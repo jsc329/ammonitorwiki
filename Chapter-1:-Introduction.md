@@ -11,7 +11,7 @@ The **AMMonitor** package builds upon two R packages: (1) **monitoR** [@monitoR]
 Figure 1.1 provides an overview of AMMonitor. 
 
 
-
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
 
 
 
