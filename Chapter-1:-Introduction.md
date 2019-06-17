@@ -11,7 +11,7 @@ The **AMMonitor** package builds upon two R packages: (1) **monitoR** [@monitoR]
 Figure 1.1 provides an overview of AMMonitor. 
 
 
-
+[Figure 1.](https://code.usgs.gov/vtcfwru/ammonitor/blob/master/vignettes/Chap1_Figs/AMMonitor.png)
 
 
 
