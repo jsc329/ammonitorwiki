@@ -13,6 +13,8 @@ Figure 1.1 provides an overview of AMMonitor.
 
 
 
+
+
 1. Holling CS, United Nations Environment Programme. Adaptive environmental assessment and management. Laxenburg, Austria; Chichester, New York: International Institute for Applied Systems Analysis; Wiley; 1978. pp. xviii, 377p.
 
 2. Walters C. Adaptive management of renewable resources. New York: Macmillan; 1986. p. 374 p.
@@ -63,4 +65,4 @@ Figure 1.1 provides an overview of AMMonitor.
 
 25. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T, et al. Data.table: Extension of ’data.frame’ (version 1.12.0) [Internet]. Comprehensive R Archive Network; 2019. Available: https://cran.r-project.org/web/packages/data.table/index.html
 
-26. Kuhn M. Caret: Classification and regression training (version 6.0) [Internet]. Comprehensive R Archive Network; 2018. Available: https://cran.r-project.org/web/packages/caret/index.html
+26. Kuhn M. Caret: Classification and regression training (version 6.0) [Internet]. Comprehensive R Archive Network; 2018. Available: https://cran.r-project.org/web/packages/caret/index.html![AMMonitor](uploads/227009a24e7ed4a372fc03cee8ac3eb0/AMMonitor.png)
