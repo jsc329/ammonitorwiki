@@ -11,9 +11,7 @@ The **AMMonitor** package builds upon two R packages: (1) **monitoR** [@monitoR]
 Figure 1.1 provides an overview of AMMonitor. 
 
 
-![alt text](https://code.usgs.gov/vtcfwru/ammonitor/blob/master/vignettes/Chap1_Figs/AMMonitor.png)
-
-![AMMonitor](uploads/ca9494528a6bb1db16102ede7d8e98b4/AMMonitor.png)
+![Figure 1.1](uploads/ca9494528a6bb1db16102ede7d8e98b4/AMMonitor.png)
 
 
 1. Holling CS, United Nations Environment Programme. Adaptive environmental assessment and management. Laxenburg, Austria; Chichester, New York: International Institute for Applied Systems Analysis; Wiley; 1978. pp. xviii, 377p.
