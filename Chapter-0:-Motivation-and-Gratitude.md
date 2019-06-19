@@ -57,16 +57,34 @@ massive amounts of data to allow BLM to quickly ascertain species
 distribution patterns (e.g., an occupancy analysis) in relation to their
 management objectives.
 
-The **AMMonitor** package places the monitoring data into an
-**a**daptive **m**anagement framework \[19\], and was developed with a
-prototype of 20 AMU units (smartphones) \[20–22\]. Since then, we have
-added the capacity to use the smartphone’s camera by enabling timed
-photographs as well as motion-triggered photographs, allowing the
-smartphones to act as “cam-trackers.” However, the **AMMonitor**
-approach does not require the use of smartphones. Its flexibility allows
-the analyis of data collected by other autonomous devices, and further
-permits the storage of results from other analytical systems for
-additional processing in R.
+In broad terms, the **AMMonitor** approach starts with ecological
+hypotheses or natural resource management objectives (Figure 0.1;
+boxed). Data are collected with Autonomous Monitoring Units (AMUs) to
+test hypotheses or to evaluate the state of a resource with respect to a
+management objective. Acoustic recordings and photos are collected and
+delivered to the cloud. Raw and processed data are stored in a SQLite
+database. The data can be analyzed with a wide variety of analytical
+methods, often models of abundance or occupancy pattern. These analyses
+can be stored, and resulting outputs can be compared with research and
+monitoring objectives to track progress toward management goals. The
+final results are assessed with respect to hypotheses or objectives.
+Thus, the **AMMonitor** package places the monitoring data into an
+**a**daptive **m**anagement framework \[19\].
+
+
+![fig1](uploads/1c822f31eeafb831b6e105701d0d661b/fig1.png)
+
+*Figure 0.1. The general AMMonitor framework begins with basic research
+hypotheses or applied resource management objectives (boxed).*
+
+The **AMMonitor** approach was developed with a prototype of 20 AMU
+units (smartphones) \[20–22\]. Since then, we have added the capacity to
+use the smartphone’s camera by enabling timed photographs as well as
+motion-triggered photographs, allowing the smartphones to act as
+“cam-trackers.” However, the **AMMonitor** approach does not require
+the use of smartphones. Its flexibility allows the analyis of data
+collected by other autonomous devices, and further permits the storage
+of results from other analytical systems for additional processing in R.
 
 This guide provides step-by-step instructions for using **AMMonitor** in
 its current form for monitoring programs that rely on remotely-captured
