@@ -1,6 +1,4 @@
-  - [Key Elements of the AMMonitor
-    Approach](#key-elements-of-the-ammonitor-approach)
-  - [Installing AMMonitor](#installing-ammonitor)
+   - [Installing AMMonitor](#installing-ammonitor)
   - [Cloud-Based Account](#cloud-based-account)
   - [AMMonitor Directory Structure](#ammonitor-directory-structure)
   - [AMModels: A Vehicle for Storing Models in a Model
@@ -15,43 +13,26 @@ SQLite as a database engine for storing and tracking all components of
 the monitoring effort, and (3) a suite of R-based functions for analysis
 of monitoring data.
 
-The AMMonitor approach starts with ecological hypotheses or natural
-resource management objectives (Figure 1.1). Data are collected to test
-these hypotheses or to evaluate the state of a resource with respect to
-a management objective. Acoustic recordings and photos are collected on
-Android smartphone AMUs, which deliver files to the cloud. Raw and
-processed data are stored in a SQLite database. The data can be analyzed
-with a wide variety of analytical methods, often models of abundance or
-occupancy pattern. These analyses can be stored, and resulting outputs
-can be compared with research and monitoring objectives to track
-progress toward management goals. The final results are assessed with
-respect to hypotheses or objectives.
-![fig1](uploads/b9c4f14d14db10c10a960bec69a9a166/fig1.png)
-
-*Figure 1.1. The general AMMonitor framework begins with basic research
-hypotheses or applied resource management objectives (boxed).*
-
-# Key Elements of the AMMonitor Approach
-
 As previously mentioned, **AMMonitor** was developed as a prototype for
 monitoring wildlife in sunny California, USA. Our prototype included the
-following elements (keyed to Figure 1.2).
-![fig2](uploads/1596ddd25a1243215b69cbb72d06452a/fig2.png)
+following elements (keyed to Figure 1.1).
 
-*Figure 1.2. A generalized overview of the AMMonitor approach.*
+![fig2](uploads/9f8b63f15162d3a4806b2847162bcb9d/fig2.png)
+
+*Figure 1.1. A generalized overview of the AMMonitor approach.*
 
   - Smart phone monitoring: Each cell phone station is fully
     plug-and-play, with an Android cell phone and external microphone
-    stored in a weather-proof box mounted to a pole (Figure 1.2a).
+    stored in a weather-proof box mounted to a pole (Figure 1.1a).
     Stations are remote and powered by solar panels. Each cell phone is
     connected to a Google account and receives its recording/photo
     schedule daily via a Google calendar connection when in data
     transmission mode. Audio files, photos, and performance logs are
     sent directly to a linked Dropbox account daily, where they are then
-    archived and analyzed using AMMonitor functions (Figure 1.2b).
+    archived and analyzed using AMMonitor functions (Figure 1.1b).
 
   - Data Storage and Handling: Raw data, along with some automatically
-    processed data, are stored within a SQLite database (Figure 1.2c).
+    processed data, are stored within a SQLite database (Figure 1.1c).
     SQLite is a self-contained, high-reliability, embedded,
     full-featured, public-domain, SQL database engine. It is the most
     used database engine in the world, with a maximum storage of 140
@@ -104,7 +85,8 @@ following elements (keyed to Figure 1.2).
     signal is a target signal of interest, and 3) analytical results,
     such as an occupancy analysis or soundscape analysis.
 
-This guide will explain each step of the AMMonitor approach in detail.
+This guide will explain each step of the **AMMonitor** approach in
+detail.
 
 # Installing AMMonitor
 
@@ -163,6 +145,9 @@ as.data.frame(ls("package:AMMonitor"))
   - caret \[7\] - provides machine learning functions for refining the
     performance of automated detection via **monitoR** templates.
 
+These should be automatically installed when you install **AMMonitor**.
+If not, use the `install.packages()` function to do so manually.
+
 # Cloud-Based Account
 
 The **AMMonitor** framework assumes that files are stored on a
@@ -215,9 +200,9 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-![filestructure2](uploads/7d32386865842a68c53cee17f25001b0/filestructure2.PNG)
+![filestructure2](uploads/bee10005c96e406962711778d8169aec/filestructure2.PNG)
 
-*Figure 1.3. Directory structure that is required by the AMMonitor
+*Figure 1.2. Directory structure that is required by the AMMonitor
 approach.*
 
 Each (empty) directory will store specific types of information as
