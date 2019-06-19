@@ -1,4 +1,4 @@
-   - [Installing AMMonitor](#installing-ammonitor)
+  - [Installing AMMonitor](#installing-ammonitor)
   - [Cloud-Based Account](#cloud-based-account)
   - [AMMonitor Directory Structure](#ammonitor-directory-structure)
   - [AMModels: A Vehicle for Storing Models in a Model
@@ -17,7 +17,7 @@ As previously mentioned, **AMMonitor** was developed as a prototype for
 monitoring wildlife in sunny California, USA. Our prototype included the
 following elements (keyed to Figure 1.1).
 
-![fig2](uploads/9f8b63f15162d3a4806b2847162bcb9d/fig2.png)
+![fig2](uploads/197403899b32cc6b27b8df245c313fda/fig2.png)
 
 *Figure 1.1. A generalized overview of the AMMonitor approach.*
 
@@ -29,11 +29,14 @@ following elements (keyed to Figure 1.1).
     schedule daily via a Google calendar connection when in data
     transmission mode. Audio files, photos, and performance logs are
     sent directly to a linked Dropbox account daily, where they are then
-    archived and analyzed using AMMonitor functions (Figure 1.1b).
+    archived and analyzed using AMMonitor functions (Figure 1.1b). The
+    recording/photo schedules may be optimized by AMMonitor functions
+    based on previously logged detections (Figure 1.1e).
 
   - Data Storage and Handling: Raw data, along with some automatically
     processed data, are stored within a SQLite database (Figure 1.1c).
-    SQLite is a self-contained, high-reliability, embedded,
+    We will dive deeply into the **AMMonitor** database in Chapter 3. In
+    a nutshell, SQLite is a self-contained, high-reliability, embedded,
     full-featured, public-domain, SQL database engine. It is the most
     used database engine in the world, with a maximum storage of 140
     terabytes. AMMonitor uses the R package, RSQLite \[1\] to connect R
@@ -66,24 +69,35 @@ following elements (keyed to Figure 1.1).
     analyze the state of the ecosystem with respect to research
     hypotheses or management objectives. And we’ve come full-circle.
 
-  - Analysis Storage and Handling. While the SQLite database stores much
-    of the data, most analytical outputs are stored in an AMModels
-    library \[2,3\]. The concept of an AMModels library is extremely
-    simple: a library stores the outputs of an R analysis (often in the
-    form of a model), along with descriptive metadata, so that they may
-    be easily recalled and used in the future. As a brief example, an R
-    user may invoke the ‘lm’ function to analyze a dataset in a simple
-    linear regression framework. The ‘lm’ function outputs are stored as
-    an object of class ‘lm’, which contains a vast amount of
-    information, including model inputs, model coefficients, fitting
+  - Analyses: Audio and photo data are analyzed in R with a variety of
+    methods. For example, audio files scanned with a
+    template-basedapproach ultimately provides the probability that any
+    given signal is the target signal you seek \[2\] (Figure 1.1d).
+    These probabilities can be aggregated in many ways to address
+    ecological questions. For example, they may be inputs into a
+    multi-season occupancy analysis \[3\] to ascertain the status and
+    population trend (increasing, decreasing, stable) of a target
+    species (Figure 1.1f).
+
+  - Storage of Analyses: While the SQLite database stores much of the
+    processed data, most analytical outputs are stored in an
+    **AMModels** library \[4,5\]. The concept of an AMModels library is
+    extremely simple: a library stores the outputs of an R analysis
+    (often in the form of a model), along with descriptive metadata, so
+    that they may be easily recalled and used in the future. As a brief
+    example, an R user may invoke the ‘lm’ function to analyze a dataset
+    in a simple linear regression framework. The ‘lm’ function outputs
+    are stored as an object of class ‘lm’, which contains a vast amount
+    of information, including model inputs, model coefficients, fitting
     information, and residuals. This model, along with its metadata, can
-    be stored in an AMModels library. This model can be used to generate
-    predictions on new data. In the context of AMMonitor, we use an
-    AMModel library to store 1) models that predict species activity
-    patterns (e.g., singing) as a function of covariates, 2) machine
-    learning classification models that provide the probability that a
-    signal is a target signal of interest, and 3) analytical results,
-    such as an occupancy analysis or soundscape analysis.
+    be stored in an **AMModels** library. This model can be used to
+    generate predictions on new data. In the context of **AMMonitor**,
+    we use an **AMModel** library to store 1) models that predict
+    species activity patterns (e.g., singing) as a function of
+    covariates, 2) machine learning classification models that provide
+    the probability that a signal is a target signal of interest, and 3)
+    analytical results, such as an occupancy analysis or soundscape
+    analysis.
 
 This guide will explain each step of the **AMMonitor** approach in
 detail.
@@ -111,7 +125,7 @@ help(package = "AMMonitor")
 
 The package itself contains many functions and built-in datasets, which
 we will introduce over the course of this book. Below, we display the
-first 10 functions and datasets as a tibble \[4\]:
+first 10 functions and datasets as a tibble \[6\]:
 
 ``` r
 # List the functions in AMMonitor
@@ -136,13 +150,13 @@ as.data.frame(ls("package:AMMonitor"))
 **AMMonitor** has a handful of package dependencies. These include:
 
   - RSQLite \[1\] - connects R to a SQLite database.
-  - AMModels \[2\] - a vehicle for storing models (analytical output)
+  - AMModels \[4\] - a vehicle for storing models (analytical output)
     for future use.
-  - data.table \[5\]- enables rapid sorting and manipulation of large
+  - data.table \[7\]- enables rapid sorting and manipulation of large
     tables.
-  - monitoR \[6\]- pits templates against collected recordings to search
+  - monitoR \[8\]- pits templates against collected recordings to search
     for target signals.
-  - caret \[7\] - provides machine learning functions for refining the
+  - caret \[9\] - provides machine learning functions for refining the
     performance of automated detection via **monitoR** templates.
 
 These should be automatically installed when you install **AMMonitor**.
@@ -200,7 +214,7 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-![filestructure2](uploads/bee10005c96e406962711778d8169aec/filestructure2.PNG)
+![filestructure2](uploads/4187388fba955a8602a9fa49a22b5cff/filestructure2.PNG)
 
 *Figure 1.2. Directory structure that is required by the AMMonitor
 approach.*
@@ -246,7 +260,7 @@ store it in the **database** directory.
 The **AMMonitor** SQLite database does much of the heavy lifting for
 managing AMMonitor data by tracking people, equipment, metadata about
 recordings and photos, and more. To store and manage models, however, we
-use the R package, **AMModels** \[2\]. Generally speaking, a “model” is
+use the R package, **AMModels** \[4\]. Generally speaking, a “model” is
 typically the result of some analysis. An **AMModel** “library” stores a
 collection of models as a single R object (the “model library”) that can
 be saved to an .RDS file, thus allowing models to be retrieved for
@@ -367,9 +381,26 @@ for r (version 2.1,1) \[Internet\]. Comprehensive R Archive Network;
 
 </div>
 
+<div id="ref-BalanticStatistical">
+
+2\. Balantic CM, Donovan TM. Statistical learning mitigation of false
+positives from template-detected data in automated acoustic wildlife
+monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
+doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
+
+</div>
+
+<div id="ref-BalanticOccupancy">
+
+3\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
+automated acoustic monitoring data. Ecological Applications. 2019;29:
+e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
+
+</div>
+
 <div id="ref-AMModels">
 
-2\. Katz J, Donovan T. AMModels: Adaptive management model manager
+4\. Katz J, Donovan T. AMModels: Adaptive management model manager
 (version 0.1.4) \[Internet\]. Comprehensive R Archive Network; 2018.
 Available: <https://cran.r-project.org/web/packages/AMModels/>
 
@@ -377,7 +408,7 @@ Available: <https://cran.r-project.org/web/packages/AMModels/>
 
 <div id="ref-Donovan2018">
 
-3\. Donovan T, Katz J. AMModels: An r package for storing models, data,
+5\. Donovan T, Katz J. AMModels: An r package for storing models, data,
 and metadata to facilitate adaptive management. PLoS ONE. 2018;13:
 1339–1345.
 doi:[10.1371/journal.pone.0188966](https://doi.org/10.1371/journal.pone.0188966)
@@ -386,7 +417,7 @@ doi:[10.1371/journal.pone.0188966](https://doi.org/10.1371/journal.pone.0188966)
 
 <div id="ref-tibble">
 
-4\. Muller K, Wickham H, Francois R, Bryan J, RStudio. Tibble: Simple
+6\. Muller K, Wickham H, Francois R, Bryan J, RStudio. Tibble: Simple
 data frames (version 2.0.1) \[Internet\]. Comprehensive R Archive
 Network; 2019. Available:
 <https://cran.r-project.org/web/packages/tibble/index.html>
@@ -395,7 +426,7 @@ Network; 2019. Available:
 
 <div id="ref-datatable">
 
-5\. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T,
+7\. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T,
 et al. Data.table: Extension of ’data.frame’ (version 1.12.0)
 \[Internet\]. Comprehensive R Archive Network; 2019. Available:
 <https://cran.r-project.org/web/packages/data.table/index.html>
@@ -404,7 +435,7 @@ et al. Data.table: Extension of ’data.frame’ (version 1.12.0)
 
 <div id="ref-monitoR">
 
-6\. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
+8\. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
 1.0.7) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <http://www.uvm.edu/rsenr/vtcfwru/R/?Page=monitoR/monitoR.htm>
 
@@ -412,7 +443,7 @@ et al. Data.table: Extension of ’data.frame’ (version 1.12.0)
 
 <div id="ref-caret">
 
-7\. Kuhn M. Caret: Classification and regression training (version 6.0)
+9\. Kuhn M. Caret: Classification and regression training (version 6.0)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/caret/index.html>
 
