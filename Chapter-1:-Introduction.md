@@ -1,1 +1,1 @@
-[Chapter 1: Introduction to AMMonitor](https://code.usgs.gov/vtcfwru/ammonitor/blob/master/vignettes/01-introduction.html)
+<a href="https://code.usgs.gov/vtcfwru/ammonitor/blob/master/vignettes/01-introduction.html" target="_blank">Chapter 1:  Introduction to AMMonitor</a>
