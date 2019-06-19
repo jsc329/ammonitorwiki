@@ -1,6 +1,3 @@
-AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework
-================
-
   - [Background](#background)
   - [Gratitude](#gratitude)
   - [References](#references)
