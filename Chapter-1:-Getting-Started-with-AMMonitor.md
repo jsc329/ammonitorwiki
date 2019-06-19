@@ -1,6 +1,3 @@
-Chapter 1: Getting Started with AMMonitor
-================
-
   - [Key Elements of the AMMonitor
     Approach](#key-elements-of-the-ammonitor-approach)
   - [Installing AMMonitor](#installing-ammonitor)
