@@ -57,18 +57,16 @@ massive amounts of data to allow BLM to quickly ascertain species
 distribution patterns (e.g., an occupancy analysis) in relation to their
 management objectives.
 
-The **AMMonitor** package builds upon the software **monitoR** \[19\],
-an R package that uses spectrogram cross-correlation and binary point
-matching algorithms to automatically search audio files for target
-sounds. The **AMMonitor** package places the monitoring data into an
-**a**daptive **m**anagement framework \[20\], and was developed with a
-prototype of 20 AMU units (smartphones) \[21–23\]. Since then, we have
+The **AMMonitor** package places the monitoring data into an
+**a**daptive **m**anagement framework \[19\], and was developed with a
+prototype of 20 AMU units (smartphones) \[20–22\]. Since then, we have
 added the capacity to use the smartphone’s camera by enabling timed
 photographs as well as motion-triggered photographs, allowing the
-smartphones to act as “cam-trackers.” The **AMMonitor** approach does
-not require the use of smartphones however. Its flexibility allows the
-capture of data from other autonomous devices and the storage of results
-from other analytical systems.
+smartphones to act as “cam-trackers.” However, the **AMMonitor**
+approach does not require the use of smartphones. Its flexibility allows
+the analyis of data collected by other autonomous devices, and further
+permits the storage of results from other analytical systems for
+additional processing in R.
 
 This guide has been written to illustrate the **AMMonitor** approach as
 it currently stands. We welcome collaborators who may be interested in
@@ -224,30 +222,23 @@ adaptive management. Biological Conservation. 2016;195: 255–263.
 
 </div>
 
-<div id="ref-Katz2016">
-
-19\. Katz J, Hafner S, Donovan T. Tools for automated acoustic
-monitoring within the r package monitoR. Bioacoustics. 2016;12: 50–67. 
-
-</div>
-
 <div id="ref-Williams2011">
 
-20\. Williams BK. Adaptive management of natural resources-framework and
+19\. Williams BK. Adaptive management of natural resources-framework and
 issues. Journal of Environmental Management. 2011;92: 1346–1353. 
 
 </div>
 
 <div id="ref-BalanticStatistical">
 
-21\. Balantic CM, Donovan TM. Statistical learning mitigation of false
+20\. Balantic CM, Donovan TM. Statistical learning mitigation of false
 positive detections in automated acoustic wildlife monitoring. 2019. 
 
 </div>
 
 <div id="ref-BalanticOccupancy">
 
-22\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
+21\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. 
 
@@ -255,9 +246,10 @@ e01854.
 
 <div id="ref-BalanticTemporal">
 
-23\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
+22\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. In review. 
 
 </div>
 
 </div>
+
