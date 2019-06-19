@@ -219,6 +219,7 @@ set this main directory as your working directory whenever you use
 **AMMonitor**.
 
 ![filestructure2](uploads/7d32386865842a68c53cee17f25001b0/filestructure2.PNG)
+
 *Figure 1.3. Directory structure that is required by the AMMonitor
 approach.*
 
