@@ -68,9 +68,10 @@ the analyis of data collected by other autonomous devices, and further
 permits the storage of results from other analytical systems for
 additional processing in R.
 
-This guide has been written to illustrate the **AMMonitor** approach as
-it currently stands. We welcome collaborators who may be interested in
-improving or building on our approach.
+This guide provides step-by-step instructions for using **AMMonitor** in
+its current form for monitoring programs that rely on remotely-captured
+data for use in adaptive management. We welcome collaborators who may be
+interested in improving or building on our approach.
 
 # Gratitude
 
@@ -204,7 +205,8 @@ enabling adaptive management. Ecology and Society. 2013;18.
 <div id="ref-Rist2013">
 
 16\. Rist L, Felton A, Samuelsson L, Sandstrom C, Rosvall O. A new
-paradigm for adaptive management. Ecology and Society. 2013;18. 
+paradigm for adaptive management. Ecology and Society. 2013;18: 63.
+Available: <http://dx.doi.org/10.5751/ES-06183-180463>
 
 </div>
 
@@ -232,7 +234,9 @@ issues. Journal of Environmental Management. 2011;92: 1346–1353.
 <div id="ref-BalanticStatistical">
 
 20\. Balantic CM, Donovan TM. Statistical learning mitigation of false
-positive detections in automated acoustic wildlife monitoring. 2019. 
+positives from template-detected data in automated acoustic wildlife
+monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
+doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
 </div>
 
@@ -240,14 +244,15 @@ positive detections in automated acoustic wildlife monitoring. 2019.
 
 21\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
-e01854. 
+e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
 </div>
 
 <div id="ref-BalanticTemporal">
 
 22\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
-maximize detection across a suite of focal wildlife species. In review. 
+maximize detection across a suite of focal wildlife species. Ecology and
+Evolution. 
 
 </div>
 
