@@ -1,18 +1,9 @@
-AMMonitor: An R Package for Remote Biodiversity Monitoring
+AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework
 ================
 
-  - [Disclaimer](#disclaimer)
   - [Background](#background)
   - [Gratitude](#gratitude)
   - [References](#references)
-
-# Disclaimer
-
-This draft manuscript is distributed solely for purposes of scientific
-peer review. Its content is deliberative and predecisional, so it must
-not be disclosed or released by reviewers. Because the manuscript has
-not yet been approved for publication by the U.S. Geological Survey
-(USGS), it does not represent any official USGS finding or policy.
 
 # Background
 
@@ -60,25 +51,24 @@ Gnatcatcher (*Polioptila melanura*), and Eurasian Collared-dove
 (*Streptopelia decaocto*). The agency has established management
 objectives (benchmarks) to ensure the persistence of sensitive species
 and minimize the spread of invasive species across the SEZ as solar
-energy projects are added to the landscape. Thus, AMMonitor’s primary
-function is to enable the practice of **a**daptive **m**anagement via a
-novel and flexible integrated system.
+energy projects are added to the landscape. In developing **AMMonitor**,
+our primary goal was to create a system for handling and processing
+massive amounts of data to allow BLM to quickly ascertain species
+distribution patterns (e.g., an occupancy analysis) in relation to their
+management objectives.
 
-In developing **AMMonitor**, our primary goal was to create a system for
-handling and processing massive amounts of data to allow BLM to quickly
-ascertain species distribution patterns (e.g., an occupancy analysis) in
-relation to their management objectives. The **AMMonitor** package
-builds upon the software **monitoR** (Katz, Hafner, and Donovan, 2016),
-an R package developed in T. Donovan’s lab that uses spectrogram
-cross-correlation and binary point matching algorithms to automatically
-search audio files for target sounds. The **AMMonitor** package places
-the monitoring data into an adaptive management framework (Williams,
-2011), and was developed with a prototype of 20 AMU units (smartphones)
-by C. Balantic and T. Donovan (Balantic and Donovan, 2019a; Balantic and
-Donovan, 2019b; Balantic and Donovan, 2019c). Since then, we have added
-the capacity to use the smartphone’s camera by enabling timed
+The **AMMonitor** package builds upon the software **monitoR** \[19\],
+an R package that uses spectrogram cross-correlation and binary point
+matching algorithms to automatically search audio files for target
+sounds. The **AMMonitor** package places the monitoring data into an
+**a**daptive **m**anagement framework \[20\], and was developed with a
+prototype of 20 AMU units (smartphones) \[21–23\]. Since then, we have
+added the capacity to use the smartphone’s camera by enabling timed
 photographs as well as motion-triggered photographs, allowing the
-smartphones to act as “cam-trackers.”
+smartphones to act as “cam-trackers.” The **AMMonitor** approach does
+not require the use of smartphones however. Its flexibility allows the
+capture of data from other autonomous devices and the storage of results
+from other analytical systems.
 
 This guide has been written to illustrate the **AMMonitor** approach as
 it currently stands. We welcome collaborators who may be interested in
@@ -234,5 +224,40 @@ adaptive management. Biological Conservation. 2016;195: 255–263.
 
 </div>
 
+<div id="ref-Katz2016">
+
+19\. Katz J, Hafner S, Donovan T. Tools for automated acoustic
+monitoring within the r package monitoR. Bioacoustics. 2016;12: 50–67. 
+
 </div>
 
+<div id="ref-Williams2011">
+
+20\. Williams BK. Adaptive management of natural resources-framework and
+issues. Journal of Environmental Management. 2011;92: 1346–1353. 
+
+</div>
+
+<div id="ref-BalanticStatistical">
+
+21\. Balantic CM, Donovan TM. Statistical learning mitigation of false
+positive detections in automated acoustic wildlife monitoring. 2019. 
+
+</div>
+
+<div id="ref-BalanticOccupancy">
+
+22\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
+automated acoustic monitoring data. Ecological Applications. 2019;29:
+e01854. 
+
+</div>
+
+<div id="ref-BalanticTemporal">
+
+23\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
+maximize detection across a suite of focal wildlife species. In review. 
+
+</div>
+
+</div>
