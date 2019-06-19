@@ -1,14 +1,3 @@
 
-  - [Keys](#keys)
-  - [Create the database](#create-the-database)
-  - [Interacting with Tables](#interacting-with-tables)
-  - [The AMMonitor Database “Front
-    End”](#the-ammonitor-database-front-end)
-      - [SQLite ODBC](#sqlite-odbc)
-      - [Linking Access to the SQLite
-        database](#linking-access-to-the-sqlite-database)
-      - [Access Forms](#access-forms)
-  - [Chapter Summary](#chapter-summary)
-  - [Bibliography](#bibliography)
-
+asdf
 
