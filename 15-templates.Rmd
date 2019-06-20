@@ -1,0 +1,262 @@
+---
+title: "AMMonitor"
+output: 
+  html_document:
+    css: styles.css
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+csl: plos.csl
+bibliography: refs.bib
+---
+
+```{r echo = F}
+# Set up chapter table and figure counters; figure folder
+source("includes.R")
+options(table_counter_str = "<b>Table 15.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure 15.%s</b>")
+knitr::opts_chunk$set(fig.path = 'Chap15_Figs/')
+```
+
+
+```{r, echo = FALSE}
+# Clean up for re-knits:
+db.name <- 'Chap15.sqlite'
+db.path <- paste0(getwd(), '/database/', db.name)
+if (file.exists('db.path')) 
+  {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
+unlink(db.path) 
+```
+
+## Chapter 15: The Templates Table
+
+In an acoustic monitoring context, a **template** is an example of a type of sound a researcher hopes to automatically identify using the computer. It might be a single identifying note, a phrase of multiple notes, and/or a breeding song. If a focal species produces multiple sound types, the user might create multiple templates. 
+
+In **AMMonitor**, a template is an R object that contains a signal of interest. The database table **templates** stores information about each template, including information on its class, minimum and maximum frequency, and the template object itself. Once users have created a template for a target signal, they can run the template against recordings to acquire detected events similar to the target signal (as demonstrated in the next chapter, **scores**).
+
+To illustrate the process of creating a template in **AMMonitor**, we use `dbCreateSample()` to create a database called "Chap15.sqlite", which will be stored in a folder called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+
+We will generate sample data for necessary tables in the `dbCreateSample()` function below. We will also demonstrate how to auto-populate the **templates** table with **AMMonitor** functions later on in the chapter:
+```{r}
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap15.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables = c('species', 'library', 'people', 'templates'))
+```
+
+Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
+```{r}
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap15.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
+
+After that, we send a SQL statement that will enforce foreign key constraints. 
+```{r}
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
+```
+
+### The Templates Table
+
+We begin by looking at the **templates** table. We can use `dbTables()` to view the table's field summary:
+
+```{r}
+# Look at information about the templates table
+dbTables(db.path = db.path, table = "templates")
+
+```
+
+The primary key for this table is *templateID*, which is the template's unique name (a character of up to 255 characters in length). Each template must be tagged to a signal given in the **library** table (*libraryID*). The fields *class*, *software*, and *package* store information about the class of the template object and how it was created. *Comment* is a text field where users can store additional information. The fields *minFrq* and *maxFrq* store the template's minimum and maximum frequency. The fields *wl* (window length), *ovlp* (overlap), and *wn* (window type) provide information on how to convert the audio signal into a visible spectrogram. The field *template* is the actual template itself, stored as a SQLite BLOB. The [SQLite tutorial](http://www.sqlitetutorial.net/sqlite-data-types/) page defines a BLOB as "a binary large object that can be used to store any kind of data. The maximum size of BLOBs is unlimited."  The final column, *personID* identifies the team member who created the template. 
+
+Foreign key assigments can be confirmed as follows:
+```{r, eval = T}
+# Return foreign key information for the templates table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(templates);")
+```
+
+Notice that the field *personID* from table **people** maps to the *personID* field in the **templates** table, and the field *libraryID* from table **library** maps to the *libraryID* field in the **templates** table. 
+
+Below, we view the library that comes with the sample database:
+
+```{r}
+# Retrieve the lists in the sample database
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM library")
+
+```
+
+Recall that the **library** table in an **AMMonitor** database identifies target signals issued by a particular species. For example, for the target species Verdin (speciesID = 'verd'), three signals are listed in the library: a two-note song, a three-note song, and other. At least one template should be created for each signal so that **AMMonitor** can search for these signals in audio recordings. 
+
+Before diving into the mechanics of creating and saving templates to the database, we view example templates that come with the **AMMonitor** sample database:
+```{r}
+# Retrieve the templates in the templates table
+sample.templates <- RSQLite::dbGetQuery(
+  conn = conx, 
+  statement = "SELECT templateID, libraryID, class, 
+                      software, package, template, personID 
+              FROM templates")
+
+# View the structure of the sample.templates
+str(sample.templates)
+
+```
+
+
+As shown, the sample database comes with three templates created by Frodo Baggins: two for the 'verd_2notes' signal and one for the 'verd_other' signal. The *templateID* contains a unique character name chosen by the user. The *libraryID* indicates which sound/call the template intends to capture. In *class*, *software*, and *package*, we state the type of template, the software, and the R package used to create it. In our example, the classes are either **corTemplateList** or **binTemplateList**, created using the R software package **monitoR** [@monitoR]. The *template* field contains the template itself, stored as a BLOB. 
+
+To use a template stored in the database, we retrieve the template with `templatesUnserialize()`. This function converts the database BLOB (serialized) back to the orignal R object. Here, we retrieve and plot the template named 'verd1', which is a template designed to find the 'verd_2notes' signal: 
+
+```{r, eval = F}
+# Retrieve the template from the database
+t1 <- templatesUnserialize(db.path = db.path, templateID = 'verd1')
+
+# Look at the structure of this object
+str(t1, max.level = 3)
+
+# Plot it
+plot(t1)
+```
+
+
+
+### Creating a template
+
+For template creation, **AMMonitor** uses functions from the package [**monitoR**](https://cran.r-project.org/web/packages/monitoR/index.html) [@monitoR, @Katz2016]. The **monitoR** [Quickstart Guide PDF](https://cran.r-project.org/web/packages/monitoR/vignettes/monitoR_QuickStart.pdf) provides instructions on how to create templates. Below, we summarize the key points.
+
+Users should put thought and care into constructing templates. It is in iterative process, and users will likely wish to create many templates and then conduct some testing to decide which ones are worth using. Though no template will be perfect, the success of the automated detection system may be fine-tuned later as described in the  the **scores** and **classifications** chapters. 
+
+The first step in creating a template is to read a recording into R. Typically, recordings are stored in the **recordings** folder within the main **AMMonitor** directory. For demonstration purposes, however, we will load sample recordings that come with the **AMMonitor** package, and write one of them to a wave file in our working directory:  
+```{r}
+# Read in data
+data(sampleRecordings)
+
+# Write the fourth recording to the working directory
+tuneR::writeWave(object = sampleRecordings[[4]],
+                 filename = "midEarth5_2016-03-21_07-30-00.wav ")
+```
+
+We view the recording using the **monitoR** function `viewSpec()`, specifying the 'clip' name, 'units' of "seconds", and a 'page.length' of 10 seconds.
+```{r}
+monitoR::viewSpec(clip = "midEarth5_2016-03-21_07-30-00.wav", 
+                  units = "seconds", 
+                  page.length = 10)
+```
+Here, we see an example of vocalizations by a target Middle Earth monitoring species, the Verdin, which has a species code of 'verd' in the **species** table as shown below:
+
+```{r}
+# Confirm that Verdin is in the species table
+RSQLite::dbGetQuery(conx, 'SELECT * FROM species WHERE speciesID = "verd" ')
+```
+
+As previously described, the verdin has 3 distinct vocalizations that are identified in the **library** table. 
+
+```{r}
+# Check on Verdin library selections
+RSQLite::dbGetQuery(conx, 'SELECT * FROM library WHERE speciesID = "verd" ')
+```
+
+We decide this is a good example of a Verdin two-note song, and that we want to construct a template with it. **monitoR** contains two template types: spectrogram cross-correlation (created using the `makeCorTemplate()` **monitoR** function), and binary point matching (created using the `makeBinTemplate()` **monitoR** function). Find more information about these functions in the [monitoR Quickstart Guide PDF](https://cran.r-project.org/web/packages/monitoR/vignettes/monitoR_QuickStart.pdf). 
+
+Below, we use `makeCorTemplate()` to create a  cross correlation template. We input the file name in the 'clip' argument, specify time limits in seconds in the 't.lim' argument, and specify frequency limits in the 'frq.lim' argument (essentially drawing a box around the signal). In the 'select' argument, we have input the "auto" option so that the template will be automatically created based on the time and frequency limits. Alternatively, the "cell" and "rectangle" options give the user finer control over the template. Next, the 'score.cutoff' argument identifies the threshold above which similar signals are detected. Below, we select a score.cutoff of 0. Lastly, we give the template a 'name', which will become this template's unique templateID in the database. Several other arguments facilitate template customization that we have not covered here, including buffers, density point selection, and Fourier transform arguments window length (default 512), overlap (default 0), and window type (default "hanning"). We encourage users to spend some time with the template creation portion of the **monitoR** Quickstart Guide and helpfiles for `makeCorTemplate()` and `makeBinTemplate()`.
+```{r, eval = TRUE}
+# Create a template based on the first signal in the audio recording
+verd4 <- monitoR::makeCorTemplate(
+  clip = "midEarth5_2016-03-21_07-30-00.wav", 
+  t.lim = c(4.45, 4.95), 
+  frq.lim = c(3.8,6), 
+  select = "auto", 
+  score.cutoff = 0,
+  name = "verd4")
+```
+
+We make a second template with the other vocalization present on our recording.
+```{r}
+# Create a template based on the second signal in the audio recording
+verd5 <- monitoR::makeCorTemplate(
+  clip = "midEarth5_2016-03-21_07-30-00.wav", 
+  t.lim = c(8.8, 9.32), 
+  frq.lim = c(3.8,6), 
+  select = "auto", 
+  score.cutoff = 0,
+  name = 'verd5')
+```
+
+
+### Testing Templates
+
+> TD: Template Sensitivity/Specificity Score Threshold function. Narrative here. This function would take a template as input. It would look at annotated records. It would produce the sens/spec curves in the form of a model (an output from the sensitivy or specificificty function in caret?) Funciton inputs: templateID, db, amml (will add to teh model library if provided; may need a model name though or it could be auto-created). 
+
+>
+
+### Saving Templates
+
+When we are satisifed with our template(s), we can insert them into the database's **templates** table using `templatesInsert()`, which first takes our **db.path** object as input to the 'db.path' argument. Next, the argument 'template.list' requires an object of class **corTemplateList** or **binTemplateList**. The **monitoR** template system is designed to work with multiple templates, so even a single template is considered either a corTemplateList or a binTemplateList. In the 'template.list' argument, we may input a single template object, such as **verd4**. Alternatively, if we wish to insert several templates at once, we can wrap the **monitoR** function `combineCorTemplates()` around multiple corTemplateList objects and send all of them to `templatesInsert()`, which we do below. Lastly, into the 'libraryID' argument, we pass a character vector of the libraryIDs we want to associate with each template, which should be ordered following the templates in 'template.list'. Below, both templates have the libraryID 'verd_2notes'. 
+
+```{r, echo = F, results = 'hide'}
+
+# remove verd4 and verd5 if in templates table
+RSQLite::dbGetQuery(conx, 'DELETE FROM templates WHERE templateID = "verd4" ')
+RSQLite::dbGetQuery(conx, 'DELETE FROM templates WHERE templateID = "verd5" ')
+
+
+```
+
+```{r, eval =T}
+# Insert the following templates
+templatesInsert(db.path = db.path, 
+                template.list = combineCorTemplates(verd4, verd5), 
+                libraryID = c('verd_2notes', 'verd_2notes'),
+                personID = 'fbaggins')
+```
+
+Next, we view the templates table, noting that there are now five templates, four of which focus on the two-note song type.
+```{r, eval = T}
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = 'SELECT templateID, libraryID, class, software, 
+                                        package, template, personID 
+                                 FROM templates')
+```
+
+Notice that the `templatesInsert()` function has converted our templates into a SQLite data type called a "blob", which itself contains a data type called "raw". Because SQLite does not allow columns containing R objects of class list or S4, `templatesInsert()` serializes the template into a format that SQLite accommodates. 
+
+As previously demonstrated, we can unserialize templates and read them in as the original objects using `templatesUnserialize()`. We input our **db.path** object into the 'db.path' argument. In 'templateID', we provide a character vector of the templateIDs to be returned: 
+```{r, eval = T}
+# Grab templates from the templates table and convert them back into templateList objects
+unserialized.templates <- templatesUnserialize(db.path = db.path, 
+                                               templateID = c('verd4', 'verd5'))
+
+# View the object  -- it is a corTemplateList
+unserialized.templates
+```
+
+Creating good templates requires testing and evaluation, but they are critical for searching through recordings collected by the monitoring team in pursuit of species presence. This process is illustrated in Chapter 16.
+
+### The Templates Table in Access
+
+The templates table is a secondary tab nestled under the primary Species tab in the Access Navigation Form. First, we view the Species tab:
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap15_Figs/species.PNG', dpi = 500)
+```
+
+Here, each species is featured (verd is record 9 of 9, as shown at the bottom of the form). This species has three signals of interest ('verd_2notes', 'verd_3notes', and 'verd_other') logged in the signal library.
+
+Clicking on the Templates secondary tab, we see that two templates exist for the 'verd_2notes' signal (both are objects of "corTemplateList"), and one was created for the 'verd_other' signal (an object of "binTemplateList"). 
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap15_Figs/templates.PNG', dpi = 500)
+```
+
+
+### Chapter summary
+
+We use templates to search for target signals issued by a species of monitoring interest. Currently, **AMMonitor** supports templates of class corTemplateList or binTemplateList in R, which are produced by the R package **monitoR** using the functions `makeCorTemplate()` and `makeBinTemplate()`, respectively [@monitoR]. The function `templatesInsert()` ensures that templates are serialized and stored as BLOBs in the **templates** table of an **AMMonitor** database, while `templatesUnserialize()` extracts templates from the database and returns them in their proper forms for subsequent analysis in R.
+
+### Chapter References

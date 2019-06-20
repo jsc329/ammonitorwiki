@@ -1,0 +1,307 @@
+---
+title: "AMMonitor"
+output: 
+  html_document:
+    css: styles.css
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+csl: plos.csl
+bibliography: refs.bib
+---
+
+```{r echo = F}
+# Set up chapter table and figure counters; figure folder
+source("includes.R")
+options(table_counter_str = "<b>Table 19.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure 19.%s</b>")
+knitr::opts_chunk$set(fig.path = 'Chap19_Figs/')
+```
+
+
+```{r, echo = FALSE}
+# Clean up for re-knits:
+db.name <- 'Chap19.sqlite'
+db.path <- paste0(getwd(), '/database/', db.name)
+if (file.exists('db.path')) 
+  {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
+unlink(db.path) 
+```
+
+## Chapter 20: Assessment
+
+In previous chapters, we explained how the **scores** and **classifications** tables in an **AMMonitor** database store a wealth of information about captured signals (see Chapter 17). We further illustrated just one (of many) potential analyses that use the **scores** and **classifications** data to address ecological questions (see Chapter 18). Many of the questions that a research team seeks to answer are linked to **objectives**, as introduced in Chapter 5, and we will now return to this important topic. 
+
+In the book, "Structured Decision Making: A Practical Guide to Environmental Management Choices" [@Gregory], Robin Gregory suggests that the "statement of objectives can be kept pretty simple. Essentially, they consist of the thing that matters and (usually) a verb that indicates the desired direction of change: 
+
+1. Increase revenues to the regional government.
+2. Reduce the probability of extinction of wild salmon.
+3. Minimize emissions of greenhouse gasses.
+4. Maximize year-round employment."
+
+These examples include indicators (also called attributes; what exactly will be measured, such as revenue, probability of extinction, emissions, employment) and direction (the intended level or direction, such as increase, decrease, minimize, maximize, or maintain). Units of measure may also be specified.
+
+**AMMonitor** facilitates the tracking of objectives generically, but what is most important from the monitoring perspective is that an objective can be quantitatively assessed through the analysis of monitoring data, such as remotely captured acoustic data or images. As such, example objectives may include:
+
+1. Maximize occupancy rate of desired species x.
+2. Minimize occupancy rate of undesired species y.
+3. Minimize human-made sounds.
+
+Setting objectives can be difficult, and a discussion of how to set objectives is well beyond our scope. For additional information, see @Keeney, @Gregory, @Conroy, @Goodwin, @Walters1986, @Fuller2014, @Williams2011, and @Runge2011. In Chapter 5, we described how objectives (of any type) can be logged in the **AMMonitor** database. Now, we focus on how to assess an objective by comparing the results of an analysis with the stated objective. The analysis will be logged in the **assessments** database table to provide a trace. Unlike other chapters, there are no new **AMMonitor** functions to explore. The reason is because objectives can vary tremendously, and each objective may very well require a unique set of instructions for pitting an analysis output against the objective itself. These instructions may be stored in a script (logged in the **scripts** table, and where the actual code is stored in the directory called "scripts").
+
+Here, we provide a single example of an assessment. We define an assessment as an analysis conducted to describe the state of affairs, i.e., the state of the ecological system with respect to the stated objective. We begin this chapter by reviewing the objectives we introduced in Chapter 5, focusing on an occupancy objective related to a small desert songbird, the Verdin (*Auriparus flaviceps*). Next, we use the dynamic false positive occupancy model from [@Miller2013] (which we ran in Chapter 18) to assess the current Verdin occupancy status. Finally, we illustrate some coding approaches (saved in a script) to compare the objective with the documented occupancy status, and log this assessement into the **assessments** table. 
+
+
+### Create the Chapter Database
+
+Here, we use `dbCreateSample()` to create a database called "Chap5.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For the demonstration purposes of this chapter, we will only pre-populate a few necessary tables.
+
+```{r}
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap19.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  c("objectives", "species", 
+                           "lists", "listItems"))
+```
+
+Next, we initialize a character object, **db.path**, that holds the database's full file path. We connect to the database with RSQLite's `dbConnect()` function, where we must identify the SQLite driver in the 'drv' argument:
+
+```{r}
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap19.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
+
+Finally, we send a SQL statement that will enforce foreign key constraints within the database.
+
+```{r}
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = 
+              "PRAGMA foreign_keys = ON;"
+          )
+```
+
+### The Objectives Table 
+
+Let's start by reviewing the structure of the **objectives** table:
+
+```{r}
+# Look at information about the objectives table
+dbTables(db.path = db.path, table = "objectives")
+```
+
+`dbTables()` identifies the name of each column, the primary key, the type of data stored in each column, and required column entries. 
+
+- *objectiveID* - the table's primary key (must be unique and less than 255 characters). Should be a brief identifier that is easily typed.
+- *listID* - a list record that is provided in the **lists** table, if applicable.
+- *speciesID* - a species record that is given in the **species** table, if applicable.
+- *objective* - the stated objective in report-ready form. 
+- *indicator* - specifies what exactly will be measured.
+- *units* - specifies the units of measure.
+- *direction* - indicates the desired direction, such as increase, maximize, decrease, minimize, or maintain. 
+- *min* - the minimum acceptable target, if applicable.
+- *max* - the maximum acceptable target, if applicable.
+- *standard* - the stated target, if applicable.
+- *narrative* - A text field that allows any number of characters to be stored.
+
+This table also contains foreign keys that are linked to other database tables, identified using the PRAGMA statement below: 
+
+```{r, eval = T}
+# Return foreign key information for the speciesList table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(objectives);")
+
+```
+Resulting output shows that the field *speciesID* from the table **objectives** maps to the field *speciesID* in the table **species**. Additionally, the field *listID* from the table **objectives** maps to the field *listID* in the table **lists**. Notice that the **objectives** table simply contains objectives, and does not map objective hierarchies or identify objectives by type. The reason is that these characterizations may change depending on context, requiring a different approach for handling such cases (perhaps in future versions of **AMMonitor**).
+
+We now will look at the sample objectives that come with the sample database:
+
+```{r}
+# Retrieve the first objective, returned as a data.frame
+objectives <- RSQLite::dbGetQuery(conn = conx, 
+                                  statement = "SELECT * FROM objectives")
+
+# Show the sample objective (columns 1:6)
+objectives[1:6]
+
+```
+
+Here, our sample data consists of four records, and we are displaying the first six columns only. The first objective's ID is simply "midEarth", and the objective is "Conserve native biodiversity". The *listID* for this objective is the list called "Middle Earth" (from the **lists** table), which identifies all species of Middle Earth. The next three objectives deal with specific species and their desired occupancy rates; we have elected to set the primary keys by the species abbreviation, followed by the word "occupancy" for the primary keys. In each case, the *listID* is set to \<NA\>, the *speciesID* is linked to the primary key in the **species** table, the *indicator* to be measured is "Psi" (which is the Greek symbol $\psi$, commonly used to denote occupancy rate), with "Probability" as the *units* of measure. 
+
+Objectives are not required to be associated with a **speciesID** or **listID**, however. For example, in some U.S. National Parks, monitoring objectives center around maximizing characteristics of soundscapes.
+
+We now focus on a specific sample objective, centered on the songbird species, the [Verdin](https://www.allaboutbirds.org/guide/Verdin/id).
+
+```{r}
+# Show the sample objective (row 4; columns 1, 7:10)
+objectives[4,c(1,7:10)]
+```
+
+Here, we see an objective with the *objectiveID* of "verd_occupancy". Note that *direction* is set to "Maintain." Directions are typically "Maximize", "Minimize", or "Maintain" to indicate which direction the monitoring (and management) team wishes to push the state of the Verdin population. Here, we wish to manage such that the *standard* is 0.4, but can range between the upper (*max*) and lower (*min*) boundary of acceptable occupancy. 
+
+The final column of the **objectives** table (not shown) stores the objective narrative. The *narrative* field can be used to provide additional narrative. For example, might include a description of the type of analysis or analyses that may be used to assess the objective.
+
+The purpose of a monitoring effort is to compare the state of the system (e.g., Verdin occupancy rate) with a stated objective (which could be a natural resources objective or a scientific objective). Now that we understand the Verdin objective, we can analyze our remotely captured data.
+
+### The Verdin Dynamic Occupancy Analysis
+
+In Chapter 18, we assumed the Middle Earth team analyzed the **AMMonitor** acoustic monitoring data with the package, **RPresence** [@RPresence, @Fiske2011] in a multi-season (dynamic) occupancy modeling framework.
+
+As a quick refresher to Chapter 18, we used the function `occupancySim()` to simulate an encounter history for the Verdin (necessary because the sample dataset that comes with **AMMonitor** is too small to run a meaninful analysis directly). The `occupancySim()` function provides encounter histories like "real" histories from remotely captured data; these data can be input into a single-species false positive dynamic occupancy model ('the Miller Model'). Note that the current version of `occupancySim()` does not accommodate covariates.
+
+Users may input a desired number of sites ('n.sites'), seasons ('n.seasons'), and 'surveys.per.season'. In 'psi', input the desired probability of occupancy in the first season; in 'gamma', the probability of colonization of an unoccupied site; and in 'epsilon', the probability of extinction from an occupied site. In 'p11', input a value for detection probability given presence; in 'p10', the probability of a false positive detection at an unoccupied site; and in 'b', the probability a detection will be certain, conditional on detecting the species at an occupied site. 
+
+```{r}
+# set a random number seed
+set.seed(201)
+
+# create a simulated encounter history with 100 sites
+sim.eh <- occupancySim(n.sites = 100, 
+                       n.seasons = 2, 
+                       surveys.per.season = 5,
+                       psi = 0.5, 
+                       gamma = 0.15, 
+                       epsilon = 0.3,
+                       p11 = 0.8,
+                       p10 = 0.05,
+                       b = 0.05)
+
+```
+
+`occupancySim()` returns a matrix where the number of rows is equal to 'n.sites', and the number of columns is equal to 'n.seasons'\*'surveys.per.season'. Notice that because of the random nature of simulating data, the final dataset's parameters are not exactly equal to the requested parameter values; increasing sample size will generally reduce this difference. Cells are populated with either a 0, 1, or 2. Row names indicate generic location names. Again, column names follow the pattern of 'season'-'survey'; the column name '1-1' indicates season 1, survey 1. '1-2' stands for season 1, survey 2, and so on. `occupancySim()` also returns messages comparing the user-specified values against the actual simulated values (which may differ substantially if given a low value of 'n.sites'). Below, we view the first few records of **sim.eh** to confirm its format:
+
+```{r}
+head(sim.eh)
+```
+
+Here, we will assume that this Verdin dataset was collected by remotely deployed acoustic or photographic monitoring. To analyze this dataset and obtain parameter estimates for occupancy, we will use **RPresence** functions to fit a Miller et al. 2013 [@Miller2013] dynamic occupancy model with no covariates. RPresense simply links the program R to the stand-alone executable program, PRESENCE, which in turn provides a suite of analytical tools for estimating species distribution patterns through space and time.
+
+First, we use the **RPresence** function `createPao()` to generate a PAO (proportion of area occupied) file for input to PRESENCE. The 'data' argument takes a raw encounter history matrix as input. Below, we input our simulated encounter history, **sim.eh**. In 'nsurveyseason', we specify the number of surveys in each season; in our case, there are 5 per season. Into the 'unitnames' argument, we input the rownames of the encounter history, taking care to ensure that they are in the same order as the sites in the encounter history matrix. 
+
+```{r}
+# Load RPresence
+library(RPresence)
+
+# Create pao
+one.pao <- createPao(data = sim.eh,             
+                     nsurveyseason = rep(5, 2), 
+                     unitnames = rownames(sim.eh)) 
+```
+
+Next, we create formulas for all six parameters of the Miller model, and turn them into R data type "formulas" using lapply(form.list, as.formula). Finally, we use the `occMod()` function to run the analysis, inputting the **formulas** object to the 'model' argument and **one.pao** to 'data'. Under 'type', we indicate 'do.fp' (which stands for *dynamic occupancy false positives*). We use the 'randinit' argument to tell PRESENCE to use 9 different starting values to help it find the top of the likelihood function. Lastly, we can give the output file a name in the 'outfile' argument. See [RPresence/PRESENCE documentation](https://www.mbr-pwrc.usgs.gov/software/presence.html) for more details. 
+
+```{r}
+# Create a list of formulae for the Miller intercept model
+form.list <- list('psi ~ 1', 
+                  'gamma ~ 1', 
+                  'epsilon ~ 1',
+                  'p11 ~ 1', 
+                  'p10 ~ 1', 
+                  'b ~ 1')
+
+# Convert the formula list to an object of class formula
+formulas <- lapply(form.list, as.formula)
+
+# Run the RPresence occMod function; save the output as a model called 'sim.model'
+sim.model <- occMod(model = formulas,
+             data = one.pao,
+             type = 'do.fp',
+             randinit = 9,
+             outfile = 'm0')
+
+# Look at the structure of the resulting model output
+str(sim.model, max.level = 1)
+
+```
+
+**RPresence** returns a list of outputs, which is packed full of information about the analysis. We view some key outputs below, recalling that we simulated a 3 year study. The main "state" of the system parameters are:
+
+- psi = the initial occupancy pattern in year 1
+- gamma = the probability that an unoccuppied site in year *t*-1 becomes occupied in year *t* (i.e., the probability of colonization)
+- epsilon = the probability that an occupied in year *t*-1 becomes unoccupied in year *t* (i.e., the probability of extinction)
+
+The remaining parameters are detection parameters, and provide information about the detection process.
+
+```{r}
+# Retrieve the real parameter estimates from the model, sim.model
+estimates <- lapply(sim.model$real, function(x) unlist(x[1, 1:4]))
+
+# Show the estimates
+estimates
+
+```
+
+Recall that we can store any model in an **AMModels** library if we wish to preserve it for posterity. (Recall that we created an **AMModels** library called do_fp.RDS, which is housed in the **ammls** directory). This library stores any/all of the dynamic occupancy false positive models run by a monitoring program. Below, we demonstrate code for saving a useful model to the do_fp **AMModels** library. We will be able to use this model in the future and update it as needed to evaluate progress toward our Verdin monitoring objective through time.
+
+```{r, eval = T}
+# Read do_fp amml into R: 
+do.fp.amml <- readRDS('ammls/do_fp.RDS')
+
+# Turn sim.model into an amModel
+am.model <- amModel(model = sim.model, comment = 'Model for Verdin occupancy demonstration.')
+
+# Turn am.model into a named list for insertAMModelLib
+am.model.list <- list(verd_sim_occupany = am.model)
+
+# Insert the models into the AMModels library:
+do.fp.amml <- insertAMModelLib(models = am.model.list, 
+                               amml = do.fp.amml)
+
+# Re-save to amml folder:
+saveRDS(do.fp.amml, 'ammls/do_fp.RDS')
+
+```
+
+
+### Assessment of the Verdin Occupancy Objective
+
+At this point, we have identified an objective for managing the Verdin, and analyzed our Verdin data with a dynamic occupancy false positive analysis. Now, we are equipped to assess the objective with respect to the analysis output. The code below can be written as an R script for reproducibility.
+
+Recall that our Verdin objective is:
+ 
+```{r}
+# Show the  sample objective (row 4; columns 1, 7:10)
+objectives <- objectives[4,c(1,7:10)]
+objectives
+```
+
+We can use the following code to generate site occupancy rates for each of the three survey years, and plot them with respect to our stated objective:
+
+```{r}
+# set up a vector to hold the psi estimates for each year
+psi <- rep(estimates$psi['est'],3)
+gamma <- estimates$gamma['est']
+epsilon <- estimates$epsilon['est']
+
+# calculate psi for years 2 and 3
+for (i in 2:3) {
+  psi[i] = psi[i - 1] * (1 - epsilon) + (1 - psi[i - 1]) * gamma
+}
+
+# plot 
+plot(x = 1:3, 
+     y = psi, 
+     ylim = c(0,1), 
+     pch = 20, 
+     xlab = 'Year', 
+     xaxt = 'n',
+     ylab = expression(psi)) 
+axis(side = 1, at = 1:3, labels = TRUE)
+     
+lines(x = 1:3, y = psi)
+
+abline(h = 0)
+
+# add in the min from the objective
+abline(h = objectives[1,'min'], col = 'red', lty = 'dashed')
+
+# add in the  max from the objective
+abline(h = objectives[1,'max'], col = 'red', lty = 'dashed')
+
+```
+
+In Year 1, our Verdin occupancy rate exceeded the 0.35-0.45 minimum and maximum range for our objective. This triggered adaptive management action by the Middle Earth monitoring team to nudge the Verdin occupancy rate downward into the desired range. In Year 2 and Year 3, we were within our goal range. In future years, if the downward trend in Verdin occupancy continues to the point that it places us outside the goal range, this would again trigger modification to the management action. 
+
+

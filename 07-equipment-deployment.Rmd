@@ -1,0 +1,294 @@
+---
+title: "AMMonitor"
+output: 
+  html_document:
+    css: styles.css
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+csl: plos.csl
+bibliography: refs.bib
+---
+
+```{r echo = F}
+# Set up chapter table and figure counters; figure folder
+source("includes.R")
+options(table_counter_str = "<b>Table 7.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure 7.%s</b>")
+knitr::opts_chunk$set(fig.path = 'Chap7_Figs/')
+```
+
+```{r, echo = FALSE, message = FALSE, results = 'hide'}
+# Clean up for re-knits:
+db.name <- 'Chap7.sqlite'
+db.path <- paste0(getwd(), '/database/', db.name)
+if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
+file.remove(db.path) 
+```
+
+
+## Chapter 7: The Accounts, Equipment, Deployment, and Log Tables
+
+This chapter covers the **accounts**, **equipment**,  **deployment** and **logs** tables of an **AMMonitor** database, and explains their utility for a monitoring program. Briefly, the **accounts** table is used to store information about accounts, such as Google accounts or a Dropbox account. The **equipment** table stores information about each piece of monitoring equipment, such as a smartphone. The **deployment** table is used to track which piece of equipment is deployed at a given monitoring location. The **logs** table stores smartphone device logs that can be used for troubleshooting (see xxx, in prep, for details on our smartphone approach and setup).
+
+Here, we use the `dbCreateSample()` function to create a database called "Chap7.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For the demonstration purposes of this chapter, we will only pre-populate a few necessary tables:
+
+```{r}
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap7.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  c("people", "accounts", 
+                           "equipment", "deployment",
+                           "locations", "logs"))
+```
+
+We begin by connecting to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **db**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
+
+```{r}
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap7.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
+
+Finally, we send a SQL statement that will enforce foreign key constraints. 
+
+```{r}
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = 
+              "PRAGMA foreign_keys = ON;"
+          )
+```
+
+Now we are ready to begin.
+
+### The Accounts Table
+
+The **accounts** table stores information about various accounts that you may use in your monitoring program. For example, if you use Dropbox, your login information may be stored here. In this chapter, we are most concerned with storing account credentials associated Google accounts that are set up for each monitoring smartphone (see Donovan and Balantic, in prep, for further details). 
+
+To begin, we view the **accounts** table metadata:
+
+```{r}
+# Look at information about the accounts table
+dbTables(db.path = db.path, table = "accounts")
+```
+
+This table stores typical credentials for an account, with a mix of data types (VARCHAR, INTEGER, TEXT). The primary key is the column *accountID*, which must be unique. The field *type* indicates the type of account (e.g., google, dropbox, darksky). Importantly, for smartphone monitoring that utilizes Google, your monitoring program must identify one Google acccount that serves as the 'primary account'. The primary account is designated with the number 1 in the *primaryAccount* column; non-primary accounts have entries of 0. For Google accounts, the *email* column will be necessary to populate if researchers intend to make use of the **schedule** and **prioritization** capacities covered in later chapters. The password column, *pw*, can be used to store passwords however you want, encrypted or unencrypted. This field is not required should you wish to store passwords external to the **AMMonitor** database. 
+
+Below, we view records in the sample **accounts** table using `dbGetQuery()`. Although the sample data actually contains 55 accounts, we limit the returned table to the first six records:
+
+```{r}
+# Retrieve the first 6 records from the accounts table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM accounts LIMIT 6")
+```
+
+The sample data stores account information for various Google accounts, a Dropbox account, and a DarkSky account (see Chapter 8: Temporals). Notice that we have set up a (fake) Google account called "midEarthMgt", which serves as the "primary" Google account. The emails for each Google account are also listed. Three additional Google accounts are shown ("midEarth1", "midEarth2", and "midEarth3"), which are identified as non-primary Google accounts.
+
+In previous chapters, we provided CRUD (create, read, update, delete) examples for working with records in a table via R. All of the examples apply to the **accounts** table as well. We will review some of these operations in the **deployment** section of this chapter.
+
+### The Equipment Table
+
+The **equipment** table tracks all equipment used in a monitoring program. In a program that utilizes smartphones for monitoring, each smartphone should be linked to a particular Google account. This table can be used even if smartphones are not the monitoring equipment of choice.
+
+The `dbTables()` function provides a summary of the table's field names and data types. Below, we note that the  table has several fields, most of which are not required, that include a mix of VARCHAR, TEXT, and INTEGER data. The *equipmentID* (primary key) is the only required field. Optional fields may be used to record information about smartphone-based monitoring (see xxx, in prep). 
+
+```{r}
+# Look at information about the equipment table
+dbTables(db.path = db.path, table = "equipment")
+```
+
+Importantly, the *accountID* links a particular piece of equipment with an account listed in the table **accounts**. We confirm this relationship with a PRAGMA statement in `dbGetQuery()`:
+
+```{r, eval = T}
+# Return foreign key information for the equipment table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(equipment);")
+
+```
+This output shows that the field *accountID* from the table **accounts** maps to the field *accountID* in the table **equipment**. Note that the *on_update* column value is set to "CASCADE", indicating that when a primary key in the **account** table is changed, the mapped keys in the **equipment** table will be automatically updated. Also note that the *on_delete* column value is set to "NO ACTION", indicating that when a primary key is deleted from the **account** table, no records will be removed from the linked **equipment** table. 
+
+We view records in the sample **equipment** table using `dbGetQuery()`. Below, we specify only a few columns of interest, and although the sample data contains 52 pieces of equipment, we limit the returned table to the first five records:
+```{r}
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT 
+                                     equipmentID, accountID, model, manufacturer, 
+                                     OS, status 
+                                     FROM equipment
+                                     LIMIT 5")
+```
+
+The *equipmentID* can be any identifier we want. Here, we chose basic equipment names like equip\@1, equip\@2, but the *equipmentID* names are up to the user so long as they are unique and do not break any SQLite naming conventions. Notice that each piece of equipment has a corresponding accountID, as would be the case with smartphone monitoring. Remaining columns are used optionally to track hardware information. In this example, note that we have described the *status* of equipment pieces equip\@1 and equip\@2 as 'broken' and 'stolen', respectively (in a long-term monitoring program, some equipment will likely be retired over time). Thus, when we discuss the **deployment** table later in this chapter, we should anticipate that neither of these pieces of equipment will be currently deployed at an active monitoring location. Users are encouraged to standardize a list of acceptable entries for the *status* field that meet their programmatic needs, and may do so using the **lists** and **listItems** tables introduced in Chapter 4.
+
+
+### The Deployment Table
+
+The **deployment** table links both the **locations** and **equipment** tables to track which equipment is deployed (physically located) at which monitoring locations. This table is crucial to account for the possibility that some of our monitoring equipment might be deployed at different locations over time. 
+
+As always, `dbTables()` provides a summary of the field names and data types in the **deployment** table, which has six fields. The primary key for this table is a composite key consisting of the fields  *equipmentID*, *locationID*, and *dateDeployed*. Importantly, **AMMonitor** functions will use the *dateDeployed* and *dateRetrieved* fields to infer which sites are actively being monitored: if *dateRetrieved* is NULL, **AMMonitor** assumes that the site is actively being monitored. 
+
+```{r}
+# Look at information about the deployment table
+dbTables(db.path = db.path, table = "deployment")
+```
+
+#### Reading Records
+
+We view records in the sample **deployment** table using either `dbReadTable()` or `dbGetQuery()`. There are a total of 53 records in this sample table, but we limit the query below to show only the first six records, printed as a tibble:
+
+```{r}
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM deployment LIMIT 6")
+```
+
+ 
+The *equipmentID* and *locationID* show us which piece of equipment is currently deployed at which location. The *dateDeployed* column specifies when a piece of equipment was deployed to a particular location. The *dateRetrieved* column tells us when a device's deployment ended at a particular location; values of NA indicate that a specific piece of equipment is still currently deployed at that location. The *personID* column can be used to track the monitoring team member responsible for initiating a particular deployment, and the *notes* column records any additional details. 
+
+The above example underscores the need for a deployment table. Notice that equipmentID equip\@1 underwent two deployments. The first deployment was overseen by 'fbaggins' at location\@1 from 2015-11-14 to 2016-01-12. Next, 'fbaggins' moved this piece of equipment to location\@3, where it recorded from 2016-01-13 to 2016-01-18. After that, equip\@1 has no more deployments -- based on the first record of the **equipment** table, we presume this is because equip\@1 is now broken. The notes column can be used to provide more details if desired. EquipmentID equip\@2 was deployed by 'fbaggins' at location\@2 from 2015-11-14 to 2016-01-17, and serves no more deployments after this point (a glance at the second row of the **equipment** table reminds us that this piece of equipment was stolen). Later rows indicate that *equipmentID* equip\@3, equip\@4, and equip\@5 were deployed at location\@1, location\@2, and location\@3, respectively. NAs in the *dateRetrieved* column for these records convey that these deployments are ongoing. 
+
+Importantly, all entries in the *locationID* column must match a *locationID* present in the **locations** table, and all entries in the *equipmentID* column must match an *equipmentID* present in the **equipment** table. Additionally, if a *personID* is provided, the entry must match an entry in the *personID* column in the **people** table. Thus, the fields *locationID*, *equipmentID*, and *personID* in the **deployment** table are foreign keys that reference primary keys in other tables. This can be confirmed with the following SQL statement:   
+
+```{r, eval = T}
+# Return foreign key information for the deployment table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
+
+```
+This output shows that the field *personID* (if provided) from the table **people** maps to the field *personID* in the  **deployment** table. Further, the field *locationID* from the table **locations** maps to the field *locationID* in the  **deployment** table, and the field *equipmentID* from the table **equipment** maps to the field *equipmentID* in the **deployment** table. 
+
+Note that in all cases, the *on_update* column value is set to "CASCADE", indicating that when a primary key is changed in the **locations**, **equipment**, or **people** tables, the mapped keys in the **deployment** table will be automatically updated. Also note that the *on_delete* column value is set to "NO ACTION", indicating that when a primary key is deleted from the primary tables, no records will be removed from the linked **deployment** table. We encourage readers to verify these actions.
+
+To avoid writing cumbersome SQLite statements, we can use the **AMMonitor** function `qryDeployment()` as a tool for pulling up basic information about deployment status at active monitoring sites. In the 'locationID' argument, we can query for a specific site or sites of interest to see which monitoring equipment is currently deployed there.
+
+```{r}
+# Query deployment status at specific actively monitored locations: 
+qryDeployment(conn = conx, locationID = 'location@3')
+```
+
+We can check the status of *all* actively monitored locations by indicating 'all' in the 'locationID' argument: 
+```{r, eval = T}
+# Query deployment status at all actively monitored locations: 
+qryDeployment(conn = conx, locationID = 'all')
+```
+
+As shown, 50 locations are actively monitored. Alternatively, users can invoke `dbGetQuery()` to work with the **deployment** table for more customized queries. 
+
+#### CRUD operations
+
+As demonstrated in Chapter 3, the easiest way to add records to the database using R is to generate a data.frame of records, and then use the `dbWriteTable()` function to insert them. However, to successfully insert new records into the **deployment** table, the user must be vigilant about current equipment status, active monitoring locations, and current deployments. The sample **locations** table shows that we are actively monitoring 50 locations, and 52 phones are listed in the **equipment** table. 
+
+Imagine that, due to equipment failure, we need to terminate equip\@52's deployment at location\@50 on 2016-02-05. Further imagine that we will replace it with equip\@1 (which has undergone a repair -- previously, it was broken). First, we indicate that equip\@52 has been retrieved with an *update* query:
+
+```{r}
+# Indicate the retrieval of equip@52
+RSQLite::dbExecute(conn = conx, 
+          statement = "UPDATE deployment 
+                       SET dateRetrieved = '2016-02-05', 
+                           notes = 'Apparently broken'
+                       WHERE equipmentID = 'equip@52' ")
+```
+R returns a '1' to indicate that one record was updated, and the update can be confirmed by the reader with a call to `dbGetQuery()`. 
+
+In service of sound recordkeeping, we update the **equipment** table to reflect a change in status for equip\@1 and equip\@52 according to the status standards we have chosen in our monitoring program:
+```{r, eval = T}
+# Update equip@1's status to 'in service'
+RSQLite::dbExecute(conn = conx, 
+          statement = "UPDATE equipment 
+                       SET status = 'in service' 
+                       WHERE equipmentID = 'equip@1'")
+
+# Update equip@52's status to 'broken'
+RSQLite::dbExecute(conn = conx, 
+          statement = "UPDATE equipment 
+                       SET status = 'broken' 
+                       WHERE equipmentID = 'equip@52'")
+```
+
+Finally, we are positioned to demonstrate the addition of a new record to the **deployment** table. We are going to take the recently repaired equipment equip\@1 and deploy it at location\@50.
+
+To record our new deployment, we create a data.frame of one record, ensuring that all column names in the data.frame exactly match the field names in the database itself, and making sure that the data types in the data.frame match those expected by the database. We then add the contents of this data.frame directly to the **deployment** table in the database using the `dbWriteTable()` function, ensuring that 'overwrite' = FALSE and 'append' = TRUE. 
+
+```{r, eval = T}
+# Generate a new record
+new.deployment <- data.frame(equipmentID = 'equip@1',
+                             locationID = 'location@50',
+                             dateDeployed = '2016-02-05',
+                             dateRetrieved = NA,
+                             personID = 'bbaggins',
+                             notes = 'Swapped phones for servicing.',
+                             stringsAsFactors = FALSE)
+
+# Add the record to the database
+RSQLite::dbWriteTable(conn = conx, name = 'deployment', 
+             value = new.deployment,
+             row.names = FALSE, overwrite = FALSE,
+             append = TRUE, header = FALSE)
+
+# Verify this record has been added by looking at deployments at location@50
+RSQLite::dbGetQuery(conn = conx, 
+           statement =  "SELECT * FROM deployment 
+                         WHERE locationID = 'location@50' ")
+```
+
+### The Logs Table
+
+The **logs** table is used with smartphone monitoring, where each phone sends a performance log on a scheduled basis to the monitoring team (see xxx, in prep, for full details). Briefly, in our smartphone monitoring approach, each phone sends its performance logs to the log_drop directory as shown below on a schedule, with a file name such as 'midEarth3_log.txt'. Each phone's log file is then parsed on a daily basis, and the information is inserted to the **logs** table via the **AMMonitor** function `xxx()`. Once the data are logged into the database table, the log_drop file is deleted. 
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap7_Figs/directories.PNG', dpi = 500)
+```
+
+The directory 'logs' also stores performance logs for each smartphone, and these contain different information than what is stored in the **logs** table. The "log_drop" and "logs" directories, along with a full description of our smartphone monitoring approach, is outlined in xxx (in prep).
+
+As always, `dbTables()` provides a summary of the field names and data types in the **logs** table, which has 10 fields. The primary key for this table is a composite key consisting of the fields *accountID*, *logDate*, and *logTime*. 
+
+```{r}
+# Look at information about the logs table
+dbTables(db.path = db.path, table = "logs")
+```
+The remaining columns store information that is provided by each smartphone. The *lat* and *long* columns provide the device's location as registered by the device itself. The field *battery* gives the battery strength at the time the log was written. The field *signal* gives the cell phone signal strength; *memory* gives the device memory in use in MB; *reboot* gives the time (in seconds) since a reboot occurred; and *data* gives the total amount of mobile data used by the device since the last reboot. 
+
+An example of parsed data that is inserted to the **logs** table can be seen below:
+
+```{r}
+# Retrieve the first record from the logs table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM logs LIMIT 1")
+```
+
+
+
+Finally, when we are finished using the database, we disconnect.
+```{r}
+
+# Disconnect from the database
+RSQLite::dbDisconnect(conx)
+
+```
+
+###  The Accounts Table in Access
+
+For monitoring programs that use the Microsoft Access front end, the **accounts** form provides a convenient 'spreadsheet' type method for tracking accounts. It is located as a secondary tab under the primary tab "Program Mgt".
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap7_Figs/accounts.PNG', dpi = 500)
+```
+
+Note that 55 records are present in the **acounts** table (which underlies this form).
+
+###  The Equipment, Deployment, and Log Tables in Access
+
+The Equipment form can be accessed as a secondary tab under the Locations tab. The deployment table is linked to this form to conveniently display the deployment history for a given piece of equipment.
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap7_Figs/equipment.PNG', dpi = 500)
+```
+
+Note that there are 52 entries for equipment, and the arrow keys at the bottom of the form can be used to navigate to or search for new records. Each piece of equipment has **deployment** information stored in the green box. Above, we show equip\@1, which was deployed at location\@1, later retrieved, re-deployed at location\@3 on 2016-01-13, and later retrieved on 2016-01-18. If using smartphone monitoring, each equipment is linked to an account, and the accounts log is shown in the red box. Note the unfriendly "Hands off!" warning, which alerts users that the table is automatically populated by **AMMonitor** functions. 
+
+The **deployment** and **logs** tables can also be accessed directly by clicking on their tabs in the left menu. These bring up datasheet views of the tables and are not subset to a particular piece of equipment or a particular account. Uers can use the deployment tab to insert, update, or delete records if the deployment subform highlighted in green is not helpful. As always, monitoring teams are free to adjust the Access front end in any way to meet their needs. 
+
+
+### Chapter Summary
+
+This chapter covered the **equipment**, **deployment**, **logs**, and **account** tables. The deployment table is necessary to account for the possibility that monitoring equipment might be moved to different locations over time. As with the **locations** table, special care should be taken by the user to ensure that data entered in these tables is correct and up-to-date. The **logs** table is described in depth in xxx (in prep), where we outline our approach to monitoring with smartphones. The remaining tables are used extensively in future chapters. 
+

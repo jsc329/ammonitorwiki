@@ -1,0 +1,182 @@
+# Appendix 2:  Sound Analysis Tutorial
+
+
+## Introduction
+
+- monitoring of animal populations
+- vocalizations. Animals make lots of sounds, can be used in estimating the health of the population and tracking trends though time.
+
+
+•	http://www.physicsclassroom.com/Class/sound/U11L1a.cfm
+•	http://mmc.gov/reports/workshop/pdf/sound_bklet.pdf
+•	Vi hart 
+
+
+## What is Sound?
+
+Sound is a mechanical disturbance that moves through a medium.  Sender, medium, and receiver.
+Sender: Pressure causes medium to move.  Change in pressure; alternating low and high.
+
+Medium:  air, water http://www.dosits.org/tutorials/sciencetutorial/introduction/.  Sound cannot travel through a vacuum.  Only the disturbance travels: not the medium.  The material moves back and forth
+
+Longitudinal wave; wave in a pond.  Take one tiny spot; wave moves through it.  Disturbance moves as wave..but the medium does not move. 
+
+receiver:  Humans can hear between x and y hertz; but many animals emit sounds outside the human hearing range. Bats, for example.
+
+Message:  sound contains information that is useful (a signal) or not useful (a noise).
+
+## Music
+
+We can learn about how sound waves are made, recorded, stored, played, and ultimately heard by thinking of a musical instrument.  Musical scales are collections of notes that are pleasant to hear.  Most of us are familiar with the sound of a piano.  The piano is both a string and percussion instrument:  when a key is pressed, a “hammer” is invoked which strikes a string and sets the string vibrating.  This vibration sets the air molecules around it in motion:  a wave motion that moves through the air.  When the sound waves hit your eardrum, the eardrum starts vibrating at the same frequency, and your brain can interpret this as pitch.  
+
+![](figure/piano.png) 
+
+A piano has 88 keys.  There are 12 notes on a piano, and these notes are repeated over and over again with a specific pattern. 
+
+![](figure/piano2.png) 
+
+Each note is identified by a letter value and its grouping (which is called an octave).  For instance, C is one of the 12 notes, but to know what sound it makes you need to specify the octave as well. The middle C and the highest C produce two different sounds.
+
+![](figure/piano3.png) 
+
+Each piano key has a unique frequency.  For example, middle A is the only note that has a frequency of 440 Hz.  The frequencies drop as you move left of Middle C, and they increase as you move right.  The spreadsheet lists the notes and octaves of each piano key in columns T:W.  The frequencies of each key were provided at:  http://www.phy.mtu.edu/~suits/notefreqs.html.  
+
+![](figure/piano4.png) 
+
+Let’s create some musical sounds.  In cells B16:D16, you can select a note and octave in the drop-down list. These cells are shaded green to alert you to the fact that you can change the entries in the cells.  We’ve select the C, D, and E notes in the fourth octave.  Their corresponding frequencies (Hz) are provided in cells B15:D15.  
+
+![](figure/piano4.png) 
+
+Now let’s make some sound waves.  In column A we set up a time series in seconds, beginning with 0 in cells A17.  Given the keys selected, we then use a formula called a sine function to create the sound waves that would be made by that key.  We will review sine functions later.  For now, our goal is to build intuition of what sound waves are.    A graph of the three notes through time looks like this:
+
+
+Note a few things about this graph.  First, this is a very, very short period of time!  Second, the waves revolve around 0 millivolts, going in both positive and negative directions.  Third, we’ve graphed the data so that it is clear that the sound waves themselves are continuous over time.  That is, at any point in time, you can determine the millivolts (energy) of the wave.  
+
+
+Terms:
+
+- Cycle
+- Hertz
+- Amplitude
+- Millivolt
+- Period (T)
+- Frequency = 1/T
+- Wave
+- Volume
+- Waveform
+- Compression
+- Rarefaction
+
+
+
+To describe a sound, we consider (http://mmc.gov/reports/workshop/pdf/sound_bklet.pdf):
+•	Its duration (seconds, minutes, hours, days, months…)
+•	Its frequency content (narrowband, wideband, changing with time, …)
+•	Its amplitude (loud, soft, changing with frequency, and/or time…)
+•	The spatial extent of its generation (inches, feet, miles)
+•	The distance between the source and receiver
+•	The medium conveying the sound (air, water, steel, …)
+
+
+![http://mmc.gov/reports/workshop/pdf/sound_bklet.pdf](figure/frequency.png) 
+
+Although real sound waves are disturbances that move continuously over a given time interval, we created sound on the spreadsheet at specific intervals, and this is a called the Sample Rate (which we’ll revisit soon).  Always remember that sounds produce continuous waves that move through a medium.  To create the sound waves, down column A, we start a time interval beginning with 0 in cell A17.  We then allow the spreadsheet to create a wave based on 12501 data points (cell A12517).  Notice that because the number of sample points in the spreadsheet is fixed to 12501, and the data for each sample is calculated using the sample rate provided, changing the sample rate changes only the length of time we are sampling, not the actual frequency of the waves.  
+
+When we play multiple notes at the same time we are playing a chord.  Chords are therefore the sum of all the notes they contain (the notes must sum, as opposed to average or any other function, because they are transmitted in a single medium). When the C, D, and E notes are played together (4th octave), they create the C Major chord.  
+
+![](figure/chord.png)
+
+The chord is simply the sum of the three notes, which interact by amplifying and cancelling each other at various points along the time axis.  Explain what is meant by amplifying and canceling.  
+
+![](figure/chord_signal.png)
+
+The chord is an example of a complex wave. Complex waves are a sum of sine waves of different frequencies, amplitudes, and phases. 
+
+When recording sounds in nature, the air (or water) is full of sound waves that can be emitted from multiple sources, distances, etc.  Not only do the frequencies produced by a single singing bird “sum” in the air, but when both sing at once the sounds each produce further interfere as they are propagated.
+
+![](figure/birds.png)
+
+Noise, etc.  (any issues with unclear signals)
+
+
+##  Recording Sound
+
+
+Let’s now assume the air is filled with sound waves, and we are interested in recording these waves. To record a sound, you need a receiver; a device that includes a microphone  to capture the sound, and you need a method of recording the waveform.   Let’s start with the first recording made.  
+
+![](figure/edison.png)
+
+If you go to the How Stuff Works website and press the Record button, you’ll see waves come into the horn and vibrate the diaphragm, and the needle records the movement. If you press the Play button, the needle reads the record, moves the diagram, and sound waves are emitted out through the horn.  Edison’s phonograph recorded the original wave.  Such a recording is called an analog recording:  “An analog recording is one where a property or characteristic of a physical recording medium is made to vary in a manner analogous to the variations in air pressure of the original sound.”  
+
+In contrast to Edison’s recording device, the spreadsheet creates a digital recording, which involves sampling from the continuous sound waves that are generated mathematically and storing the frequencies.  The number of samples collected per unit time is set by the Sample Rate, or the sampling frequency. 
+
+![](figure/hertz.png)
+
+
+What are the units here?  They are again Hertz, which captures the number of times something happens per second.  Here, our focus is on the rate at which we sample a continuous sound.  Hertz are expressed as 1/second, or s-1.  So 2368 Hertz translates to a sample collected every 1/2368th of a second, or 2368 samples per second.  That’s a lot of samples!  Normally, this rate is expressed as kilohertz (kHz), which is Hertz / 1000.  So our sampling rate can also be expressed as 2.368 kHz.
+
+Let’s look at sampling rate graphically.    For example, in sampling a C wave of 261.63 Hz, we can use many points along the wave (sample rate = 3913), or we can use fewer points along the wave (sample rate = 2452).
+
+![](figure/c.png)
+
+In digital recordings, the sample rate determines the quality of the recording.  Sample an awful lot, and you will nearly be able to recreate the original, continuous wave file.  Sample a little, and you may lose a lot of the fine changes in frequency that make up a sound.  The trick is to find the middle ground:  your computer must store this information. Common sampling rates include 44.1 kHz, 48 kHz, 96 kHz and 192 kHz.  A music CD stores sound samples at a sampling rate of 44.1 kHz; this is enough samples to recreate a good sound, but small enough that you don’t need a computer mainframe to store all of the data!  
+
+Nyquist theorem: What happens if you sample too little?
+
+## Create a sound file
+
+
+Let’s create a sound recording that a computer can read.  An audio file format is “An audio file format is a file format for storing digital audio data on a computer system.”  The most common sound file format used is mp3.  Lossy data compression.  In contrast, a wav file format is a Microsoft and IBM audio file format that stores audio bitstreams on a personal computer. Uncompressed.
+
+To create a wav file of musical sounds, first, select the musical notes you would like to hear.  We selected the C, D, and E notes in the fourth octave (cells B16:D16).  
+
+## Play a sound file in seewave
+
+
+
+## Creating sound waves with sine and cosine functions
+
+In the last section, you created a sound using sound functions in both Audacity and Excel.  And although we didn’t go into the details, these sounds were generated using sine equations.  To understand how sounds are represented mathematically you will need to be fairly fresh with your understanding of sine and cosine functions, which in turn use radians as an input.  Both sine and cosine functions describe repeating or cyclical events; for our purposes we use these functions to create sound waves.  
+Most of us are familiar with navigating around a circle using degrees, but what is the difference between a radian and degree?  A fabulous explanation is given by Kalid Azad at http://betterexplained.com/articles/intuitive-guide-to-angles-degrees-and-radians/.  
+
+
+
+ 
+
+Second, if you are going to digitally record a sound, you must select a sampling rate.  If you set the sampling rate to 2368 Hz, you can see that frequency of the sound is collected roughly every 0.00042 seconds because 1/0.000422 = 2368.  
+
+
+## Creating Signals
+
+So far, we’ve created a wav file that consists of digital samples generated by a single sine function (choose one piano key). We also created a chord by summing across different sine frequencies of the individual notes.  We could just as easily have generated the single note with a cosine function.  Cosine functions, as we saw in the sine-cosine tab, are just sine functions that are phase advanced by π/2.   Therefore, we can generate any sinusoid by adding not just sine functions but also cosine functions!  In this section, we will create more complex sounds.  
+The goal of this spreadsheet is to start with frequencies as inputs, create sine and cosine functions that use each frequency, weight them according to which ones are included in the signal, and then use the weighted sine and cosine function to create a time-domain signal.  This signal can then be written to a .wav file and played in Audacity. 
+
+We start by listing the frequencies we are interested in including in our signal.  These frequencies will be used in both cosine functions (in yellow) and in sine functions (in orange).  Our signal can contain frequencies between 0 and 4186 Hz.  
+
+
+## Analyzing Sound:  Time Domain
+
+
+## Analyzing Sound: Frequency Domain
+
+
+### The Fourier Transformation
+
+To transform from time domain to frequency domain we use the Fourier Transform.  The question this section will attempt to answer is “how is a spectrogram generated from a sound signal?”  This does not sound like a complex question, and indeed the process should not be intimidating.  We will answer the question by looking at the data available to us: we have a series of discrete measurements of air pressure over time, and we want to know what combinations of pressure changes at the sound source(s) produced the compression and rarefaction wave we measured.  One difficulty we must overcome is that we may have multiple sound sources, plus each source is generating sounds that contain more than one frequency.  Another difficulty is that the frequency of each sound may be changing very quickly.  Our brains are capable decomposing sounds into component frequencies and comprehending frequency changes very quickly and intuitively (and in some people, very accurately as well); computers and digital devices are capable of decomposing sounds into their component frequencies using a Fourier transform, and by repeating a Fourier transform very quickly on successive time slices it can detect changes in frequency.
+
+A Fourier transform is the mechanism by which a computer composes a sinusoid from a series of weighted frequency inputs.  One way to think about this is to imagine that every sound is composed of every frequency imaginable, but some frequencies contribute a lot of energy to the sound and some contribute no energy.  The energy contribution of each frequency is proportional to what we are calling the weight.  
+
+The DFT is described mathematically as:
+
+
+This is a fancy way of saying that the data value (X) for each frequency (k) = sum for each point in the window (n) of all cosine and sine (frequency * duration of sample (1/N) * point # in the window (n)) * complex conjugate (x).  The DFT and IDFT formulas are expressed here in the equivalent “e to the j omega t” format for simplicity, but with considerably more effort we could have written out all the sines and cosines.
+
+The IDFT is mathematically described as: 
+
+
+Implementing the Fourier transform in a spreadsheet in such a way that a user can specify weights for each audio frequency would be the equivalent of programming a simple mathematical audio synthesizer.  In the companion spreadsheet each frequency can be specified independently and multiple frequencies can be combined to form musical chords.  The spreadsheet generates a string of values that represent the signal, and it can insert that string of values into a .wav file.  Your computer can play the file by sending the signal to the speakers as a continuous alternating current (AC) voltage stream.  
+An inverse Fourier transform is the mechanism by which a computer decomposes a sinusoidal input into its component frequencies.  Using an inverse Fourier transform a computer can analyze the continuous AC voltage stream coming from an electret microphone and identify what frequencies generated the signal.  It can perform this analysis quickly and repeatedly so that as the frequency changed over time (such as with speech, birdsong, or music) the approximate time of the change can be known to the computer.
+
+There are numerous Fourier transform variants, and the one chosen for a particular use depends on the parameters of the signal and any subsequent analysis.  This spreadsheet tutorial is designed to describe the DFT and the IDFT, which are appropriate for the uses described above.  It is worth mentioning that most software implementations of a Fourier transform do not use the DFT but instead use the Fast Fourier Transform (FFT).  As the name implies the FFT takes less computing time than other Fourier transforms.  The FFT and the DFT share similar fundamental concepts but are implemented in different ways.  Only the DFT and IDFT will be described in this tutorial. 
+
+

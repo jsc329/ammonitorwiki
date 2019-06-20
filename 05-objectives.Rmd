@@ -1,0 +1,170 @@
+---
+title: "AMMonitor"
+output: 
+  html_document:
+    css: styles.css
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+csl: plos.csl
+bibliography: refs.bib
+---
+
+```{r echo = F}
+# Set up chapter table and figure counters; figure folder
+source("includes.R")
+options(table_counter_str = "<b>Table 5.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure 5.%s</b>")
+knitr::opts_chunk$set(fig.path = 'Chap5_Figs/')
+```
+
+```{r, include = FALSE}
+# Clean up for re-knits:
+db.name <- 'Chap5.sqlite'
+db.path <- paste0(getwd(), '/database/', db.name)
+if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
+file.remove(db.path) # may or may not be needed
+```
+
+
+## Chapter 5: The Objectives Table
+
+This chapter is about documenting the objectives of a monitoring effort. Setting natural resource objectives can be very difficult, but they are usually the primary reason a monitoring program exists. Generally speaking, an objective identifies a vision that a person, organization, or agency may have. Monitoring can be used to assess whether or not that vision has been met. When an objective is not being met, it may prompt the individual, organization, or agency to act in a way that will push the objective towards its intended target.
+
+Objectives can be broadly placed into four categories:
+
+1. **Fundamental objectives** are objectives that a decision maker truly values and wants to achieve [@Conroy]. E.g., "Increase loon populations."
+2. **Means objectives** are a means to achieving the fundamental objectives. E.g., "Minimize lead in fishing tackle."
+
+Conroy and Peterson [@Conroy] state, "We can sort out fundamental from means objectives by asking the questions *'why is that important'* and *'how can we accomplish that'* for each objective. If our answer to 'why is that important' is along the lines of 'to achieve another (perhaps more fundamental) objective', then it is probably a means objective. If the answer to 'why is that important' is simply 'because that is what we desire' or for many regulatory agencies, 'because that is our legal mandate', then it is probably a fundamental objective. Other authors @Keeney distinguish between fundamental, means, strategic, and process objectives. 
+
+In the book, "Structured Decision Making: A Practical Guide to Environmental Management Choices" [@Gregory], Robin Gregory suggests that the "statement of objectives can be kept pretty simple. Essentially, they consist of the thing that matters and (usually) a verb that indicates the desired direction of change: 
+
+1. Increase revenues to the regional government.
+2. Reduce the probability of extinction of wild salmon.
+3. Minimize emissions of greenhouse gasses.
+4. Maximize year-round employment."
+
+These examples include indicators (also called attributes; what exactly will be measured, such as revenue, probability of extinction, emissions, employment) and direction (the intended level or direction, such as increase, decrease, minimize, maximize, or maintain). Units of measure may also be specified.
+
+**AMMonitor** facilitates the tracking of objectives generically, but what is most important from the monitoring perspective is that an objective can be quantitatively assessed through the analysis of monitoring data, such as remotely captured acoustic data or images. As such, example objectives may include:
+
+1. Maximize occupancy rate of desired species x.
+2. Minimize occupancy rate of undesired species y.
+3. Minimize human-made sounds.
+
+Setting objectives can be difficult, and a discussion of how to set objectives is well beyond our scope. For additional information, see @Keeney, @Gregory, @Conroy, @Goodwin, @Walters1986, @Fuller2014, @Williams2011, and @Runge2011. Here, we wish to simply highlight how objectives (of any type) can be logged in the **AMMonitor** database. In Chapter 19, we will illustrate how to use monitoring results to assess an example objective.   
+
+### Create the chapter database
+
+Here, we use `dbCreateSample()` to create a database called "Chap5.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For the demonstration purposes of this chapter, we will only pre-populate a few necessary tables.
+
+```{r}
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap5.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  c("objectives", "species", 
+                           "lists", "listItems"))
+```
+
+Next, we initialize a character object, **db.path**, that holds the database's full file path. We connect to the database with RSQLite's `dbConnect()` function, where we must identify the SQLite driver in the 'drv' argument:
+
+```{r}
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap5.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
+
+Finally, we send a SQL statement that will enforce foreign key constraints within the database.
+
+```{r}
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = 
+              "PRAGMA foreign_keys = ON;"
+          )
+```
+
+### The Objectives Table in SQLite
+
+We begin by viewing the structure of the **objectives** table:
+
+```{r}
+# Look at information about the objectives table
+dbTables(db.path = db.path, table = "objectives")
+```
+
+`dbTables()` identifies the name of each column, the primary key, the type of data stored in each column, and required column entries. 
+
+- *objectiveID* - the table's primary key (must be unique and less than 255 characters). Should be a brief identifier that is easily typed.
+- *listID* - a list record that is provided in the **lists** table, if applicable.
+- *speciesID* - a species record that is given in the **species** table, if applicable.
+- *objective* - the stated objective in report-ready form. 
+- *indicator* - specifies what exactly will be measured.
+- *units* - specifies the units of measure.
+- *direction* - indicates the desired direction, such as increase, maximize, decrease, minimize, or maintain. 
+- *min* - the minimum acceptable target, if applicable.
+- *max* - the maximum acceptable target, if applicable.
+- *standard* - the stated target, if applicable.
+- *narrative* - A text field that allows any number of characters to be stored.
+
+This table also contains foreign keys that are linked to other database tables, identified using the PRAGMA statement below: 
+
+```{r, eval = T}
+# Return foreign key information for the speciesList table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(objectives);")
+
+```
+Resulting output shows that the field *speciesID* from the table **objectives** maps to the field *speciesID* in the table **species**. Additionally, the field *listID* from the table **objectives** maps to the field *listID* in the table **lists**. In both cases, the *on_update* column value is set to "CASCADE", indicating that when a primary key in the **species** or **lists** tables is changed, the mapped keys in the **objectives** table will be automatically updated. Also note that the *on_delete* column value is set to "NO ACTION", indicating that when a primary key is deleted from the **species** or **lists** tables, no records will be removed from the linked **objectives** table. 
+
+Notice that the **objectives** table simply contains objectives, and does not map objective hierarchies or identify objectives by type. The reason is that these characterizations may change depending on context, requiring a different approach for handling such cases (perhaps in future versions of **AMMonitor**).
+
+We now will look at the sample objectives.
+
+```{r}
+# Retrieve the first objective, returned as a data.frame
+objectives <- RSQLite::dbGetQuery(conn = conx, 
+                         statement = "SELECT * FROM objectives")
+
+# Show the  sample objective (columns 1:6)
+objectives[1:6]
+
+```
+
+Here, our sample data consists of four records, and we are displaying the first six columns only. The first objective's ID is simply "midEarth", and the objective is "Conserve native biodiversity". The *listID* for this objective is the list called "Middle Earth" (from the **lists** table), which identifies all species of Middle Earth. The next three objectives deal with specific species and their desired occupancy rates; we have elected to set the primary keys by the species abbreviation, followed by the word "occupancy" for the primary keys. In each case, the *listID* is set to <NA>, the *speciesID* is linked to the primary key in the **species** table, the indicator to be measured is "Psi" (which is the Greek symbol $\psi$, and is commonly used to denote "occupancy rate"), with "Probability" as the unit of measure.
+
+Objectives are not required to be associated with a **speciesID** or **listID**, however. For example, in some U.S. National Parks, monitoring objectives center around maximizing characteristics of soundscapes.
+
+We now will look at a specific sample objective, centered in the songbird species, the [Verdin](https://www.allaboutbirds.org/guide/Verdin/id).
+
+```{r}
+# Show the  sample objective (row 4; columns 1, 7:10)
+objectives[4,c(1,7:10)]
+```
+
+Here, we see an objective with the *objectiveID* of "verd_occupancy". Note that *direction* is set to "Maintain."  Directions are typically "Maximize", "Minimize", or "Maintain" to indicate which direction the monitoring (and management) team wishes to push the state of the Verdin population. Here, we wish to manage such that *standard* is 0.4, but can range between the upper (*max*) and lower (*min*) boundary of acceptable occupancy. 
+
+The final column of the **objectives** table (not shown) stores the objective narrative. The *narrative* field can be used to provide additional narrative, and we encourage its liberal use. The narrative, for example, might include a description of the type of analysis or analyses that may be used to assess the objective, and may highlight the name of the **AMModels** library used to store results.
+
+The purpose of a monitoring effort is to compare the state of the system (e.g., Verdin occupancy rate) with a stated objective. Much later in the book (Chapter 18: Occupancy), the Middle Earth team will be using multi-season (dynamic) occupancy modeling approaches to make this comparison, where the team will analyze the **AMMonitor** acoustic monitoring data with the package, RPresence [@RPresence, @Fiske2011], and will store the results in a dedicted AMModels library. In Chapter 19 (Assessment), we will pit the results of the occupancy analysis against Objective 3. 
+
+
+### The Objectives Table in Access
+
+In the **AMMonitor** Access front-end, Objectives are a primary tab, located at the top of the Navigation Form. Once selected, the tab reveals a form linked to the **objectives** table, where each objective is displayed singly.
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap5_Figs/objectives.PNG', dpi = 500)
+```
+
+Looking toward the bottom of the form, we see the "verd_occupancy" objective is to maintain Verdin populations at an occupancy rate of 0.4. Later in the book, we will eventually pit this objective against some analyses to gauge how well Middle Earth is doing with respect to this objective. 
+ 
+
+### Chapter Summary
+
+In this chapter, you learned about the **AMMonitor** database table that stores objectives. Setting objectives can be very difficult, but they are usually the reason a monitoring program exists. This may be the hardest table to fill out in the entire SQLite database, but is perhaps the most important. 
+
+### Chapter References

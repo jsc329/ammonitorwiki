@@ -1,0 +1,359 @@
+---
+title: "AMMonitor"
+output: 
+  html_document:
+    css: styles.css
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+csl: plos.csl
+bibliography: refs.bib
+---
+
+```{r echo = F}
+# Set up chapter table and figure counters; figure folder
+source("includes.R")
+options(table_counter_str = "<b>Table 16.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure 16.%s</b>")
+knitr::opts_chunk$set(fig.path = 'Chap16_Figs/')
+```
+
+```{r, echo = FALSE}
+# Clean up for re-knits:
+db.name <- 'Chap16.sqlite'
+db.path <- paste0(getwd(), '/database/', db.name)
+if (file.exists('db.path')) 
+  {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
+unlink(db.path) 
+```
+
+## Chapter 16: The Scores Table
+
+The premise of automated acoustic monitoring is that a research team can efficiently scan new audio recordings for target signals by creating templates, which are models of a target signal. When a template is run against a recording, all detected signals receive a score quantifying similarity between the signal and the template. 
+
+If a score exceeds some user-chosen score threshold, it is a "detected event". A detected event is a signal with some chance of being a target signal. Some detected events may be target signals issued from a focal species (true positives), and others may be false alarms (false positives). 
+
+The graph below conveys the idea of pitting a recording against a template (here, the 'verd1' template). The lower panel shows the match between the template and the audio file (~24 - 51 seconds). Four detected events exceed a user-defined threshold of 0.2. Each detected event is highlighted in the upper panel, and these signals can be true target signals or false alarms. 
+```{r, echo = F, include = TRUE, message=F, eval = F}
+
+survey.fp <- 'midEarth3_2016-03-12_07-00-00.wav'
+ctemps <- templatesUnserialize(db.path = db.path, templateID = c('verd1'))
+ctemps@templates$verd1@score.cutoff <- 0.2
+cscores <- corMatch(survey = survey.fp, templates = ctemps)
+cdetects <- findPeaks(cscores)
+plot(cdetects)
+
+
+```
+
+```{r, out.width = 600, out.height = 400, echo = F}
+
+knitr::include_graphics('Chap16_Figs/detection-pic.png', dpi = 500)
+```
+
+```{r,  out.width = 600, out.height = 400, echo = F, eval =F}
+knitr::include_graphics('Chap16_Figs/detection-pic.jpg', dpi = 500)
+```
+
+Given a recording and a template, this chapter highlights how to use **AMMonitor** to obtain scores and simultaneously extract each detected event's acoustic *features*. Each detected event (and accompanying acoustic features) is stored in the **scores** table, and the acoustic features can later be used to distinguish true target signals from false alarms (covered in Chapter 17: Classifications). 
+
+To illustrate the **scores** table, we will use `dbCreateSample()` to create a database called "Chap16.sqlite", to be stored in a folder called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+
+Below, we use `dbCreateSample()`to create sample data for necessary tables. We will populate the **scores** table using **AMMonitor** functions later on in the chapter. 
+```{r}
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap16.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables = c('people', 'species','library', 
+                          'locations','equipment', 
+                          'accounts', 'templates', 
+                          'recordings', 'lists', 'listItems')
+              )
+```
+
+Next, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
+```{r}
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap16.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
+
+After that, we send a SQL statement to enforce foreign key constraints. 
+```{r}
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
+```
+
+
+### The Scores Table
+
+We begin by viewing a summary of the **scores** table using `dbTables()`:
+
+```{r}
+# Look at information about the scores table
+dbTables(db.path = db.path, table = "scores")
+```
+
+The primary key for this table is the *scoreID*, which is automatically assigned by SQLite. The *recordingID* maps to a recordingID in the **recordings** table, while the *templateID* maps to a templateID in the **templates** table. We verify these key relationships with the following code:
+
+```{r, eval = T}
+# Return foreign key information for the scores table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(scores);")
+```
+
+In all cases, *on_update* is set to CASCADE, meaning that if a key in a primary table is updated (e.g., a templateID is updated), the changes trickle down to the **scores** table. Notice also that *on_delete* is set to NO ACTION, so if a key in a primary table is deleted (e.g., a template is deleted from the **templates** table), the change does not affect the **scores** table. Users can choose to manually delete affected records in the **scores** table if desired. 
+
+The **scores** table stores additional information for each detected event from a given recording and template. The *scoreThreshold* provides the user-defined threshold used for detecting events. The *time* field indicates the time (in seconds) when the event was detected on the recording. The *manualVerifyLibraryID* and *manualVerifySpeciesID* columns will be covered in the next chapter (Classifications). The *features* field contains acoustic summary features associated with each detected event. Features are stored as a "blob" data type because SQlite does not accommodate lists or S4 objects (instead, the features have been serialized for compatibility with SQLite). Finally, the *timestamp* field records the system date and time at which the detection was logged. 
+
+
+### Acquiring automatic detections with scoresDetect()
+
+Our task in this chapter is to illustrate the process of acquiring automatic detections with **AMMonitor's** `scoresDetect()` function. Here, we pit templates that come with the sample database (see Chapter 15) against sample recordings (see Chapter 11) in search of target signals from species of interest.
+
+To begin, we remind ourselves that templates are stored in the **templates** table:
+
+```{r}
+# Retrieve the sample database templates table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM templates")
+
+```
+
+Here, we see two templates of class "corTemplateList", and one of class "binTemplateList". All three templates seek signals produced by the Verdin (a songbird), with templateIDs of "verd1", "verd2", and "verd3". We would like to find instances of these signals in recordings.
+
+To do so, we read in the recordings that come with the **AMMonitor** package. Recall that in an established monitoring program, recordings are wave files stored in the **recordings** directory in the cloud, normally retrieved via `dropBoxGetOneFile()`. For the purposes of this chapter, however, we will read in the sample recordings and write them as waves to the working directory with **tuneR**'s [@tuneR] `writeWave()` function: 
+
+```{r}
+# Read in sample recordings
+data(sampleRecordings)
+
+# Write recordings to working directory
+tuneR::writeWave(object = sampleRecordings[[1]], 
+                 filename = "midEarth3_2016-03-12_07-00-00.wav")
+tuneR::writeWave(object = sampleRecordings[[2]], 
+                 filename = "midEarth4_2016-03-04_06-00-00.wav")
+tuneR::writeWave(object = sampleRecordings[[3]], 
+                 filename = "midEarth4_2016-03-26_07-00-00.wav")
+tuneR::writeWave(object = sampleRecordings[[4]], 
+                 filename = "midEarth5_2016-03-21_07-30-00.wav")
+
+```
+
+Note that metadata for these four recordings is already tracked in the sample **recordings** table in the database:
+
+```{r}
+# Retrieve the sample database recordings table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM recordings")
+
+```
+
+Thus, the recordings themselves are now in our working directory as wave files, while the recording metadata and templates are stored in the SQLite database.
+
+At this point, we can use `scoresDetect()` to compare template similarity to sounds encountered in the recordings, and extract acoustic features associated with each detected event. 
+
+This function has several arguments, many of which have default values. 
+
+```{r}
+# Retrieve the arguments for the scoresDetect function
+args(scoresDetect)
+```
+
+In brief, `scoresDetect()` requires the 'db.path' to the SQLite database, the name of the 'directory' that holds the recordings, a 'token.path' if the directory is cloud-based, the names of the 'templateIDs' to be analyzed, the 'score.thresholds' to be used for detecting events, and additional arguments that specify how the analysis is to be conducted and how to handle the output.
+
+There are three ways to specify which recordings should be analyzed with `scoresDetect()`: 
+
+- The first option is to use the 'date.range' argument, where a user must specify a length 2 character vector of date ranges (inclusive) over which to run template matching. Dates should be given in YYYY-mm-dd format. e.g. c('2016-03-04', '2016-03-12'). 
+- The second option is to use the 'timestamp' argument, wherein a user specifies a length 1 character of a date or timestamp from which to run the function (in YYYY-mm-dd **or** YYYY-mm-dd hh:mm:ss format). Here, `scoresDetect()` will be run on all recordings more recent than or equal to the timestamp. For example, if the 'timestamp' is set to yesterday at midnight, `scoresDetect()` will analyze any new recordings present in the **recordings** table beginning with midnight yesterday up to the present moment today. This option is compatible with monitoring programs that routinely analyze data as new material becomes available. 
+- The third option is to use the 'recordingID' argument, where a user specifies a character vector of recordingIDs against which to run templates. If scores should be run for all recordings, the user may set recordingID = 'all'. 
+
+Similarly, there are two ways to specify which templates should be analyzed in the `scoresDetect()` function. 
+
+- First, the user can pass in a vector of templateIDs from the **templates** table. 
+- Second, the user can provide a *listID* from the **listItems** table, and store the template names as a database list. For example, the sample database contains a list called "Target Species Templates", which contains the *items* 'verd1' and 'verd2' from the **templates** table, column *templateID*. We can confirm this with the following query:
+
+```{r}
+# Retrieve a list called 'Target Species Templates'
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM listItems 
+                                 WHERE listID = 'Target Species Templates' ")
+
+```
+
+Thus, an **AMMonitor list** can be passed to `scoresDetect()` function in lieu of a vector of templateIDs. 
+
+Finally, there are alternative approaches for specifying the score thresholds to be used by the `scoresDetect()` function. First, the user can pass in a vector of score thresholds used. In this case, the threshold values should be ordered by the template order. Second, if the user provides no threshold values, `scoresDetect()` will utilize the score threshold value stored with the template directly via monitoR functions (see Chapter 15); **be aware that monitoR uses default values for score thresholds if you do not provide them yourself when creating the template**.
+
+We illustrate some alternative approaches in the three code blocks below. In all cases, we are pitting templates against the recordings 'midEarth3_2016-03-12_07-00-00', 'midEarth4_2016-03-04_06-00-00', 'midEarth4_2016-03-26_07-00-00', and 'midEarth5_2016-03-21_07-30-00' (located in the working directory). Here, the Chap16 database is identified in the *db.path* argument, and the recordings are located in our working directory. For the 'score.thresholds' argument, we specify a numeric vector of score thresholds to use for each template; any signal above this threshold will be registered as a detected event. Lastly, we indicate whether we want to insert the scores directly into the database (db.insert = TRUE) or merely test the function while learning how to use it (db.insert = FALSE). 
+
+```{r, eval = F}
+# Run scoresDetect using recordingID = 'all' and a vector of templateIDs
+# Example is not executed
+scores <- scoresDetect(db.path = db.path, 
+                       directory = getwd(), 
+                       recordingID = 'all',
+                       templateID = c('verd1', 'verd2', 'verd3'),
+                       score.thresholds = c(0.2, 0.2, 13),
+                       token.path = NULL, 
+                       db.insert = FALSE)
+```
+
+
+```{r, eval = F}
+# Run scoresDetect using a listID for templates, 
+# a timestamp for recordings, and omitting the score.thresholds argument 
+# Example is not executed
+scores <- scoresDetect(db.path = db.path, 
+                       directory = getwd(), 
+                       timestamp = '2018-10-21',  
+                       listID = 'Target Species Templates',     
+                       token.path = NULL, 
+                       db.insert = FALSE) 
+```
+
+
+```{r, eval = T}
+# Run scoresDetect using a listID for templates and a 
+# date.range for recordings; insert to database
+# This example IS executed and we insert results into the database
+scores <- scoresDetect(db.path = db.path, 
+                       directory = getwd(), 
+                       date.range = c('2016-03-04', '2016-03-12'),  
+                       listID = 'Target Species Templates',     
+                       score.thresholds = c(0.2, 0.2),
+                       token.path = NULL, 
+                       db.insert = TRUE) 
+```
+
+
+As shown, `scoresDetect()` generates a number of progress messages about which recordings and templates it is currently processing (all of which may be suppressed by wrapping the function in a call to `suppressMessages()`). If we have previously run the same combination of recordingID, templateID and score threshold and these records are present in the database, the function will neither run nor insert this combination again. 
+
+The results of `scoresDetect()` are provided in a data frame, which is inserted into the database **scores** table if db.insert = TRUE. Below, we view the first six scores from our analysis:
+
+```{r}
+# Retrieve a scores from the 'verd1' template
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM scores 
+                                 WHERE templateID = 'verd1' LIMIT 6")
+
+```
+
+Notice that the first detected event in the recording midEarth3_2016-03-12_07-00-00.wav was produced by the template "verd1". This signal was detected at time 0.499 seconds, and had a score of 0.267. This score was added to the results because it exceeded the threshold of 0.2, which is also stored in the database.
+
+The columns *manualVerifyLibraryID* and *manualVerifySpeciesID* will be filled in later (See Chapter 17: Classifications). The features of each event are stored in the database as a "blob" datatype, which is displaying as "raw 37.41 kB".
+
+### Event Features
+
+To explore detected event features in greater depth, we query the database and extract the first record from the **scores** table:  
+
+```{r}
+# Retrieve a scores from the 'verd1' template
+scores <- RSQLite::dbGetQuery(conn = conx, 
+                              statement = "SELECT * 
+                                           FROM scores 
+                                           WHERE templateID = 'verd1' LIMIT 1")
+
+# Look at the structure
+str(scores)
+```
+
+Here, we confirm the returned object is a data.frame. *Features* of each event are returned as a list of 1, and are of serialized "raw" data type. We use `unserialize()` to unserialize the features into their original state and see what they are: 
+
+```{r}
+# Unserialize event features
+unserialized.features <- lapply(X = scores$features, FUN = 'unserialize')
+```
+
+The **unserialized.features** object is still a list, but the features are now contained in a data.frame. 
+
+```{r, eval = T}
+# Confirm that features of an event are stored as a data.frame within a list
+class(unserialized.features[[1]])
+
+# Get dimensions of this dataframe
+dim(unserialized.features[[1]])
+```
+
+The **unserialized.features** object contains a wealth of data about the detected event, stored as a single row with 1204 columns. `scoresDetect()` depends heavily on the sound analysis R package **seewave** [@seewave] to acquire these acoustic features. We will use this collection of numbers in the next chapter to train models that fine-tune the automated detection system, distinguishing target signals from false alarms.
+
+Below, we view features 1 through 10 of this event to get an idea of what they are:
+```{r, eval = T}
+# Extract row 1, columns 1:10 from this features dataframe
+unserialized.features[[1]][1,1:10]
+
+```
+These particular features constitute the first through the tenth amplitude values associated with the detected event, designated by the prefix **amp**. They represent the magnitude of the first 10 pixels of the spectrogram. The total number of **amp** values in a feature set depends on the size of the template. 
+
+Features that begin with a prefix of **tc** or **fc** were generated by the package **seewave**'s `acoustat()` function. `acoustat()` computes the short-term Fourier transform (STFT) to produce a time by frequency matrix, and then computes an aggregation function across rows and columns of the matrix, giving the time and frequency contours. [From the `acoustat()` helpfile](http://rug.mnhn.fr/seewave/HTML/MAN/acoustat.html), "each contour is considered as a probability mass function (PMF) and transformed into a cumulated distribution function (CDF)." 
+
+The number of **tc** values is equal to the number of time bins in the template. Each **tc** value is the amplitude probability mass function for that time bin:  
+
+
+```{r, eval =T}
+# Extract row 1, columns 1076:1085 from this features dataframe
+unserialized.features[[1]][1,1076:1085]
+```
+
+Features that begin with the prefix **fc** were also generated by **seewave's** `acoustat()`. The number of **fc** values is equal to the number of frequency bins in the template. Each **fc** value is the amplitude probability mass for that frequency bin:
+
+
+```{r, eval = T}
+# Extract row 1, columns 1118:1127 from this features data.frame
+unserialized.features[[1]][1,1118:1127]
+```
+
+Features with a **time** prefix were also generated by **seewave's** `acoustats()` function, and are calculated from the cumulative distribution functions generated from the time probability mass function (time.P1 = time initial percentile; time.M = time median; time.P2 = the time terminal percentile; time.IPR = time interpercentile range):
+
+```{r, eval = T}
+# Extract row 1, columns whose name includes 'time'
+unserialized.features[[1]][1, grep(pattern = 'time', names(unserialized.features[[1]]))]
+```
+
+Features with a **freq** prefix were also generated by **seewave's** `acoustats()` function, and are calculated from the cumulative distribution functions generated from the frequency probability mass function (freq.M = freq median; freq.P2 = the freq terminal percentile; freq.IPR = freq interpercentile range). 'freq.p1', or the frequency initial percentile, is calculated by `acoustats()` but is not stored in the feature set because it is the same for each detected event from a given template, and therefore has no use for distinguishing between target signals and false alarms. 
+
+```{r, eval = T}
+# Extract row 1, columns whose name includes 'freq'
+unserialized.features[[1]][1, grep(pattern = 'freq', names(unserialized.features[[1]]))]
+```
+
+Features with the prefix **sp** were calculated via the **seewave** `specprop()` function, which returns a list of statistical properties of a frequency spectrum (sp.mean = mean frequency of the amplitude matrix; sp.sd = sd of the mean of the amplitude matrix; sp.sem = standard error of the mean of the amplitude matrix; sp.median = median frequency of the amp matrix; sp.mode = mode frequency (dominant frequency) of the amp matrix; sp.Q25 = first quartile; sp.Q75 = third quartile; sp.IQR = interquartile range; sp.cent = centroid of the amp matrix; sp.skewness =  skewness; sp.kurtosis = kurtosis ("peakedness"); sp.sfm = spectral flatness measure; sp.sh = spectrol entropy):
+
+```{r, eval = T}
+# Extract row 1, columns whose name includes 'sp'
+unserialized.features[[1]][1, grep(pattern = 'sp', names(unserialized.features[[1]]))]
+```
+
+Finally, features preceded by **zc** were acquired via **seewave**'s `zcr()` function, and reflect zero-crossing rates. A zero-crossing rate is the average number that the sign of a time wave changes within a given time bin. Because the template associated with these features has 42 time bins, there are 42 zero-crossing rate values: 
+```{r, eval = T}
+# Extract row 1, columns 1163:1172 from this features dataframe
+unserialized.features[[1]][1, 1163:1172]
+```
+
+As previously noted, the features for each detected event will be used in our next chapter, 17: Classifications, where they can be used to separate true positive events from false alarms.
+
+### The Scores Table in Access
+
+The scores table is a secondary tab in the Access Navigation Form, located under the 'Recordings' primary tab. Below, we view the Recordings tab, where you can see four recordings are present in the database, and annotations are listed for each recording.
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap16_Figs/recordings.PNG', dpi = 500)
+```
+
+Clicking on the secondary tab labeled "Scores" will bring up the scores themselves. 
+
+```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap16_Figs/scores.PNG', dpi = 500)
+```
+
+Each score is listed individually (here, we are viewing the first of 52 scores in the database). The "Hands Off!" message reiterates that these entries are filled in automatically by the `scoresDetect()` function, not entered manually. Each score can be manually verified, and additionally run through sets of statistical learning classifiers that return the probability that the signal is a target signal. These topics are covered in the Classifications chapter (next). 
+
+### Chapter Summary
+
+This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain a rich amount of information about each detected signal, which can be used to help the computer separate target signals from false alarms. 
+
+### Chapter References

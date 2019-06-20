@@ -1,0 +1,40 @@
+---
+title: ""
+output: 
+  html_document:
+    css: plos.csl
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+bibliography: refs.bib
+---
+
+```{r echo = F}
+source("includes.R")
+options(table_counter_str = "<b>Appendix 2.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure A2.%s</b>")
+
+knitr::opts_chunk$set(fig.path = 'Appendix2_Figs/')
+
+```
+
+## Appendix 1: Cell Phone Configuration
+
+
+Locations - each phone at one location.  Locaitons identified by lat and long in locations table.
+
+Describe set up for a single cell phone. Primary Google account to be used to purchase apps needed
+
+1. easyvoice pro
+2. 
+3. 
+
+### Wireless Plan
+
+
+
+### Configuration
+
+
+

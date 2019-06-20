@@ -1,0 +1,62 @@
+---
+title: ""
+output: 
+  html_document:
+    css: plos.csl
+    df_print: tibble
+    fig_caption: yes
+    toc: yes
+    toc_depth: 4
+bibliography: refs.bib
+---
+
+```{r echo = F}
+source("includes.R")
+options(table_counter_str = "<b>Appendix 1.%s</b> ")
+options(fig_caption_no_sprintf = "<b>Figure A1.%s</b>")
+
+knitr::opts_chunk$set(fig.path = 'Appendix1_Figs/')
+
+```
+
+## Appendix 1: Monitoring Station Setup
+
+Locations - each phone at one location.  Locaitons identified by lat and long in locations table.
+
+Describe set up for a single location
+
+### Equipment Needed
+
+Station looks like this
+
+image
+
+1.  pole (and helpful equipment that may aid in its placement)
+
+2.  box to hold phone - see through if 
+
+3.  external microphone for recording
+
+5. solar panel and mounting bracket (provides power to the cell phone)
+
+6.  cables for connecting phone to panel, microphone to cell phone
+
+####  Equipment List
+
+
+### Setting Up a Station
+
+#### Step 1: Installing the Pole
+
+#### Step 2: Attaching to Solar Panel
+
+#### Step 3: Preparing the Cell Phone Box
+
+#### Step 4: Attaching the Cell Phone Box
+
+
+
+
+
+
+
