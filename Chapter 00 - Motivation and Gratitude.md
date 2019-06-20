@@ -65,7 +65,7 @@ final results are assessed with respect to hypotheses or objectives.
 Thus, the **AMMonitor** package places the monitoring data into an
 **a**daptive **m**anagement framework \[19\].
 
-<img src="Chap0_Figs/fig1.png" width="81" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap0_Figs/fig1.png" width="400" height="400" style="display: block; margin: auto;" />
 
 *Figure 0.1. The general AMMonitor framework begins with basic research
 hypotheses or applied resource management objectives (boxed).*
