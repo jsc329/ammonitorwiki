@@ -68,8 +68,7 @@ final results are assessed with respect to hypotheses or objectives.
 Thus, the **AMMonitor** package places the monitoring data into an
 **a**daptive **m**anagement framework \[19\].
 
-
-![fig1](uploads/1c822f31eeafb831b6e105701d0d661b/fig1.png)
+\[\[<https://code.usgs.gov/vtcfwru/ammonitor/blob/master/vignettes/Chap0_Figs/fig1.png>\]\]
 
 *Figure 0.1. The general AMMonitor framework begins with basic research
 hypotheses or applied resource management objectives (boxed).*
@@ -268,7 +267,5 @@ e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 22\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution. 
-
-</div>
 
 </div>
