@@ -9,13 +9,9 @@ As previously mentioned, **AMMonitor** was developed as a prototype for
 monitoring wildlife in sunny California, USA. Our prototype included the
 following elements (keyed to Figure 1.1).
 
-------------------------------------------------------------------------
-
-<img src="Chap1_Figs/overview.png" width="100%" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap1_Figs/overview.png" width="100%" style="background-color:  #d3d3d3; padding:10px; display: inline-block;" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 1.1. A generalized overview of the AMMonitor approach.*
-
-------------------------------------------------------------------------
 
 -   Smart phone monitoring: Each cell phone station is fully
     plug-and-play, with an Android cell phone and external microphone
@@ -119,111 +115,40 @@ following code:
 
 The package itself contains many functions and built-in datasets, which
 we will introduce over the course of this book. Below, we display the
-first 10 functions and datasets as a tibble \[6\]:
+functions and datasets:
 
     > # List the functions in AMMonitor
-    > as.data.frame(ls("package:AMMonitor"))
+    > ls("package:AMMonitor")
 
-        ls("package:AMMonitor")
-    1                  accounts
-    2             activity_amml
-    3      ammCreateDirectories
-    4                  analysis
-    5             annotatePhoto
-    6         annotateRecording
-    7  annotateRecordingModular
-    8               annotations
-    9               assessments
-    10          classifications
-    11      classifier_practice
-    12         classifierAssess
-    13       classifierEnsemble
-    14         classifierModels
-    15    classifierPerformance
-    16        classifierPredict
-    17         classifiers_amml
-    18           classifierTest
-    19          classifierTrain
-    20            dbClearTables
-    21                 dbCreate
-    22           dbCreateSample
-    23                 dbTables
-    24                 dbVacuum
-    25               deployment
-    26        dropboxGetOneFile
-    27          dropboxMetadata
-    28         dropboxMoveBatch
-    29                equipment
-    30     equipmentPerformance
-    31              generateRDS
-    32       googleDropboxCloud
-    33       googleDropboxLocal
-    34                  library
-    35                listItems
-    36                    lists
-    37                locations
-    38           locationsShape
-    39                     logs
-    40             modelsInsert
-    41               objectives
-    42             occupancySim
-    43                   people
-    44                   photos
-    45              photosCheck
-    46          plotAnnotations
-    47           plotDetections
-    48                  plotROC
-    49        plotVerifications
-    50     plotVerificationsAvg
-    51                       pr
-    52               priorities
-    53           prioritization
-    54             priorityInit
-    55              prioritySet
-    56                      qry
-    57            qryDeployment
-    58               qryPkCheck
-    59        qryPrioritization
-    60             qryTemporals
-    61               recordings
-    62          recordingsCheck
-    63             samplePhotos
-    64         sampleRecordings
-    65                 schedule
-    66          scheduleAddVars
-    67           scheduleDelete
-    68            scheduleFixed
-    69            scheduleOptim
-    70             schedulePush
-    71              scheduleSun
-    72                   scores
-    73             scoresDetect
-    74             scoresVerify
-    75      scoresVerifyModular
-    76               scriptArgs
-    77                  scripts
-    78           shapeOccupancy
-    79                   simGlm
-    80               soundscape
-    81                 spatials
-    82                  species
-    83                templates
-    84          templatesInsert
-    85     templatesUnserialize
-    86                temporals
-    87         temporalsDarksky
-    88             temporalsGet
+     [1] "accounts"                 "activity_amml"            "ammCreateDirectories"     "analysis"                 "annotatePhoto"           
+     [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "assessments"              "classifications"         
+    [11] "classifier_practice"      "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"   
+    [16] "classifierPredict"        "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"           
+    [21] "dbCreate"                 "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"              
+    [26] "dropboxGetOneFile"        "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"    
+    [31] "generateRDS"              "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"               
+    [36] "lists"                    "locations"                "locationsShape"           "logs"                     "modelsInsert"            
+    [41] "objectives"               "occupancySim"             "people"                   "photos"                   "photosCheck"             
+    [46] "plotAnnotations"          "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"    
+    [51] "pr"                       "priorities"               "prioritization"           "priorityInit"             "prioritySet"             
+    [56] "qry"                      "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"            
+    [61] "recordings"               "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                
+    [66] "scheduleAddVars"          "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"            
+    [71] "scheduleSun"              "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"     
+    [76] "scriptArgs"               "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"              
+    [81] "spatials"                 "species"                  "templates"                "templatesInsert"          "templatesUnserialize"    
+    [86] "temporals"                "temporalsDarksky"         "temporalsGet"            
 
 **AMMonitor** has a handful of package dependencies. These include:
 
 -   RSQLite \[1\] - connects R to a SQLite database.
 -   AMModels \[4\] - a vehicle for storing models (analytical output)
     for future use.
--   data.table \[7\]- enables rapid sorting and manipulation of large
+-   data.table \[6\]- enables rapid sorting and manipulation of large
     tables.
--   monitoR \[8\]- pits templates against collected recordings to search
+-   monitoR \[7\]- pits templates against collected recordings to search
     for target signals.
--   caret \[9\] - provides machine learning functions for refining the
+-   caret \[8\] - provides machine learning functions for refining the
     performance of automated detection via **monitoR** templates.
 
 These should be automatically installed when you install **AMMonitor**.
@@ -283,14 +208,10 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-------------------------------------------------------------------------
-
-<img src="Chap1_Figs/filestructure2.PNG" width="75%" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap1_Figs/filestructure2.PNG" width="75%" style="background-color:  #d3d3d3; padding:10px; display: inline-block;" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 1.2. Directory structure that is required by the AMMonitor
 > approach.*
-
-------------------------------------------------------------------------
 
 Each (currently empty) directory will store specific types of
 information as introduced below:
@@ -463,20 +384,15 @@ and metadata to facilitate adaptive management. PLoS ONE. 2018;13:
 1339–1345.
 doi:[10.1371/journal.pone.0188966](https://doi.org/10.1371/journal.pone.0188966)
 
-6. Muller K, Wickham H, Francois R, Bryan J, RStudio. Tibble: Simple
-data frames (version 2.0.1) \[Internet\]. Comprehensive R Archive
-Network; 2019. Available:
-<https://cran.r-project.org/web/packages/tibble/index.html>
-
-7. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T, et
+6. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T, et
 al. Data.table: Extension of ’data.frame’ (version 1.12.0) \[Internet\].
 Comprehensive R Archive Network; 2019. Available:
 <https://cran.r-project.org/web/packages/data.table/index.html>
 
-8. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
+7. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
 1.0.7) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <http://www.uvm.edu/rsenr/vtcfwru/R/?Page=monitoR/monitoR.htm>
 
-9. Kuhn M. Caret: Classification and regression training (version 6.0)
+8. Kuhn M. Caret: Classification and regression training (version 6.0)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/caret/index.html>
