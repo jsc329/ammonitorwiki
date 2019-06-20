@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# render("vignettes/02-database.RMD")
+# rmarkdown::render(input = "02-database.Rmd", output_format = "md_document", output_file = "Chapter 2 - AMMonitor Database.md")
 
 ```
 
@@ -37,26 +37,30 @@ The primary goal of **AMMonitor** is to provide a system that efficiently proces
 
 In the **AMMonitor** system, raw monitoring files such as recordings and photos are stored in the Dropbox Cloud (intentionally not synced to a user's computer). All other data, including photo and recording metadata, are stored within a [SQLite database](https://www.sqlite.org/index.html). SQLite is a self-contained, high-reliability, embedded, full-featured, public-domain, SQL database engine. **AMMonitor** uses the R package RSQLite [@RSQLite] to connect R with the database. 
 
-SQLite is a **relational database**, which is simply a collection of tables that are related in some way. Specific columns in one table may be formally linked to other tables. Information stored in or across tables can be retrieved using a language called SQL, which stands for Structured Query Language. 
+SQLite is a **relational database**, which is simply a collection of tables that are related in some way.   Each table stores specific information, and specific columns in one table may be formally linked to other tables. Information stored in or across tables can be retrieved using a language called SQL, which stands for Structured Query Language. We will learn some basic SQL commands, but much of your work will done in R.
 
 Typically, SQL databases are stored on a large server (such as the server at a university or agency) that requires a management and oversight by a database administrator. In contrast, a SQLite database does not require a server or administrator. Instead, the entire database is stored as a single file, which may reside on a single computer or in the cloud. The SQLite home page explains: "SQLite is an in-process library that implements a self-contained, serverless, zero-configuration, transactional SQL database engine. The code for SQLite is in the public domain and is thus free for use for any purpose, commercial or private. SQLite is the most widely deployed database in the world with more applications than we can count, including several high-profile projects." [@SQLite]
 
 An **AMMonitor** SQLite database is created with the `dbCreate()` function, and should be stored in the "database" folder within the main AMMonitor directory. 
 
-[Figure 2.1. ]('https://code.usgs.gov/vtcfwru/ammonitor/tree/master/vignettes/Chap2_Figs/directories.PNG')
+
+```{r, eval = T, echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap2_Figs/directories.PNG', dpi = 900)
+```
 
 
 
-*Figure 2.1.  The "database" directory should store the AMMonitor SQLite database.*
+>*Figure 2.1.  The "database" directory should store the AMMonitor SQLite database file.*
 
 Before we actually create the database, we provide an overview of the tables within an **AMMonitor** database. 
 
-```{r, eval = F, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T,  echo = F, fig.align = 'center'}
 
-knitr::include_graphics('Chap2_Figs/ERD2.PNG', dpi = 500)
+knitr::include_graphics('Chap2_Figs/ERD2.PNG', dpi = 700)
 ```
 
-*Figure 2.2.  AMMonitor database schema, showing key tables with a few columns.*
+>*Figure 2.2.  AMMonitor database schema, showing key tables with a few columns.  Lines between tables indicate how tables are related to each other.*
 
 If you are new to relational databases, relax.  Think of a database as several Excel worksheets (a workbook), where each sheet is a table that stores specific information; the tables are linked in a specific way.
 
@@ -112,7 +116,7 @@ RSQLite::dbExecute(conn = conx, statement =
           )
 ```
 
-This is our first look at SQLite syntax, passed through `dbExecute()`'s 'statement' argument. The word PRAGMA (from "pragmatic") is a computer programming directive that tells SQLite how to process input. Here, we are telling SQLite to enforce foreign key contraints. That means if a person named Gandalf deploys equipment, and we create a new record in the **deployment** table indicating so, Gandalf must be present in the **people** table, or an error will occur. This ensures the database stays tidy and clean.
+This is our first look at SQLite syntax, passed through the `dbExecute()` 'statement' argument. The word PRAGMA (from "pragmatic") is a computer programming directive that tells SQLite how to process input. Here, we are telling SQLite to enforce foreign key contraints. That means if a person named Gandalf deploys equipment, and we create a new record in the **deployment** table indicating so, Gandalf must be present in the **people** table, or an error will occur. This ensures the database stays tidy and clean.
 
 Sending a SQLite statement with the `dbExecute()` function is one way to interact with the database. Another way is through **AMMonitor** functions. For example, throughout this vignette, we will be using the `dbTables()` function to view a particular table's columns, the type of data it stores, and its primary keys. For example:
 
@@ -143,7 +147,7 @@ The columns *on_update* and *on_delete* are important settings: in **AMMonitor**
 
 #  Interacting with Tables 
 
-There are many ways to interact with tables in a SQLite database, and many tables are automatically populated by **AMMonitor** functions. There two options for viewing the contents of a SQLite table using R. If the table is relatively small, we can use the RSQLite function `dbReadTable()` to read the entire table into R's memory, again specifying our **conx** object in the 'conn' argument, and "people" as the table of interest in the 'name' argument. 
+There are many ways to interact with tables in a SQLite database, and many tables are automatically populated by **AMMonitor** functions. There two options for viewing the contents of a SQLite table using R. If the table is relatively small, we can use the RSQLite function `dbReadTable()` to read the entire table into R's memory.  Below, we specify our **conx** object in the 'conn' argument, and "people" as the table of interest in the 'name' argument. 
 
 ```{r}
 # Read the entire table and store as get.people
@@ -166,18 +170,18 @@ RSQLite::dbExecute(conn = conx, statement =
 ) 
 ```
 
-ALTER TABLE may also be used to delete columns. However, we strongly advise against deleting any default **AMMonitor** tables or columns -- doing so may produce function errors, and we will not be able to assist you in fixing them.
+ALTER TABLE may also be used to delete columns. However, we strongly advise against deleting any default **AMMonitor** tables or columns -- doing so may produce function errors, and we will not be able to assist you in fixing them!
 
 # The AMMonitor Database "Front End"
 
 While a monitoring team member can always interact with the database through R (as shown above), not all team members will be proficient in R, and may prefer an alternative database interface. To that end, **AMMonitor** comes with a Microsoft Access "front end", which is simply an Access navigation form that connects to the SQLite database. This front end provides users with a form-like feel for entering or updating records. The actual data, however, remain in the SQLite database. 
 
-```{r, eval = F, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = 700, out.height = 500, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
 ```
 
-*Figure 2.3*.
+>*Figure 2.3.  The AMMonitor Access front end is a navigation form, which is a collection of many different forms.*
 
 Figure 2.3 shows the **AMMonitor** Access front end, which is a Navigation Form in Access (a form containing many forms). The top of the form consists of primary tabs (2.2a), which are Program Mgt, Objectives, Species, Locations, Recordings, and Photos. When a primary tab is selected (e.g,. the Program Mgt tab has been selected), the left menu displays a set of secondary tabs (2.2b). Thus, People, Accounts, and Lists fall under the realm of Program Mgt. When a secondary tab such as **People** is selected, its form is displayed. This form maps to the database table **people** (2.2c). The table's fields are displayed in a form-like view above, and can alternatively be displayed in a spreadsheet-like table view. As previously mentioned, the **people** table consists of six columns (fields), and a single record is displayed in the form (2.2d). Toward the bottom of the form, we can advance from record to record using the arrow buttons (2.2e), or we can create a new record by pressing the sun icon button (2.2f). Access has a built-in search form (2.2g) which can be used to locate particular records. 
 
@@ -202,40 +206,40 @@ Download the driver for your machine, and install it. Then follow these steps fo
 
 1. Navigate to your computer's ODBC Data Source Administrator. You can likely search on "ODBC" to find this, and it should look something like shown below. Under the User DSN tab, click the Add button. 
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/odbc1.PNG', dpi = 500)
 ```
 
-*Figure 2.4*.
+>*Figure 2.4.  The ODBC Data Source Administrator dialogue box allows you to create new ODBC connections (Open Data Base Connectivity)*.
  
 2. A new dialogue box will open, prompting you to select a driver. Locate the SQLite3 ODBC Driver you just installed, and click Finish.
 
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/odbc2.PNG', dpi = 500)
 ```
 
-*Figure 2.5*.
+>*Figure 2.5.   Select the SQLite3 ODBC Driver to let your computer communicate with the SQLite database*.
 
 3. Another new dialogue box will open. You need to name your data source, navigate to a particular SQLite database, and press OK. Here, we are naming our data source Chap2_sqlite, and will connect to the sqlite database called chap2.sqlite using the Browse button. It is a good idea to have the data source name match up (at least loosely) with the name of the database so that you can identify the database based on the data source name. Additionally, there are a few options that may be enforced, including a timeout entry (if there is database inactivity after a given period of time, the connection will automatically break). Other options for this dialogue box can be found  [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
-```{r, eval  = F, out.width = 600, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval  = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/odbc3.PNG', dpi = 500)
 ```
 
-*Figure 2.6*.
+>*Figure 2.6.  Give your connection a unique name, and browse to your SQLite database file.* 
 
 4. You should now see this new data source listed in the User DSN tab; it will allow you to connect to your sqlite database. You may have many data sources (e.g., one for each chapter if you wish). When it is time to launch your own monitoring program, however, the data source will connect to your program's **AMMonitor** SQLite database.
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/odbc4.PNG', dpi = 500)
 ```
 
-*Figure 2.7*
+>*Figure 2.7.  The new DNS should now be listed in your ODBC Data Source dialogue box.*
 
 ##  Linking Access to the SQLite database
 
@@ -247,53 +251,57 @@ The next step is connect the Microsoft Access file to the SQLite database, emplo
 2. Click the External Data tab. This tab allows us to connect Access to an external database, such as an Excel file, another Access database, a text file or XML file. Here, we will use an ODBC connection, where ODBC stands for Open Database Connectivity. 
 
 
-```{r, eval = F, out.width = 600, out.height = 400, echo =F, fig.align='center'}
+```{r, eval = T, out.width = 600, out.height = 400, echo =F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/ExternalTab.PNG', dpi = 500)
 ```
-*Figure 2.8*.
+
+>*Figure 2.8.  Open Access, and click on the External Data tab.*
 
 3. Clicking on the ODBC Database button will bring up a new dialogue box. Here, we want to **link** to the data source  by creating a linked table. Press OK.
 
-```{r, eval = F, out.width = 600, out.height = 400, echo =F, fig.align='center'}
+```{r, eval = T, out.width = 600, out.height = 400, echo =F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/AccessLink.PNG', dpi = 500)
 ```
-*Figure 2.9*.
+
+>*Figure 2.9.  Indicate that you would like to link to the SQLite database (as opposed to importing the database into Access.*
 
 4. Now, we wish to locate and use the data source we just created (which uses a SQLite3 driver to connect to our SQLite database). It will likely be listed under the Machine Data Source tab, and is highlighted in blue when clicked. Press OK. 
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval = T, out.width = 600, out.height = 400, echo = F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/selectDS.PNG', dpi = 500)
 ```
 
-*Figure 2.10*.
+>*Figure 2.10.  Locate your new database connection.*
 
 5. The previous action will display a new dialogue box. This new box will ask which SQLite tables you wish to connect to. Press the Select All button to the right, which will highlight all of the tables in blue. Then press OK.
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval = T, out.width = 600, out.height = 500, echo = F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/sqliteTables.PNG', dpi = 500)
 ```
 
-*Figure 2.11*.
+>*Figure 2.11. Press the Select All button to connect all the SQLite tables to Access.*
 
 6. Under the "All Access Objects" left menu, you will see the tables. Each table has a globe symbol and arrow, indicating that each table is linked to the SQLite database table. This means we can now use Access to work with the data in our database tables.
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval = T, out.width = 600, out.height = 600, echo = F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/sqliteConnected.PNG', dpi = 500)
 ```
-*Figure 2.12*.
+
+>*Figure 2.12.  The linked tables appear as "globes" in the left menu.*
 
 Click on the **people** table, and you will see the two records currently in the SQLite database in a spreadsheet view:
 
-```{r, eval= F, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval= T, out.width = 700, out.height = 500, echo = F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/people.PNG', dpi = 500)
 ```
-*Figure 2.13*.
+
+>*Figure 2.13.  You can work with tables in Access, but most tables will be filled in by R!*
 
 A new record can be added by entering data into the row with the \* symbol. Keep in mind, however, that many tables will be automatically populated by **AMMonitor** functions. 
 
@@ -302,29 +310,31 @@ A new record can be added by entering data into the row with the \* symbol. Keep
 
 Though you may work with tables directly as above, you can alternatively use the Navigation form introduced earlier in the chapter. Locate the Navigation form by collapsing the list of Tables (press the double arrow icon to the right of the word "Tables"), and opening the list of Forms. 
 
-```{r, eval = F, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval = T, out.width = 650, out.height = 600, echo = F, fig.align='center'}
 
 knitr::include_graphics('Chap2_Figs/AccessForms.PNG', dpi = 500)
 ```
 
-*Figure 2.14*.
+>*Figure 2.14.  The Access forms are diplayed in the left menu.  The Navigation Form is the master form.*
+
 Here, you can see that the AMMonitor front end comes with many individual forms that can be customized; these individual forms are combined into the Navigation Form. Opening the Navigation will bring you to AMMonitor Navigation Form introduced earlier in the chapter.
 
 
-```{r, eval  = F, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval  = T, out.width = 650, out.height = 400, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
 ```
 
-*Figure 2.15*.
+>*Figure 2.15.  The AMMonitor Navigation Form.  This form can be customized to your liking.*
+
 The Navigation Form can be set as the default form that appears when the Access database is first opened. This can be achieved by going to File | Options | Current Database, and setting the Navigation Form as the Display Form. You may also add a customized title and icon here as well. 
 
-```{r, eval = F, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/splash.PNG', dpi = 500)
 ```
 
-*Figure 2.16*.
+>*Figure 2.16.  Force the Navigation Form to open when you open the Access file.*
 
 #  Chapter Summary
 
