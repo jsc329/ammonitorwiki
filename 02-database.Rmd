@@ -5,6 +5,8 @@ output:
     toc: true
     toc_depth: 3
     df_print: tibble
+    fig_height: 7
+    fig_width: 7
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -176,7 +178,7 @@ ALTER TABLE may also be used to delete columns. However, we strongly advise agai
 
 While a monitoring team member can always interact with the database through R (as shown above), not all team members will be proficient in R, and may prefer an alternative database interface. To that end, **AMMonitor** comes with a Microsoft Access "front end", which is simply an Access navigation form that connects to the SQLite database. This front end provides users with a form-like feel for entering or updating records. The actual data, however, remain in the SQLite database. 
 
-```{r, eval = T, out.width = 700, out.height = 500, echo = F, fig.align = 'center'}
+```{r, eval = T, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
 ```

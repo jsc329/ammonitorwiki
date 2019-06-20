@@ -391,7 +391,7 @@ front end provides users with a form-like feel for entering or updating
 records. The actual data, however, remain in the SQLite
 database.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="700" height="500" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/NavigationForm.PNG" style="display: block; margin: auto;" />
 
 > *Figure 2.3. The AMMonitor Access front end is a navigation form,
 > which is a collection of many different forms.*
