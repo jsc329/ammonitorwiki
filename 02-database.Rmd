@@ -180,7 +180,7 @@ While a monitoring team member can always interact with the database through R (
 
 ```{r, eval = T, echo = F, fig.align = 'center'}
 
-knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
+knitr::include_graphics('Chap2_Figs/NavigationForm.PNG')
 ```
 
 >*Figure 2.3.  The AMMonitor Access front end is a navigation form, which is a collection of many different forms.*
