@@ -1,2 +1,2 @@
 - [Home]
-- [Chapter 0:  Motivation and Gratitude](00-preface)
+- [Chapter 0:  Motivation and Gratitude](00-preface.md)
