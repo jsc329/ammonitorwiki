@@ -38,7 +38,6 @@ opts_chunk$set(prompt = FALSE,
                fig.align = "center",
                fig.width = 7,
                fig.height = 7, 
-               out.width = .9,
                dev = 'png',
                dev.args = list(type = "cairo"),
                dpi = 700)

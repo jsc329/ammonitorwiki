@@ -57,16 +57,15 @@ function, and should be stored in the “database” folder within the main
 AMMonitor
 directory.
 
-<img src="Chap2_Figs/directories.PNG" width="0.9" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/directories.PNG" style="display: block; margin: auto;" />
 
 > *Figure 2.1. The “database” directory should store the AMMonitor
 > SQLite database file.*
 
 Before we actually create the database, we provide an overview of the
-tables within an **AMMonitor**
-database.
+tables within an **AMMonitor** database.
 
-<img src="Chap2_Figs/ERD2.PNG" width="0.9" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/ERD2.PNG" style="display: block; margin: auto;" />
 
 > *Figure 2.2. AMMonitor database schema, showing key tables with a few
 > columns. Lines between tables indicate how tables are related to each
@@ -392,7 +391,7 @@ front end provides users with a form-like feel for entering or updating
 records. The actual data, however, remain in the SQLite
 database.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="0.9" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/NavigationForm.PNG" style="display: block; margin: auto;" />
 
 > *Figure 2.3. The AMMonitor Access front end is a navigation form,
 > which is a collection of many different forms.*
