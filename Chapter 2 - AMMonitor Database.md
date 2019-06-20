@@ -41,7 +41,7 @@ An **AMMonitor** SQLite database is created with the `dbCreate()`
 function, and should be stored in the “database” folder within the main
 AMMonitor directory.
 
-<img src="Chap2_Figs/directories.PNG" width="43" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/directories.PNG" width="50%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.1. The “database” directory should store the AMMonitor
 > SQLite database file.*
@@ -49,7 +49,7 @@ AMMonitor directory.
 Before we actually create the database, we provide an overview of the
 tables within an **AMMonitor** database.
 
-<img src="Chap2_Figs/ERD2.PNG" width="195" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/ERD2.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.2. AMMonitor database schema, showing key tables with a few
 > columns. Lines between tables indicate how tables are related to each
@@ -356,7 +356,7 @@ an Access navigation form that connects to the SQLite database. This
 front end provides users with a form-like feel for entering or updating
 records. The actual data, however, remain in the SQLite database.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="122" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/NavigationForm.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.3. The AMMonitor Access front end is a navigation form,
 > which is a collection of many different forms.*
@@ -418,7 +418,7 @@ steps for Windows users (Mac users may need a different approach):
     likely search on “ODBC” to find this, and it should look something
     like shown below. Under the User DSN tab, click the Add button.
 
-<img src="Chap2_Figs/odbc1.PNG" width="600" height="440" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/odbc1.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.4. The ODBC Data Source Administrator dialogue box allows
 > you to create new ODBC connections (Open Data Base Connectivity)*.
@@ -426,7 +426,7 @@ steps for Windows users (Mac users may need a different approach):
 1.  A new dialogue box will open, prompting you to select a driver.
     Locate the SQLite3 ODBC Driver you just installed, and click Finish.
 
-<img src="Chap2_Figs/odbc2.PNG" width="600" height="440" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/odbc2.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.5. Select the SQLite3 ODBC Driver to let your computer
 > communicate with the SQLite database*.
@@ -444,7 +444,7 @@ steps for Windows users (Mac users may need a different approach):
     dialogue box can be found
     [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
-<img src="Chap2_Figs/odbc3.PNG" width="600" height="440" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/odbc3.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.6. Give your connection a unique name, and browse to your
 > SQLite database file.*
@@ -455,7 +455,7 @@ steps for Windows users (Mac users may need a different approach):
     is time to launch your own monitoring program, however, the data
     source will connect to your program’s **AMMonitor** SQLite database.
 
-<img src="Chap2_Figs/odbc4.PNG" width="600" height="440" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/odbc4.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.7. The new DNS should now be listed in your ODBC Data Source
 > dialogue box.*
@@ -475,7 +475,7 @@ required steps.
     database, a text file or XML file. Here, we will use an ODBC
     connection, where ODBC stands for Open Database Connectivity.
 
-<img src="Chap2_Figs/ExternalTab.PNG" width="600" height="400" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/ExternalTab.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.8. Open Access, and click on the External Data tab.*
 
@@ -483,7 +483,7 @@ required steps.
     box. Here, we want to **link** to the data source by creating a
     linked table. Press OK.
 
-<img src="Chap2_Figs/AccessLink.PNG" width="600" height="400" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/AccessLink.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.9. Indicate that you would like to link to the SQLite
 > database (as opposed to importing the database into Access.*
@@ -493,7 +493,7 @@ required steps.
     will likely be listed under the Machine Data Source tab, and is
     highlighted in blue when clicked. Press OK.
 
-<img src="Chap2_Figs/selectDS.PNG" width="600" height="400" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/selectDS.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.10. Locate your new database connection.*
 
@@ -502,7 +502,7 @@ required steps.
     Select All button to the right, which will highlight all of the
     tables in blue. Then press OK.
 
-<img src="Chap2_Figs/sqliteTables.PNG" width="600" height="500" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/sqliteTables.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.11. Press the Select All button to connect all the SQLite
 > tables to Access.*
@@ -512,14 +512,14 @@ required steps.
     is linked to the SQLite database table. This means we can now use
     Access to work with the data in our database tables.
 
-<img src="Chap2_Figs/sqliteConnected.PNG" width="600" height="600" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/sqliteConnected.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.12. The linked tables appear as “globes” in the left menu.*
 
 Click on the **people** table, and you will see the two records
 currently in the SQLite database in a spreadsheet view:
 
-<img src="Chap2_Figs/people.PNG" width="700" height="500" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/people.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.13. You can work with tables in Access, but most tables will
 > be filled in by R!*
@@ -536,7 +536,7 @@ use the Navigation form introduced earlier in the chapter. Locate the
 Navigation form by collapsing the list of Tables (press the double arrow
 icon to the right of the word “Tables”), and opening the list of Forms.
 
-<img src="Chap2_Figs/AccessForms.PNG" width="650" height="600" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/AccessForms.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.14. The Access forms are diplayed in the left menu. The
 > Navigation Form is the master form.*
@@ -546,7 +546,7 @@ individual forms that can be customized; these individual forms are
 combined into the Navigation Form. Opening the Navigation will bring you
 to AMMonitor Navigation Form introduced earlier in the chapter.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="650" height="400" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/NavigationForm.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.15. The AMMonitor Navigation Form. This form can be
 > customized to your liking.*
@@ -556,7 +556,7 @@ Access database is first opened. This can be achieved by going to File |
 Options | Current Database, and setting the Navigation Form as the
 Display Form. You may also add a customized title and icon here as well.
 
-<img src="Chap2_Figs/splash.PNG" width="700" height="400" style="display: block; margin: auto;" />
+<img src="Chap2_Figs/splash.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
 
 > *Figure 2.16. Force the Navigation Form to open when you open the
 > Access file.*

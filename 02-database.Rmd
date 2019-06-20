@@ -46,7 +46,7 @@ Typically, SQL databases are stored on a large server (such as the server at a u
 An **AMMonitor** SQLite database is created with the `dbCreate()` function, and should be stored in the "database" folder within the main AMMonitor directory. 
 
 
-```{r, eval = T, echo = F, fig.align = 'center'}
+```{r, eval = T, echo = F, out.width = '50%'}
 
 knitr::include_graphics('Chap2_Figs/directories.PNG', dpi = 900)
 ```
@@ -57,7 +57,7 @@ knitr::include_graphics('Chap2_Figs/directories.PNG', dpi = 900)
 
 Before we actually create the database, we provide an overview of the tables within an **AMMonitor** database. 
 
-```{r, eval = T,  echo = F, fig.align = 'center'}
+```{r, eval = T,  echo = F, out.width = '100%'}
 
 knitr::include_graphics('Chap2_Figs/ERD2.PNG', dpi = 700)
 ```
@@ -178,7 +178,7 @@ ALTER TABLE may also be used to delete columns. However, we strongly advise agai
 
 While a monitoring team member can always interact with the database through R (as shown above), not all team members will be proficient in R, and may prefer an alternative database interface. To that end, **AMMonitor** comes with a Microsoft Access "front end", which is simply an Access navigation form that connects to the SQLite database. This front end provides users with a form-like feel for entering or updating records. The actual data, however, remain in the SQLite database. 
 
-```{r, eval = T, echo = F, fig.align = 'center'}
+```{r, eval = T, echo = F, out.width = '70%', fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/NavigationForm.PNG')
 ```
@@ -208,7 +208,7 @@ Download the driver for your machine, and install it. Then follow these steps fo
 
 1. Navigate to your computer's ODBC Data Source Administrator. You can likely search on "ODBC" to find this, and it should look something like shown below. Under the User DSN tab, click the Add button. 
 
-```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/odbc1.PNG', dpi = 500)
 ```
@@ -218,7 +218,7 @@ knitr::include_graphics('Chap2_Figs/odbc1.PNG', dpi = 500)
 2. A new dialogue box will open, prompting you to select a driver. Locate the SQLite3 ODBC Driver you just installed, and click Finish.
 
 
-```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/odbc2.PNG', dpi = 500)
 ```
@@ -227,7 +227,7 @@ knitr::include_graphics('Chap2_Figs/odbc2.PNG', dpi = 500)
 
 3. Another new dialogue box will open. You need to name your data source, navigate to a particular SQLite database, and press OK. Here, we are naming our data source Chap2_sqlite, and will connect to the sqlite database called chap2.sqlite using the Browse button. It is a good idea to have the data source name match up (at least loosely) with the name of the database so that you can identify the database based on the data source name. Additionally, there are a few options that may be enforced, including a timeout entry (if there is database inactivity after a given period of time, the connection will automatically break). Other options for this dialogue box can be found  [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
-```{r, eval  = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
+```{r, eval  = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/odbc3.PNG', dpi = 500)
 ```
@@ -236,7 +236,7 @@ knitr::include_graphics('Chap2_Figs/odbc3.PNG', dpi = 500)
 
 4. You should now see this new data source listed in the User DSN tab; it will allow you to connect to your sqlite database. You may have many data sources (e.g., one for each chapter if you wish). When it is time to launch your own monitoring program, however, the data source will connect to your program's **AMMonitor** SQLite database.
 
-```{r, eval = T, out.width = 600, out.height = 440, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/odbc4.PNG', dpi = 500)
 ```
@@ -253,7 +253,7 @@ The next step is connect the Microsoft Access file to the SQLite database, emplo
 2. Click the External Data tab. This tab allows us to connect Access to an external database, such as an Excel file, another Access database, a text file or XML file. Here, we will use an ODBC connection, where ODBC stands for Open Database Connectivity. 
 
 
-```{r, eval = T, out.width = 600, out.height = 400, echo =F, fig.align='center'}
+```{r, eval = T, out.width = '70%', echo =F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/ExternalTab.PNG', dpi = 500)
 ```
@@ -262,7 +262,7 @@ knitr::include_graphics('Chap2_Figs/ExternalTab.PNG', dpi = 500)
 
 3. Clicking on the ODBC Database button will bring up a new dialogue box. Here, we want to **link** to the data source  by creating a linked table. Press OK.
 
-```{r, eval = T, out.width = 600, out.height = 400, echo =F, fig.align='center'}
+```{r, eval = T, out.width = '70%',echo =F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/AccessLink.PNG', dpi = 500)
 ```
@@ -271,7 +271,7 @@ knitr::include_graphics('Chap2_Figs/AccessLink.PNG', dpi = 500)
 
 4. Now, we wish to locate and use the data source we just created (which uses a SQLite3 driver to connect to our SQLite database). It will likely be listed under the Machine Data Source tab, and is highlighted in blue when clicked. Press OK. 
 
-```{r, eval = T, out.width = 600, out.height = 400, echo = F, fig.align='center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/selectDS.PNG', dpi = 500)
 ```
@@ -280,7 +280,7 @@ knitr::include_graphics('Chap2_Figs/selectDS.PNG', dpi = 500)
 
 5. The previous action will display a new dialogue box. This new box will ask which SQLite tables you wish to connect to. Press the Select All button to the right, which will highlight all of the tables in blue. Then press OK.
 
-```{r, eval = T, out.width = 600, out.height = 500, echo = F, fig.align='center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/sqliteTables.PNG', dpi = 500)
 ```
@@ -289,7 +289,7 @@ knitr::include_graphics('Chap2_Figs/sqliteTables.PNG', dpi = 500)
 
 6. Under the "All Access Objects" left menu, you will see the tables. Each table has a globe symbol and arrow, indicating that each table is linked to the SQLite database table. This means we can now use Access to work with the data in our database tables.
 
-```{r, eval = T, out.width = 600, out.height = 600, echo = F, fig.align='center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/sqliteConnected.PNG', dpi = 500)
 ```
@@ -298,7 +298,7 @@ knitr::include_graphics('Chap2_Figs/sqliteConnected.PNG', dpi = 500)
 
 Click on the **people** table, and you will see the two records currently in the SQLite database in a spreadsheet view:
 
-```{r, eval= T, out.width = 700, out.height = 500, echo = F, fig.align='center'}
+```{r, eval= T, out.width = '70%', echo = F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/people.PNG', dpi = 500)
 ```
@@ -312,7 +312,7 @@ A new record can be added by entering data into the row with the \* symbol. Keep
 
 Though you may work with tables directly as above, you can alternatively use the Navigation form introduced earlier in the chapter. Locate the Navigation form by collapsing the list of Tables (press the double arrow icon to the right of the word "Tables"), and opening the list of Forms. 
 
-```{r, eval = T, out.width = 650, out.height = 600, echo = F, fig.align='center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align='left'}
 
 knitr::include_graphics('Chap2_Figs/AccessForms.PNG', dpi = 500)
 ```
@@ -322,7 +322,7 @@ knitr::include_graphics('Chap2_Figs/AccessForms.PNG', dpi = 500)
 Here, you can see that the AMMonitor front end comes with many individual forms that can be customized; these individual forms are combined into the Navigation Form. Opening the Navigation will bring you to AMMonitor Navigation Form introduced earlier in the chapter.
 
 
-```{r, eval  = T, out.width = 650, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval  = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
 ```
@@ -331,7 +331,7 @@ knitr::include_graphics('Chap2_Figs/NavigationForm.PNG', dpi = 500)
 
 The Navigation Form can be set as the default form that appears when the Access database is first opened. This can be achieved by going to File | Options | Current Database, and setting the Navigation Form as the Display Form. You may also add a customized title and icon here as well. 
 
-```{r, eval = T, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '70%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap2_Figs/splash.PNG', dpi = 500)
 ```
