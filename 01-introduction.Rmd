@@ -28,7 +28,7 @@ In this chapter, we outline the R package **AMMonitor**, and provide guidance on
 
 As previously mentioned, **AMMonitor** was developed as a prototype for monitoring wildlife in sunny California, USA. Our prototype included the following elements (keyed to Figure 1.1).  
 
-```{r, eval = T, out.width = 700, out.height = 500, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '100%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap1_Figs/overview.png', dpi = 700)
 ```
@@ -105,7 +105,7 @@ ammCreateDirectories(amm.dir.name = "AMMonitor",
 
 If you are an RStudio user, you may wish to associate an R project with this particular folder so that you can launch this project by clicking on the .Rproj file, which opens R and sets the folder as your working directory. If you are not an RStudio user, use the `setwd()` function to set this main directory as your working directory whenever you use **AMMonitor**.
 
-```{r, eval = T, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, eval = T, out.width = '50%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap1_Figs/filestructure2.PNG', dpi = 500)
 ```

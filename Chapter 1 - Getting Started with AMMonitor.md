@@ -9,7 +9,7 @@ As previously mentioned, **AMMonitor** was developed as a prototype for
 monitoring wildlife in sunny California, USA. Our prototype included the
 following elements (keyed to Figure 1.1).
 
-<img src="Chap1_Figs/overview.png" width="700" height="500" style="display: block; margin: auto;" />
+<img src="Chap1_Figs/overview.png" width="100%" style="display: block; margin: auto auto auto 0;" />
 
 *Figure 1.1. A generalized overview of the AMMonitor approach.*
 
@@ -279,7 +279,7 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-<img src="Chap1_Figs/filestructure2.PNG" width="700" height="400" style="display: block; margin: auto;" />
+<img src="Chap1_Figs/filestructure2.PNG" width="50%" style="display: block; margin: auto auto auto 0;" />
 
 *Figure 1.2. Directory structure that is required by the AMMonitor
 approach.*
