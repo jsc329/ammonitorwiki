@@ -44,8 +44,8 @@ mitigate false positive and false negative detections, and 4) can take
 advantage of the vast and growing community of R analytics. We created
 AMMonitor for the U.S. Bureau of Land Management to monitor high
 priority wildlife across the southern California Solar Energy Zone
-(SEZ), including the Couch’s spadefoot toad (*Scaphiopus couchii*), kit
-fox (*Vuples macrotis*), coyote (*Canis latrans*), and a variety of bird
+(SEZ), including the Couch’s Spadefoot (*Scaphiopus couchii*), kit fox
+(*Vuples macrotis*), coyote (*Canis latrans*), and a variety of bird
 species, such as the Verdin (*Auriparus flaviceps*), Black-tailed
 Gnatcatcher (*Polioptila melanura*), and Eurasian Collared-dove
 (*Streptopelia decaocto*). The agency has established management
