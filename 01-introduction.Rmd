@@ -28,16 +28,14 @@ In this chapter, we outline the R package **AMMonitor**, and provide guidance on
 
 As previously mentioned, **AMMonitor** was developed as a prototype for monitoring wildlife in sunny California, USA. Our prototype included the following elements (keyed to Figure 1.1).  
 
----
 
-```{r, eval = T, out.width = '100%', echo = F, fig.align = 'left'}
+```{r, eval = T, out.width = '100%', echo = F, fig.align = 'left', out.extra='style="background-color:  #d3d3d3; padding:10px; display: inline-block;"'}
 
 knitr::include_graphics('Chap1_Figs/overview.png', dpi = 700)
 ```
 
 >*Figure 1.1. A generalized overview of the AMMonitor approach.*
 
----
 
 - Smart phone monitoring:  Each cell phone station is fully plug-and-play, with an Android cell phone and external microphone stored in a weather-proof box mounted to a pole (Figure 1.1a). Stations are remote and powered by solar panels. Each cell phone is connected to a Google account and receives its recording/photo schedule daily via a Google calendar connection when in data transmission mode. Audio files, photos, and performance logs are sent directly to a linked to a cloud-based account (e.g., Dropbox) daily, where they are then archived and analyzed using AMMonitor functions (Figure 1.1b). The recording/photo schedules may be optimized by AMMonitor functions based on previously logged detections (Figure 1.1e).
 
@@ -69,10 +67,10 @@ help("AMMonitor")
 help(package = "AMMonitor")
 ```
 
-The package itself contains many functions and built-in datasets, which we will introduce over the course of this book. Below, we display the first 10 functions and datasets as a tibble [@tibble]:
+The package itself contains many functions and built-in datasets, which we will introduce over the course of this book. Below, we display the functions and datasets:
 ```{r, eval = T}
 # List the functions in AMMonitor
-as.data.frame(ls("package:AMMonitor"))
+ls("package:AMMonitor")
 ```
 
 **AMMonitor** has a handful of package dependencies. These include:
@@ -109,16 +107,16 @@ ammCreateDirectories(amm.dir.name = "AMMonitor",
 
 If you are an RStudio user, you may wish to associate an R project with this particular folder so that you can launch this project by clicking on the .Rproj file, which opens R and sets the folder as your working directory. If you are not an RStudio user, use the `setwd()` function to set this main directory as your working directory whenever you use **AMMonitor**.
 
----
 
-```{r, eval = T, out.width = '75%', echo = F, fig.align = 'left'}
+
+```{r, eval = T, out.width = '75%', echo = F, fig.align = 'left', out.extra='style="background-color:  #d3d3d3; padding:10px; display: inline-block;"'}
 
 knitr::include_graphics('Chap1_Figs/filestructure2.PNG', dpi = 500)
 ```
 
 >*Figure 1.2.  Directory structure that is required by the AMMonitor approach.*
 
----
+
 
 Each (currently empty) directory will store specific types of information as introduced below:
 
