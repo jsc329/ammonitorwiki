@@ -21,9 +21,13 @@ monitoring wildlife in sunny California, USA. Our prototype included the
 following elements (keyed to Figure
 1.1).
 
+-----
+
 <img src="Chap1_Figs/overview.png" width="100%" style="display: block; margin: auto auto auto 0;" />
 
-*Figure 1.1. A generalized overview of the AMMonitor approach.*
+> *Figure 1.1. A generalized overview of the AMMonitor approach.*
+
+-----
 
   - Smart phone monitoring: Each cell phone station is fully
     plug-and-play, with an Android cell phone and external microphone
@@ -113,19 +117,19 @@ To begin, use the `install.packages()` function to install
 **AMMonitor**.
 
 ``` r
-library(devtools)
-devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
+> library(devtools)
+> devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
 ```
 
 The package overview and function index page can be accessed with the
 following code:
 
 ``` r
-# View package overview
-help("AMMonitor")
-
-# View function index page
-help(package = "AMMonitor")
+> # View package overview
+> help("AMMonitor")
+> 
+> # View function index page
+> help(package = "AMMonitor")
 ```
 
 The package itself contains many functions and built-in datasets, which
@@ -133,8 +137,8 @@ we will introduce over the course of this book. Below, we display the
 first 10 functions and datasets as a tibble \[6\]:
 
 ``` r
-# List the functions in AMMonitor
-as.data.frame(ls("package:AMMonitor"))
+> # List the functions in AMMonitor
+> as.data.frame(ls("package:AMMonitor"))
 ```
 
     # A tibble: 88 x 1
@@ -204,9 +208,9 @@ illustrates how to set up a primary directory called “AMMonitor” on the
 E drive in a directory called “Dropbox”.
 
 ``` r
-# Create the AMMonitor directory structure
-ammCreateDirectories(amm.dir.name = "AMMonitor", 
-                     file.path = "E:/Dropbox")
+> # Create the AMMonitor directory structure
+> ammCreateDirectories(amm.dir.name = "AMMonitor", 
++                      file.path = "E:/Dropbox")
 ```
 
 **Important note: Ensure that this folder is a top-level Dropbox
@@ -219,10 +223,14 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-<img src="Chap1_Figs/filestructure2.PNG" width="50%" style="display: block; margin: auto auto auto 0;" />
+-----
 
-*Figure 1.2. Directory structure that is required by the AMMonitor
-approach.*
+<img src="Chap1_Figs/filestructure2.PNG" width="75%" style="display: block; margin: auto auto auto 0;" />
+
+> *Figure 1.2. Directory structure that is required by the AMMonitor
+> approach.*
+
+-----
 
 Each (currently empty) directory will store specific types of
 information as introduced below:
@@ -289,35 +297,35 @@ separate model libraries. `amModelLib()` requires only a description
 field, but additional metadata may also be included:
 
 ``` r
-library(AMModels)
-
-# look at the AMModels help page
-# help("AMModels")
-
-# Create a  library called "activity"
-activity <- AMModels::amModelLib(description = "This library stores models that predict species activity patterns.")
-
-# Create a library called  classifiers 
-classifiers <- AMModels::amModelLib(description = "This library stores classification models (machine learning models) that can be used to predict the probability that a detected signal is from a target species.")
-
-# Create a  library called soundscape
-soundscape <- AMModels::amModelLib(description = "This library stores results of a soundscape analysis.")
-
-# Create a library called do_fp
-do_fp <- AMModels::amModelLib(description = "This library stores results of dynamic occupancy analyses that can handle false positive detections.")
-
-# Create a list of metadata to be added to each library
-info <- list(PI = 'Bilbo Baggins', 
-             Organization = 'Middle Earth Conservancy')
-
-# Add metadata to each library
-ammlInfo(activity) <- info
-ammlInfo(classifiers) <- info
-ammlInfo(soundscape) <- info
-ammlInfo(do_fp) <- info
-
-# Look at one of the libraries
-activity
+> library(AMModels)
+> 
+> # look at the AMModels help page
+> # help("AMModels")
+> 
+> # Create a  library called "activity"
+> activity <- AMModels::amModelLib(description = "This library stores models that predict species activity patterns.")
+> 
+> # Create a library called  classifiers 
+> classifiers <- AMModels::amModelLib(description = "This library stores classification models (machine learning models) that can be used to predict the probability that a detected signal is from a target species.")
+> 
+> # Create a  library called soundscape
+> soundscape <- AMModels::amModelLib(description = "This library stores results of a soundscape analysis.")
+> 
+> # Create a library called do_fp
+> do_fp <- AMModels::amModelLib(description = "This library stores results of dynamic occupancy analyses that can handle false positive detections.")
+> 
+> # Create a list of metadata to be added to each library
+> info <- list(PI = 'Bilbo Baggins', 
++              Organization = 'Middle Earth Conservancy')
+> 
+> # Add metadata to each library
+> ammlInfo(activity) <- info
+> ammlInfo(classifiers) <- info
+> ammlInfo(soundscape) <- info
+> ammlInfo(do_fp) <- info
+> 
+> # Look at one of the libraries
+> activity
 ```
 
 ``` 
@@ -355,11 +363,11 @@ library and model name, the function will be able to retrieve the model.
 For now, we simply need to save the libraries to our “ammls” directory.
 
 ``` r
-# Save the libraries to the AMMonitor amml folder
-saveRDS(object = activity, file = "ammls/activity.RDS")
-saveRDS(object = classifiers, file = "ammls/classifiers.RDS")
-saveRDS(object = soundscape, file = "ammls/soundscape.RDS")
-saveRDS(object = do_fp, file = "ammls/do_fp.RDS")
+> # Save the libraries to the AMMonitor amml folder
+> saveRDS(object = activity, file = "ammls/activity.RDS")
+> saveRDS(object = classifiers, file = "ammls/classifiers.RDS")
+> saveRDS(object = soundscape, file = "ammls/soundscape.RDS")
+> saveRDS(object = do_fp, file = "ammls/do_fp.RDS")
 ```
 
 Thoughout this book, we will add models to these libraries.
