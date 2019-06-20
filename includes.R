@@ -29,7 +29,7 @@ opts_knit$set(base.dir = './', out.format = 'markdown', fig_caption = TRUE)
 
 
 # set default chunk options
-opts_chunk$set(prompt = FALSE,
+opts_chunk$set(prompt = TRUE,
                warning = FALSE,
                echo = TRUE,
                eval = TRUE,

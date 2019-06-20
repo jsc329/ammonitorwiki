@@ -1,15 +1,21 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 3: The People Table"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
+    fig_height: 7
+    fig_width: 7
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "03-people.Rmd", output_format = "md_document", output_file = "Chapter 3 - The People Table.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -27,7 +33,6 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 unlink(db.path) 
 ```
 
-## Chapter 3: The People Table
 
 The **people** table in an **AMMonitor** SQLite database tracks information about all members involved in a monitoring program. In addition to providing a convenient contact book, this table is used to identify project members who annotate species presence or absence in an audio or image file, or who deploy monitoring equipment at a monitoring station. 
 
@@ -70,10 +75,10 @@ dbTables(db.path = db.path, table = "people")
 
 Lastly, *pk* indicates whether the field is a primary key. In the **people** table, *personID* is the primary key. This is the single, unique identifier that points to a specific person in the **people** table, and with very few exceptions should **never be changed or deleted** or the integrity of the data in other tables may be compromised.
 
-### "CRUD" operations in R
+# "CRUD" operations in R
 
 
-#### Reading records
+## Reading records
 
 To view the contents of an existing table using R, we have a few options. If the table is relatively small, we can use the RSQLite function `dbReadTable()` to read the entire table into R's memory, again specifying our **conx** object in the 'conn' argument, and "people" as the table of interest in the 'name' argument. 
 ```{r}
@@ -127,7 +132,7 @@ RSQLite::dbGetQuery(conn = conx, "SELECT *
 
 As with `dbReadTable()`, results returned from `dbGetQuery()` can be stored as a data.frame for further manipulation in R. 
 
-####  Creating records 
+##  Creating records 
 
 The simplest way to add records to the database is to generate a data.frame of records, and then use the `dbWriteTable()` function to insert them. We begin by creating two records, ensuring that all column names in the data.frame exactly match the field names in the database itself. We take care to ensure that the data types in the data.frame match those expected by the database. 
 
@@ -190,7 +195,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM people")
 ```
 
 
-#### Updating records
+## Updating records
 
 To modify information in an existing record, we use an UPDATE statement in `dbExecute()`, ensuring that any VARCHAR or TEXT values are enclosed in single quotes. Below, we pass a SQL statement that finds all records where *lastName* is equal to Baggins, and modify those phone numbers to become 1-800-shire:
 ```{r}
@@ -212,7 +217,7 @@ RSQLite::dbGetQuery(conn = conx, statement =
                  WHERE lastName = 'Baggins'")
 ```
 
-####  Deleting records 
+##  Deleting records 
 To delete specific records from a table, we again invoke the `dbExecute()` function, this time with a DELETE statement. Below, we combine the DELETE statement with a WHERE statement to delete any records containing 'Gimli' in the *firstName* column: 
 ```{r}
 # Remove the Gimli record
@@ -236,11 +241,11 @@ Finally, we disconnect from the database when finished with modifications:
 RSQLite::dbDisconnect(conx)
 ```
 
-###  "CRUD" operations in Access
+#  "CRUD" operations in Access
 
 Figure 3.1 shows the **AMMonitor** Access front end, which is a Navigation Form in Access (a form containing many forms). The top of the form consists of primary tabs (3.1a), including Program Mgt, Objectives, Species, Locations, Recordings, and Photos. When a primary tab is selected (e.g., the Program Mgt tab has been selected), the left menu displays a set of secondary tabs (3.1b). Thus, "People" fall under the realm of Program Mgt (3.1c). 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, out.width = '100%', echo = F, fig.align = 'left'}
 
 knitr::include_graphics('Chap3_Figs/NavigationForm.PNG', dpi = 500)
 ```
@@ -253,7 +258,7 @@ This table's fields are displayed in a form-like view above, and can alternative
 - **D**eleting records in the **AMMonitor** database should be done with caution, as described above. For this reason, we have not included a 'delete' button in the Access form. However, if you must delete records, you can highlight the records of interest in the linked tables, and then press Delete on your keyboard. **Always remember:  if you delete a record that is used downstream in other tables, it is up to you to determine how you will maintain the integrity of downstream data!**  Your monitoring program should establish standards for how the team will handle deletions. 
 
 
-###  Chapter Summary
+#  Chapter Summary
 
 This chapter was a brief introduction to the **people** table in an **AMMonitor** SQLite database. People play a vital role in the monitoring effort, deploying equipment, annotating files, creating templates, and more. You may interact with this table via R by using the `dbReadTable()`, `dbWriteTable()`, `dbGetQuery(), or dbExecute()` functions. We also introduced a few SQL commands that can be used to create, read, update, or delete records from a database table. Results from these functions are stored in R as dataframes, where you can manipulate the data further as you wish. You may also interact with this table via the Access front end.   
 
