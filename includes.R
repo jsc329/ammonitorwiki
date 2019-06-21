@@ -36,11 +36,10 @@ opts_chunk$set(prompt = TRUE,
                comment = NA,
                eval = TRUE,
                fig.align = "left",
-               fig.width = 7,
-               fig.height = 7, 
                dev = 'png',
                dev.args = list(type = "cairo"),
-               dpi = 700)
+               dpi = 700,
+               highlight = TRUE)
 
 
 # set the font for figures created in R
