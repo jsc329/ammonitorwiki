@@ -7,5 +7,5 @@
 - [Chapter 5:  Objectives](Chapter 5 - Objectives)
 - [Chapter 6:  The Locations and Spatials Tables](Chapter 6 - Spatials)
 - [Chapter 7:  The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
-- [Chapter 8:  The Temporals Table](Chapter 8 - Temporals)
+- [Chapter 8:  The Temporals Table](Chapter 8 - The Temporals Table)
 
