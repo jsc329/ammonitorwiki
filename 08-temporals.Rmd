@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 8: The Temporals Table"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "08-temporals.Rmd", output_format = "md_document", output_file = "Chapter 8 - Temporals.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -26,8 +30,6 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) 
 ```
-
-## Chapter 8: The Temporals Table
 
 The **temporals** table tracks temporal information -- such as weather conditions and sunrise times -- at monitoring locations. Temporal information can be used as covariates in an analysis. For example, species distribution patterns may be limited by a range of temperatures, species behavioral patterns may be affected by moon phase, and species detection (e.g., vocalization) may be a function of weather conditions. Additionally, temporal information can be leveraged to automatically set the recording or photo **schedule** (Chapter 9: Schedule) and to automatically update the **prioritization** table (Chapter 10). Thus, this chapter and the two that follow differ from previous chapters in that the **temporals**, **schedule**, and **prioritization** tables are all updated automatically. Instead of using SQLite syntax or an MS Access interface, you will use **AMMonitor** functions to directly populate these tables in R. 
 
@@ -64,12 +66,13 @@ Finally, to keep the demonstrations in this chapter concise, we will assume that
 
 ```{r}
 RSQLite::dbExecute(conn = conx, statement =  "UPDATE deployment 
-                                     SET dateRetrieved = '2016-01-20'
-                                     WHERE locationID NOT IN ('location@1', 'location@2', 'location@3')")
+                        SET dateRetrieved = '2016-01-20'
+                        WHERE locationID NOT IN 
+                        ('location@1', 'location@2', 'location@3')")
 ```
 This action returns a '47' to indicate that 47 records have applied the action of setting *dateRetrieved* equal to '2016-01-20'. Next, we will gather temporal data for the three active stations that remain.
 
-### The Temporals Table
+# The Temporals Table
 
 The **temporals** table tracks temporal data at monitoring locations. **AMMonitor** collects weather data via the [Dark Sky API](https://darksky.net/forecast/40.7127,-74.0059/us12/en); thus the data tracked in the **temporals** table roughly matches data returned from Dark Sky. We will cover the Dark Sky API later in this chapter.
 
@@ -102,7 +105,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "SELECT COUNT(*) FROM temporals;")
 
 As shown, there are no records in this table. We do not interact with the **temporals** table the way we have with previously introduced tables. Instead, we use the **AMMonitor** function `temporalsGet()` to acquire data and auto-populate this table.
 
-### The Dark Sky API
+# The Dark Sky API
 
 The function `temporalsGet()` uses the [Dark Sky API](https://darksky.net/) to collect weather data. Read more about Dark Sky's data sources [here](https://darksky.net/dev/docs/sources). `temporalsGet()` allows users to obtain weather information around the world (where available) either as 24-hour forecasts or as hourly historical observation data. Dark Sky draws from several weather data sources, aggregating them to provide forecasts for selected locations. Their data sources include the USA NCEP’s Canadian Meteorological Center ensemble model ('cmc'), the Environment and Climate Change Canada's Public Alert System ('ecpa'), U.S. NOAA's Global Forecast System ('gfs'), U.S. NOAA's High-Resolution Rapid Refresh Model ('hrrr'), the German Meteorological Office's icosahedral nonhydrostatic ('icon'), U.S. NOAA's Integrated Surface Database ('isd'), U.S. NOAA/ESRL's Meteorological Assimilation Data Ingest System ('madis'), U.S. NOAA's North American Mesoscale Model ('nam'), U.S. NOAA's Public Alert System ('nwspa'), and U.S. NOAA/NCEP's Short-Range Ensemble Forecast ('sref'), in addition to several non-North American [weather data and weather forecast sources](https://darksky.net/dev/docs/sources). Not all data sources will be available for all points on the globe. 
 
@@ -113,17 +116,31 @@ To use `temporalsGet()` for your project, you first need to set up a Dark Sky ac
 browseURL("https://darksky.net/dev/docs")
 ```
 
-```{r, out.width = 600, out.height = 400, echo = F}
+<kbd>
+
+```{r, out.width = '100%', echo = F}
 
 knitr::include_graphics('Chap8_Figs/darksky-signup.png', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 8.1. You will need to acquire a Dark Sky API in order to automatically populate the temporals table.*
+
+
 After providing an email address and a password, you will receive a Dark Sky key, which is a character string along the lines of 'd8db31f709f973f61x4d29afe0b67e93' (merely an example; it is not a real key). You should store this string in the **settings folder** as an RDS file with a name of your choice.
 
-```{r, out.width = 400, out.height = 300, echo = F}
+<kbd>
+
+```{r, out.width = '100%', echo = F}
 
 knitr::include_graphics('Chap8_Figs/directories.PNG', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 8.2. The "settings" directory is a reasonable place to store all AMMonitor keys.*
+
 
 The code below provides an example of how to save this key as an RDS file, assuming that your working directory is the main **AMMonitor** directory, with a folder called **settings** as a sub-directory:
 
@@ -134,7 +151,7 @@ saveRDS(object = 'd8db31f709f973f61x4d29afe0b67e93',
 
 The first 1000 API calls you make per day are free. In effect, if you are gathering forecasts for fewer than 1000 monitoring sites per day, you will pay nothing. If you wish to gather large amounts of historical data in one day, you will pay a fee.
 
-### Gathering forecast data for tomorrow
+# Gathering forecast data for tomorrow
 
 The first way to use `temporalsGet()` is to acquire 24-hour forecast data for tomorrow, which we demonstrate below. The function will output 24 records (one for each hour) for each actively monitored location (as specified in the **deployment** table). 
 
@@ -212,13 +229,14 @@ We can verify that our data have been added to the database by using `dbGetQuery
 
 ```{r, eval = TRUE}
 # Confirm that the data has been added to the database,
-# viewing a few selected columns and the first 10 records:
-RSQLite::dbGetQuery(conx, "SELECT locationID, type, date, time, dewpoint, pressure, moonPhase 
-           FROM temporals LIMIT 10") 
+# Viewing a few selected columns and the first 10 records:
+RSQLite::dbGetQuery(conx, "SELECT locationID, type, date, 
+                                  time, dewpoint, pressure, moonPhase 
+                          FROM temporals LIMIT 10") 
 ```
 
 
-### Gathering historical data
+# Gathering historical data
 
 The second way to use `temporalsGet()` is to gather historical data. This time, instead of setting the 'dates' argument to NULL, we input a few dates over which we want to gather data for our three sample database locations. We can add a character vector containing as many dates as we want to this argument, but all dates must be in the format YYYY-mm-dd. We are mindful that **the number of dates in the vector** times **the number of active monitoring locations in the deployment table** will give us the number of API calls `temporalsGet()` makes to the Dark Sky API. In this case, two dates times three active monitoring locations equals a total of six calls to the API.
 
@@ -254,7 +272,7 @@ temporals <- temporalsGet(db.path = db.path,
 ```
 
 
-### Querying the temporals table
+# Querying the temporals table
 
 Briefly, the **AMMonitor** function `qryTemporals()` is a simple convenience function that returns all data from the most recent date available in the **temporals** table. This function is used internally within functions covered in subsequent chapters, but may also be helpful for users who have already initialized a **conx** object connected to the database, and who wish to avoid constructing a SQLite query to view the most recent available **temporals** data.
 
@@ -277,22 +295,28 @@ RSQLite::dbDisconnect(conx)
 
 ```
 
-### Running temporalsGet() in a script
+# Running temporalsGet() in a script
 
-While the `temporalsGet()` function can be used to gather historical temporal data associated with monitoring sites, it may be employed on a daily basis to retrieve predicted temporal information (i.e., weather data for the next 24 hours). To ease the process of manually running this function each day, a monitoring team may automatically retrieve temporal data via a "script" sourced each morning. Scripts are described in detail in Chapter 20: Scripts. 
+While the `temporalsGet()` function can be used to gather historical temporal data associated with monitoring sites, it may be employed on a daily basis to retrieve predicted temporal information (i.e., weather data for the next 24 hours). To ease the process of manually running this function each day, a monitoring team may automatically retrieve temporal data via a "script" sourced each morning. Scripts are described in detail in Chapter 19: Scripts. 
 
 
-### The Temporals Table in Access
+# The Temporals Table in Access
 
 
 The temporals form in the Microsoft Access front end can be accessed as a secondary tab under the Locations tab. This is the first look at a "Hands Off!" form in Access. The **temporals** table is entirely populated by the `temporalsGet()` function, so it should not be edited by hand. 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap8_Figs/temporals.PNG', dpi = 500)
 ```
 
+</kbd>
 
-### Chapter Summary
+>*Figure 8.3. The temporals table is displayed in form view here.  It is located under the primary tab, Locations.*
+
+
+# Chapter Summary
 
 In this chapter, we reviewed how to use the **AMMonitor** `temporalsGet()` function to gather temporal and weather data for active study locations in a monitoring program. `temporalsGet()` operates via the Dark Sky API, and offers options for acquiring either forecast or historical data. This function also offers a 'db.insert' argument that allows users to test the function before adding data directly to the database's **temporals** table.  Temporal data will be used in future chapters, starting with Chapter 9.  
