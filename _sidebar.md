@@ -19,5 +19,6 @@
 * [Chapter 17: The Classifications Table](Chapter 17 - The Classifications Table)
 * [Chapter 18: Analyses](Chapter 18 - Analyses)
 * [Chapter 19: Scripts](Chapter 19 - Scripts)
+* [Chapter 20: Assessments](Chapter 20 - Assessment)
 
 

@@ -1,15 +1,22 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 20: Assessment"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "20-assessment.Rmd", output_format = "md_document", output_file = "Chapter 20 - Assessment.md")
+
+
+# cool emoji's at https://gist.github.com/rxaviers/7360908
+# https://github.com/montlikadani/TabList/wiki/Symbols
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -29,7 +36,7 @@ if (file.exists('db.path'))
 unlink(db.path) 
 ```
 
-## Chapter 20: Assessment
+
 
 In previous chapters, we explained how the **scores** and **classifications** tables in an **AMMonitor** database store a wealth of information about captured signals (see Chapter 17). We further illustrated just one (of many) potential analyses that use the **scores** and **classifications** data to address ecological questions (see Chapter 18). Many of the questions that a research team seeks to answer are linked to **objectives**, as introduced in Chapter 5, and we will now return to this important topic. 
 
@@ -53,7 +60,7 @@ Setting objectives can be difficult, and a discussion of how to set objectives i
 Here, we provide a single example of an assessment. We define an assessment as an analysis conducted to describe the state of affairs, i.e., the state of the ecological system with respect to the stated objective. We begin this chapter by reviewing the objectives we introduced in Chapter 5, focusing on an occupancy objective related to a small desert songbird, the Verdin (*Auriparus flaviceps*). Next, we use the dynamic false positive occupancy model from [@Miller2013] (which we ran in Chapter 18) to assess the current Verdin occupancy status. Finally, we illustrate some coding approaches (saved in a script) to compare the objective with the documented occupancy status, and log this assessement into the **assessments** table. 
 
 
-### Create the Chapter Database
+# Create the Chapter Database
 
 Here, we use `dbCreateSample()` to create a database called "Chap5.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For the demonstration purposes of this chapter, we will only pre-populate a few necessary tables.
 
@@ -84,7 +91,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
           )
 ```
 
-### The Objectives Table 
+# The Objectives Table 
 
 Let's start by reviewing the structure of the **objectives** table:
 
@@ -145,7 +152,7 @@ The final column of the **objectives** table (not shown) stores the objective na
 
 The purpose of a monitoring effort is to compare the state of the system (e.g., Verdin occupancy rate) with a stated objective (which could be a natural resources objective or a scientific objective). Now that we understand the Verdin objective, we can analyze our remotely captured data.
 
-### The Verdin Dynamic Occupancy Analysis
+# The Verdin Dynamic Occupancy Analysis
 
 In Chapter 18, we assumed the Middle Earth team analyzed the **AMMonitor** acoustic monitoring data with the package, **RPresence** [@RPresence, @Fiske2011] in a multi-season (dynamic) occupancy modeling framework.
 
@@ -218,9 +225,9 @@ str(sim.model, max.level = 1)
 
 **RPresence** returns a list of outputs, which is packed full of information about the analysis. We view some key outputs below, recalling that we simulated a 3 year study. The main "state" of the system parameters are:
 
-- psi = the initial occupancy pattern in year 1
-- gamma = the probability that an unoccuppied site in year *t*-1 becomes occupied in year *t* (i.e., the probability of colonization)
-- epsilon = the probability that an occupied in year *t*-1 becomes unoccupied in year *t* (i.e., the probability of extinction)
+- psi ($\psi$) = the initial occupancy pattern in year 1
+- gamma ($\gamma$) = the probability that an unoccuppied site in year *t*-1 becomes occupied in year *t* (i.e., the probability of colonization)
+- epsilon ($\epsilon$) = the probability that an occupied in year *t*-1 becomes unoccupied in year *t* (i.e., the probability of extinction)
 
 The remaining parameters are detection parameters, and provide information about the detection process.
 
@@ -255,7 +262,7 @@ saveRDS(do.fp.amml, 'ammls/do_fp.RDS')
 ```
 
 
-### Assessment of the Verdin Occupancy Objective
+# Assessment of the Verdin Occupancy Objective
 
 At this point, we have identified an objective for managing the Verdin, and analyzed our Verdin data with a dynamic occupancy false positive analysis. Now, we are equipped to assess the objective with respect to the analysis output. The code below can be written as an R script for reproducibility.
 
@@ -300,8 +307,80 @@ abline(h = objectives[1,'min'], col = 'red', lty = 'dashed')
 # add in the  max from the objective
 abline(h = objectives[1,'max'], col = 'red', lty = 'dashed')
 
+# Disconnect from the database
+# dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)
+
 ```
 
 In Year 1, our Verdin occupancy rate exceeded the 0.35-0.45 minimum and maximum range for our objective. This triggered adaptive management action by the Middle Earth monitoring team to nudge the Verdin occupancy rate downward into the desired range. In Year 2 and Year 3, we were within our goal range. In future years, if the downward trend in Verdin occupancy continues to the point that it places us outside the goal range, this would again trigger modification to the management action. 
 
+As can be seen, the Verdin occupancy rate has dipped below the stated objective in Year 3. 
+
+# Logging the Assessement
+
+To log this (simplified) assessment, we now add an entry to the database's **assessment** table. Let's first look at this table's schema:
+
+```{r}
+# Look at information about the assessments table
+dbTables(db.path = db.path, table = "assessments")
+
+```
+
+`dbTables()` returns a list of table schemas, in this case, a list of 1, which contains a data.frame of information about the **assessments** table. The *cid* column indicates the column (field) number; *name* indicates the column name; *type* conveys the data type for that column as contained within the underlying SQLite database. Thus, the **assessments** table consists of seven fields (columns): "assessmentID", "objectiveID", "scriptID", "amml", "modelName", and "notes", and "timestamp". Most fields store VARCHAR (variable character length) data, storing up to 255 characters. In R, VARCHAR data are of class "character". The *notnull* column indicates whether an entry is required for that field.  A column's *dflt_value* specifies the default value is used for that field (NA indicates no default value).  Lastly, *pk* indicates whether the field is a primary key. In the **assessments** table, *assessmentID* is the primary key, which is automatically assigned by SQLite and is an integer.  The *objectiveID* maps to an objectiveID in the **objectives** table, while the *scriptID* maps to a scriptID in the **scripts**  table. We verify these key relationships with the following code: 
+
+```{r, eval = T}
+# Return foreign key information for the scores table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(assessments);")
+```
+
+To register our assessment, we can use a SQLite command, or enter it by hand in the Access front-end (shown later).  Note that we don't need to specify the asssessmentID because it is automatically assigned by SQLite, and we do not need to specify the timestamp because SQLite will use the default value:
+
+```{r, eval = T}
+# Insert records to the assessment table.
+RSQLite::dbSendQuery(conn = conx, statement = 
+              "INSERT INTO assessments (objectiveID,
+                         amml,
+                         modelName,
+                         notes)
+              VALUES ('verd_occupancy',
+                      'do.fp',
+                      'verd_sim_occupany',
+                      'First assessment of verdin occupancy rate.');"
+          )
+
+# Check database to confirm new records were added
+RSQLite::dbGetQuery(conn = conx, 'SELECT * FROM assessments')
+```
+
+By registering our assessment, we now formally link a natural resource objective (verdin occupancy rate) with an analysis (the dynamic occupancy model with false positives).  Our model is stored in our AMModels library, where it can be recalled at any time.  And our script, if saved, can be registered in the scripts table if desired to preserve the elements of the analysis.  
+
+As this analysis shows, the simulated Verdin occupancy rate has dipped below the stated objective in Year 3. :worried: Consequently, this information may spur the Middle Earth team to initiate some management activities that may increase the occupancy rate back toward the intended level.  Normally, an occupancy model would include some covariates that can be manipulated by management activities. For example, if Verdin local extinction from a site is related to vegetation structure at the site, then management activities that alter vegetation structure can be used to reduce site extinction risk.  If Verdin colonization of empty sites is a function of patch connectivity, then management activities that promote connectivity can be used to increase colonization of empty sites. Both of these management activities can help push the Verdin toward's it intended objective. 
+
+# The Assessments Table in Access
+
+An assessment is stored directly with its objective, and thus can be located under the main tab called Objectives.   An assessment can be logged manually, or can be logged via a SQL command as we illustrated earlier.
+
+<kbd>
+
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
+
+knitr::include_graphics('Chap20_Figs/assessments.PNG', dpi = 500)
+```
+</kbd>
+
+>*Figure 20.1.  Assessments are stored with the objective they are intended to assess. Objectives can be be scientific objectives, or natural resource management objectives.*
+
+
+# Chapter Summary
+
+The "AM" portion of the AMMonitor package stands for "Adaptive Management".   Agencies are increasingly called upon to implement their natural resource management programs within an adaptive management (AM) framework.  Adaptive management is a key initiative for the U.S. Department of Interior, which offers the following definition [@Williams2012]:
+
+"Adaptive management promotes flexible decision making that can be adjusted in the face of uncertainties as outcomes from management actions and other events become better understood. Careful monitoring of these outcomes both advances scientific understanding and helps adjust policies or operations as part of an iterative learning process. Adaptive management also recognizes the importance of natural variability in contributing to ecological resilience and productivity. It is not a 'trial and error' process, but rather emphasizes learning while doing. Adaptive management does not represent an end in itself, but rather a means to more effective decisions and enhanced benefits. Its true measure is in how well it helps meet environmental, social, and economic goals, increases scientific knowledge, and reduces tensions among stakeholders."
+
+This chapter introduces the AMMonitor approach for linking natural resource objectives with a particular analysis. As monitoring progresses, the analyses themselves (models) provide the current state of a natural resource system, and our current understanding of the environmental factors that drive the system itself.  AMMonitor may help to enable this practice for monitoring programs that utilize remotely captured data.
+
+
+
+# Chapter References
 
