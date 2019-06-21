@@ -210,7 +210,10 @@ directory. If you are not an RStudio user, use the `setwd()` function to
 set this main directory as your working directory whenever you use
 **AMMonitor**.
 
-<img src="Chap1_Figs/filestructure2.PNG" width="75%" style="background-color:  #d3d3d3; padding:10px; display: inline-block;" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap1_Figs/filestructure2.PNG" width="90%" style="display: block; margin: auto;" />
+</kbd>
 
 > *Figure 1.2. Directory structure that is required by the AMMonitor
 > approach.*

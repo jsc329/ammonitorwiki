@@ -109,12 +109,13 @@ ammCreateDirectories(amm.dir.name = "AMMonitor",
 
 If you are an RStudio user, you may wish to associate an R project with this particular folder so that you can launch this project by clicking on the .Rproj file, which opens R and sets the folder as your working directory. If you are not an RStudio user, use the `setwd()` function to set this main directory as your working directory whenever you use **AMMonitor**.
 
+<kbd>
 
-
-```{r, eval = T, out.width = '75%', echo = F, fig.align = 'left', out.extra='style="background-color:  #d3d3d3; padding:10px; display: inline-block;"'}
+```{r, eval = T, out.width = '90%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap1_Figs/filestructure2.PNG', dpi = 500)
 ```
+</kbd>
 
 >*Figure 1.2.  Directory structure that is required by the AMMonitor approach.*
 
