@@ -16,3 +16,4 @@
 * [Chapter 14: The Annotations Table](Chapter 14 - The Annotations Table)
 * [Chapter 15: The Templates Table](Chapter 15 - The Templates Table)
 * [Chapter 16: The Scores Table](Chapter 16 - The Scores Table)
+* [Chapter 17: The Classifications Table](Chapter 17 - The Classifications Table)
