@@ -96,10 +96,10 @@ This history has four primary periods (years, in this case), and three secondary
 
 With dynamic models, a large number of sites are typically surveyed through time. In addition to the encounter histories themselves, researchers may collect a number of site-level covariates (such as the patch size associated with each monitoring location), and survey-level covariates (such as prevailing weather conditions during a given survey). The encounter histories, along with site- and survey-level covariates, are inputs to the dynamic occupancy model. For outputs, the model returns estimates of the following parameters (along with estimates of the influence of covariates on these parameters):
 
-- psi (\psi):  the probability a site is occupied.
+- psi ($\psi$):  the probability a site is occupied.
 - p: the probability a species will be detected during a survey, given presence.
-- epsilon (\epsilon): the probability an occupied site will go locally extinct in the next primary period.
-- gamma (\gamma): the probability an unoccupied site will be locally colonized in the next primary period.
+- epsilon ($\epsilon$): the probability an occupied site will go locally extinct in the next primary period.
+- gamma ($\gamma$): the probability an unoccupied site will be locally colonized in the next primary period.
 
 Thus, the dynamic occupancy framework is an ideal framework for testing metapopulation theory.  Now that's cool!  :sunglasses:
 

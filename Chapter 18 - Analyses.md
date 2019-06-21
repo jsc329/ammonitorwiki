@@ -80,12 +80,12 @@ covariates, are inputs to the dynamic occupancy model. For outputs, the
 model returns estimates of the following parameters (along with
 estimates of the influence of covariates on these parameters):
 
--   psi (): the probability a site is occupied.
+-   psi (*ψ*): the probability a site is occupied.
 -   p: the probability a species will be detected during a survey, given
     presence.
--   epsilon (): the probability an occupied site will go locally extinct
-    in the next primary period.
--   gamma (): the probability an unoccupied site will be locally
+-   epsilon (*ϵ*): the probability an occupied site will go locally
+    extinct in the next primary period.
+-   gamma (*γ*): the probability an unoccupied site will be locally
     colonized in the next primary period.
 
 Thus, the dynamic occupancy framework is an ideal framework for testing
