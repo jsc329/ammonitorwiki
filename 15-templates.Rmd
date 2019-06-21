@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 15: The Templates Table"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "13-soundscape.Rmd", output_format = "md_document", output_file = "Chapter 15 - The Templates Table.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -28,8 +32,6 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
-
-## Chapter 15: The Templates Table
 
 In an acoustic monitoring context, a **template** is an example of a type of sound a researcher hopes to automatically identify using the computer. It might be a single identifying note, a phrase of multiple notes, and/or a breeding song. If a focal species produces multiple sound types, the user might create multiple templates. 
 
@@ -60,7 +62,7 @@ After that, we send a SQL statement that will enforce foreign key constraints.
 RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
-### The Templates Table
+# The Templates Table
 
 We begin by looking at the **templates** table. We can use `dbTables()` to view the table's field summary:
 
@@ -124,7 +126,7 @@ plot(t1)
 
 
 
-### Creating a template
+# Creating a template
 
 For template creation, **AMMonitor** uses functions from the package [**monitoR**](https://cran.r-project.org/web/packages/monitoR/index.html) [@monitoR, @Katz2016]. The **monitoR** [Quickstart Guide PDF](https://cran.r-project.org/web/packages/monitoR/vignettes/monitoR_QuickStart.pdf) provides instructions on how to create templates. Below, we summarize the key points.
 
@@ -187,13 +189,13 @@ verd5 <- monitoR::makeCorTemplate(
 ```
 
 
-### Testing Templates
+# Testing Templates
 
 > TD: Template Sensitivity/Specificity Score Threshold function. Narrative here. This function would take a template as input. It would look at annotated records. It would produce the sens/spec curves in the form of a model (an output from the sensitivy or specificificty function in caret?) Funciton inputs: templateID, db, amml (will add to teh model library if provided; may need a model name though or it could be auto-created). 
 
 >
 
-### Saving Templates
+# Saving Templates
 
 When we are satisifed with our template(s), we can insert them into the database's **templates** table using `templatesInsert()`, which first takes our **db.path** object as input to the 'db.path' argument. Next, the argument 'template.list' requires an object of class **corTemplateList** or **binTemplateList**. The **monitoR** template system is designed to work with multiple templates, so even a single template is considered either a corTemplateList or a binTemplateList. In the 'template.list' argument, we may input a single template object, such as **verd4**. Alternatively, if we wish to insert several templates at once, we can wrap the **monitoR** function `combineCorTemplates()` around multiple corTemplateList objects and send all of them to `templatesInsert()`, which we do below. Lastly, into the 'libraryID' argument, we pass a character vector of the libraryIDs we want to associate with each template, which should be ordered following the templates in 'template.list'. Below, both templates have the libraryID 'verd_2notes'. 
 
@@ -236,27 +238,38 @@ unserialized.templates
 
 Creating good templates requires testing and evaluation, but they are critical for searching through recordings collected by the monitoring team in pursuit of species presence. This process is illustrated in Chapter 16.
 
-### The Templates Table in Access
+# The Templates Table in Access
 
 The templates table is a secondary tab nestled under the primary Species tab in the Access Navigation Form. First, we view the Species tab:
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap15_Figs/species.PNG', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 15.1.  The templates table is associated with a target species. Templates can also be made for human-made sounds.  Unique target signals issued by a given species are identified in the library table.  The actual template is stored in the templates table.*
 
 Here, each species is featured (verd is record 9 of 9, as shown at the bottom of the form). This species has three signals of interest ('verd_2notes', 'verd_3notes', and 'verd_other') logged in the signal library.
 
 Clicking on the Templates secondary tab, we see that two templates exist for the 'verd_2notes' signal (both are objects of "corTemplateList"), and one was created for the 'verd_other' signal (an object of "binTemplateList"). 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap15_Figs/templates.PNG', dpi = 500)
 ```
 
+</kbd>
 
-### Chapter summary
+>*Figure 15.2.  The template table tracks a template to a given library signal. The template itself is stored in the database as a 'blob'.*
+
+# Chapter summary
 
 We use templates to search for target signals issued by a species of monitoring interest. Currently, **AMMonitor** supports templates of class corTemplateList or binTemplateList in R, which are produced by the R package **monitoR** using the functions `makeCorTemplate()` and `makeBinTemplate()`, respectively [@monitoR]. The function `templatesInsert()` ensures that templates are serialized and stored as BLOBs in the **templates** table of an **AMMonitor** database, while `templatesUnserialize()` extracts templates from the database and returns them in their proper forms for subsequent analysis in R.
 
-### Chapter References
+# Chapter References
