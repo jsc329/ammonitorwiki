@@ -73,7 +73,6 @@ To illustrate the process of soundscape analysis with **AMMonitor**, we will use
 
 Below, we create sample data for a few necessary tables using `dbCreateSample()`. We will auto-populate the **soundscape** table with **AMMonitor** functions later on in the chapter:
 
-<font color='blue'>
 
 ```{r}
 # Load AMMonitor
@@ -86,7 +85,7 @@ dbCreateSample(db.name = "Chap13.sqlite",
                            'equipment', 'locations',
                            'accounts', 'schedule', 'recordings'))
 ```
-</font>
+
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
 ```{r}
