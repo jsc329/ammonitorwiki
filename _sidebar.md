@@ -13,5 +13,5 @@
 * [Chapter 11:  The Recordings Table](Chapter 11 - The Recordings Table)
 * [Chapter 12:  The Photos Table](Chapter 12 - The Photos Table)
 * [Chapter 13:  The Soundscape Table](Chapter 13 - The Soundscape Table)
-* [Chapter 14:  The Annotations Table](The Annotations Table)
+* [Chapter 14:  The Annotations Table](Chapter 14 - The Annotations Table)
 
