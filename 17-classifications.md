@@ -992,10 +992,10 @@ Below, we view classifications associated with scoreID == 1:
     # A tibble: 4 x 6
       scoreID amml        classifier modelName                     modelProbability timestamp          
         <int> <chr>       <chr>      <chr>                                    <dbl> <chr>              
-    1       1 classifiers glmnet     verd1_0.2_libraryID_glmnet              0.170  2019-06-21 13:03:48
-    2       1 classifiers svmRadial  verd1_0.2_libraryID_svmRadial           0.616  2019-06-21 13:03:48
-    3       1 classifiers svmLinear  verd1_0.2_libraryID_svmLinear           0.0853 2019-06-21 13:03:48
-    4       1 classifiers rf         verd1_0.2_libraryID_rf                  0.33   2019-06-21 13:03:48
+    1       1 classifiers glmnet     verd1_0.2_libraryID_glmnet              0.170  2019-06-21 13:07:11
+    2       1 classifiers svmRadial  verd1_0.2_libraryID_svmRadial           0.616  2019-06-21 13:07:11
+    3       1 classifiers svmLinear  verd1_0.2_libraryID_svmLinear           0.0853 2019-06-21 13:07:11
+    4       1 classifiers rf         verd1_0.2_libraryID_rf                  0.33   2019-06-21 13:07:11
 
 Note that these data are identical to those we examined at the start of
 this chapter. We store the *scoreID* and the *amml* name associated with

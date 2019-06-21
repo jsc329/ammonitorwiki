@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "16-scores.Rmd", output_format = "md_document", output_file = "Chapter 17 - The Classifications Table.md")
+# rmarkdown::render(input = "17-classifications.Rmd", output_format = "md_document", output_file = "Chapter 17 - The Classifications Table.md")
 
 ```
 
