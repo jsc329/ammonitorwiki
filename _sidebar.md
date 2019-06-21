@@ -8,4 +8,5 @@
 - [Chapter 6:  The Locations and Spatials Tables](Chapter 6 - Spatials)
 - [Chapter 7:  The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
 - [Chapter 8:  The Temporals Table](Chapter 8 - The Temporals Table)
+- [Chapter 9:  The Schedules Table](Chapter 9 - The Schedule Table)
 
