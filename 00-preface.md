@@ -69,13 +69,16 @@ can be stored, and resulting outputs can be compared with research and
 monitoring objectives to track progress toward management goals. The
 final results are assessed with respect to hypotheses or objectives.
 Thus, the **AMMonitor** package places the monitoring data into an
-**a**daptive **m**anagement framework
-\[19\].
+**a**daptive **m**anagement framework \[19\].
 
-<img src="Chap0_Figs/fig1.png" width="400" height="400" style="display: block; margin: auto;" />
+<kbd>
 
-*Figure 0.1. The general AMMonitor framework begins with basic research
-hypotheses or applied resource management objectives (boxed).*
+<img src="Chap0_Figs/fig1.png" width="100%" style="display: block; margin: auto;" />
+</kbd>
+
+> *Figure 0.1. The general AMMonitor framework begins with basic
+> research hypotheses or applied resource management objectives
+> (boxed).*
 
 The **AMMonitor** approach was developed with a prototype of 20 AMU
 units (smartphones) \[20–22\]. Since then, we have added the capacity to
@@ -158,7 +161,7 @@ surveys to ecological processes. Journal of Applied Ecology. 2015;52:
 
 <div id="ref-Hobson2002">
 
-8\. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
+8\. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg SL.
 Acoustic surveys of birds using electronic recordings: New potential
 from an omnidirectional microphone system. Wildlife Society Bulletin.
 2002;30: 709–720. 
@@ -260,7 +263,7 @@ doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.160530
 
 <div id="ref-BalanticOccupancy">
 
-21\. Balantic C, Donovan T. Dynamic wildlife occupancy models using
+21\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
@@ -268,7 +271,7 @@ e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
 <div id="ref-BalanticTemporal">
 
-22\. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+22\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution. 
 
