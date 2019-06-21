@@ -342,6 +342,9 @@ Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
     Move in progress, waiting 10 seconds for server to catch up...
 
+    ...Move still in progress, waiting 10 more seconds...
+    ...Move still in progress, waiting 10 more seconds...
+
     Move status: complete
 
     Added 4 new records to recordings table.
@@ -352,10 +355,10 @@ Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
     3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
        format           timestamp
-    1:    wav 2019-06-21 14:13:09
-    2:    wav 2019-06-21 14:13:09
-    3:    wav 2019-06-21 14:13:09
-    4:    wav 2019-06-21 14:13:09
+    1:    wav 2019-06-21 14:19:54
+    2:    wav 2019-06-21 14:19:54
+    3:    wav 2019-06-21 14:19:54
+    4:    wav 2019-06-21 14:19:54
 
     > # Error checking here
     > 
@@ -388,10 +391,10 @@ the database once again to continue using it!
     3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
       format           timestamp
-    1    wav 2019-06-21 14:13:09
-    2    wav 2019-06-21 14:13:09
-    3    wav 2019-06-21 14:13:09
-    4    wav 2019-06-21 14:13:09
+    1    wav 2019-06-21 14:19:54
+    2    wav 2019-06-21 14:19:54
+    3    wav 2019-06-21 14:19:54
+    4    wav 2019-06-21 14:19:54
 
 Thus, we’ve demonstrated that the “fetchRecordings.R” script moves
 recordings from the ‘recording\_drop’ folder to the ‘recordings’ folder,
@@ -772,7 +775,8 @@ daily basis to collect incoming recordings and log their metadata in the
 inputs to function arguments through time to facilitate reproducibility
 and sound record-keeping.
 
-### Chapter References
+Chapter References
+==================
 
 1. Villanueva-Rivera LJ, Pijanowski BC. Soundecology: Soundscape ecology
 \[Internet\]. 2018. Available:

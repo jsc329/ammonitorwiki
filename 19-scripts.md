@@ -15,7 +15,7 @@ Chapter 19: Scripts and scriptArgs
   - [The scripts and scriptArgs table in
     Access](#the-scripts-and-scriptargs-table-in-access)
   - [Chapter Summary](#chapter-summary)
-      - [Chapter References](#chapter-references)
+  - [Chapter References](#chapter-references)
 
 As you’ve worked through the various chapters describing the
 **AMMonitor** approach, you’ve noticed that many tables, such as
@@ -99,8 +99,6 @@ To illustrate the use of scripts, along with the **scripts** and
 **scriptArgs** tables in **AMMonitor**, we create sample data for a few
 necessary tables using `dbCreateSample()`.
 
-<div class="panel panel-gitlab-orange">
-
 ``` r
 > # Load AMMonitor
 > library(AMMonitor)
@@ -123,8 +121,6 @@ necessary tables using `dbCreateSample()`.
 Sample data have been generated for the following tables: 
 accounts, people, scripts, equipment, locations, deployment, scriptArgs
 ```
-
-</div>
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we
@@ -851,7 +847,7 @@ daily basis to collect incoming recordings and log their metadata in the
 inputs to function arguments through time to facilitate reproducibility
 and sound record-keeping.
 
-### Chapter References
+# Chapter References
 
 <div id="refs" class="references">
 

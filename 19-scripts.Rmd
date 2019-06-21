@@ -98,7 +98,7 @@ We will illustrate the approach with two scripts, both of which would be run dai
 
 To illustrate the use of scripts, along with the **scripts** and **scriptArgs** tables in **AMMonitor**, we create sample data for a few necessary tables using `dbCreateSample()`. 
 
-<div class="panel panel-gitlab-orange">
+
 ```{r}
 # Load AMMonitor
 library(AMMonitor)
@@ -112,7 +112,7 @@ dbCreateSample(db.name = "Chap19.sqlite",
                            'scriptArgs'))
 ```
 
-</div>
+
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
 ```{r}
@@ -435,4 +435,4 @@ This chapter covered the **scripts** and **scriptArgs** tables, which provide a 
 
 
 
-### Chapter References
+# Chapter References
