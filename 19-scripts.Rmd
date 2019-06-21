@@ -1,15 +1,22 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 19: Scripts and scriptArgs"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "19-scripts.Rmd", output_format = "md_document", output_file = "Chapter 19 - Scripts.md")
+
+
+# cool emoji's at https://gist.github.com/rxaviers/7360908
+# https://github.com/montlikadani/TabList/wiki/Symbols
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -55,8 +62,6 @@ if (length(rec.files) > 0) {
 ```
 
 
-## Chapter 19: Scripts and scriptArgs
-
 As you've worked through the various chapters describing the **AMMonitor** approach, you've noticed that many tables, such as **people**, **objectives**, **equipment**, **deployment**, **acounts**, and **locations**, are filled in manually by the monitoring team. Entries in these tables can be manipulated in R or via the Access front-end. However, several tables are filled in exclusively by **AMMonitor** functions. For example, the **temporals** table is populated by the function, `temporalsGet()`, which uses the Dark Sky API to retrieve either forecast or historical weather conditions for monitoring locations. 
 
 Other such examples in the **AMMonitor** workflow include:
@@ -74,12 +79,16 @@ A challenge with scripts, however, is that the arguments may change over time. F
 
 **AMMonitor**'s solution to the problem of changing argument inputs is to permit the use of scripts that carry out daily tasks, but to store the script inputs in two tables: the **scripts** table (which simply identifies a script and its purpose), and the **scriptArgs** table. The scripts themselves should be stored in the "scripts" directory of the **AMMonitor** file structure:
 
+<kbd>
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap19_Figs/directory.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 19.1.  Scripts should be stored in the scripts directory.*
 
 We will illustrate the approach with two scripts, both of which would be run daily (say, first thing each morning).
 
@@ -89,6 +98,7 @@ We will illustrate the approach with two scripts, both of which would be run dai
 
 To illustrate the use of scripts, along with the **scripts** and **scriptArgs** tables in **AMMonitor**, we create sample data for a few necessary tables using `dbCreateSample()`. 
 
+<div class="panel panel-gitlab-orange">
 ```{r}
 # Load AMMonitor
 library(AMMonitor)
@@ -101,6 +111,8 @@ dbCreateSample(db.name = "Chap19.sqlite",
                            'accounts', 'scripts', 
                            'scriptArgs'))
 ```
+
+</div>
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
 ```{r}
@@ -117,7 +129,7 @@ After that, we send a SQL statement that will enforce foreign key constraints.
 dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
-### Scripts
+# Scripts
 
 Before we begin our analysis, we view the schema of the **scripts** table, which contains just two fields:
 
@@ -147,7 +159,7 @@ The **scriptArgs** table has 6 fields. The primary key of this table is a compos
 
 This table stores all inputs to a given script, identifying each function, each function argument, and each argument value. The *date* column allows the tracking of changes in these values, thus enabling reproducibility in the **AMMonitor** system. 
 
-### The fetchRecordings.R Script
+# The fetchRecordings.R Script
 
 The fetchRecordings.R script will use `dropboxMoveBatch()` to move recordings from the **recording_drop** folder to the **recordings** folder, and at the same time enter metadata to the **recordings** table. As such, we will first need to determine the inputs required by `dropboxMoveBatch()`.
 
@@ -199,7 +211,7 @@ Let's assume that these recordings were collected and deposited to the 'recordin
 The actual fetchRecordings.R script may look something like the code chunk below. We see the familiar database connection, foreign key constraints, and a SQLite query that retrieves the most recent arguments stored in the **scriptArgs** table. Note that the example below also returns some intermediate R outputs, which are not necessary in the script itself, but are present to illustrate what the script is actually doing. Also note that we have commented out the database connection and disconnection as we are already connected to this chapter's database.
 
 
-#### Start Script __________________
+## Start Script __________________
 
 ```{r, eval = T}
 # fetchRecordings script
@@ -268,7 +280,7 @@ cat("Recordings have been moved from recording_drop to the recordings directory.
 ```
 
 
-#### End Script ___________________
+## End Script ___________________
 
 This ends the script code; this script should be saved and stored in the 'scripts' directory, with inputs that point to the monitoring program's database. When sourced, the code will be executed with inputs stored in the **scriptArgs** table.
 
@@ -282,7 +294,7 @@ dbGetQuery(conn = conx, statement = "SELECT * FROM recordings;")
 
 Thus, we've demonstrated that the "fetchRecordings.R” script moves recordings from the 'recording_drop' folder to the 'recordings' folder, and at the same time enters metadata to the **recordings** table. Notice that the column *timestamp* automatically registers the date on which the function was run; we will make use of this in our next example.
 
-### The getSoundscape.R Script
+# The getSoundscape.R Script
 
 Our second example will use a script to automatically process the soundscape data from the *new* recordings logged in the **recordings** table. We now have four recordings to process. Before embarking on a new script, we look at the argument inputs required by **AMMonitor**'s `soundscape()` function:
 
@@ -305,7 +317,7 @@ Here, we can see that this script will use just one function, and that is AMMoni
 
 The getSoundscape.R script will look similar to the fetchRecordings.R script, in that we need to connect to a database, query the **scriptArgs** table to retrieve the script inputs, and then add some code that acquires soundscape data. Once again, the script below is showing some intermediate R outputs that normally would not be in the script itself (as in the first example, the intermediates R outputs are present to show what the script is actually doing). Also note that we have commented out the database connection and disconnection as we are already connected to this chapter's database.
 
-#### Start Script __________________
+## Start Script __________________
 
 ```{r, eval = T}
 # fetchRecordings script
@@ -383,7 +395,7 @@ cat("Soundscape data have been processed and logged into the soundscape table of
 
 ```
 
-#### End Script ___________________
+## End Script ___________________
 
 After running this script, we should see that the files have been analyzed, with outputs placed in the database's **soundscape** table. 
 
@@ -402,16 +414,22 @@ We envision that each monitoring team will have a unique workflow, and the code 
 
 
 
-### The scripts and scriptArgs table in Access
+# The scripts and scriptArgs table in Access
 
 The scripts table is a secondary tab in the Access Navigation Form, nestled under the 'Mgt' primary tab. Here's a look at the Scripts tab, where you can see that 2 records are stored in the sample database's **scripts** table. A selected script's corresponding **scriptArgs** information is listed as a subtable beneath it. These tables can be sorted in a number of ways in Access to highlight arguments that will be passed to the script.
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap19_Figs/scripts.PNG', dpi = 500)
 ```
 
-### Chapter Summary
+</kbd>
+
+>*Figure 19.1.  The scripts table stores the file names of scripts (.R files stored in the scripts directory), and stores all inputs to the script as a script argument.*
+
+# Chapter Summary
 
 This chapter covered the **scripts** and **scriptArgs** tables, which provide a highly customizable means for monitoring programs to automate repeated monitoring tasks, such as running `dropboxMoveBatch()` on a daily basis to collect incoming recordings and log their metadata in the **recordings** table. The **scripts** and **scriptArgs** tables track inputs to function arguments through time to facilitate reproducibility and sound record-keeping. 
 

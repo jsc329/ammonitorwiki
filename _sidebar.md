@@ -18,3 +18,6 @@
 * [Chapter 16: The Scores Table](Chapter 16 - The Scores Table)
 * [Chapter 17: The Classifications Table](Chapter 17 - The Classifications Table)
 * [Chapter 18: Analyses](Chapter 18 - Analyses)
+* [Chapter 19: Scripts](Chapter 19 - Scripts)
+
+
