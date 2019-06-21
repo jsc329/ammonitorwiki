@@ -196,8 +196,9 @@ Next, we use `dbGetQuery()` to view the current contents of the
     > RSQLite::dbGetQuery(conn = conx, 
     +                     statement = "SELECT * FROM annotations;")
 
-     [1] annotationID recordingID  photoID      listID       speciesID    libraryID    xMin         xMax         yMin         yMax         wl          
-    [12] ovlp         wn           annotation   personID     timestamp   
+     [1] annotationID recordingID  photoID      listID       speciesID    libraryID   
+     [7] xMin         xMax         yMin         yMax         wl           ovlp        
+    [13] wn           annotation   personID     timestamp   
     <0 rows> (or 0-length row.names)
 
 As shown, this table has no records. Our goal is to add annotations to
@@ -403,38 +404,54 @@ quitting, `annotateRecording()` returns a data.table as below:
     > # Look at the returned annotations
     > subset(annos, select = -timestamp)
 
-        annotationID                       recordingID photoID               listID speciesID      libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn
-     1:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 13.056 14.680 3.6422 5.7594 512    0 hanning
-     2:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 16.487 18.365 3.6951 5.4947 512    0 hanning
-     3:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 19.633 21.155 3.9598 5.0713 512    0 hanning
-     4:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 23.287 24.606 4.0127 5.1242 512    0 hanning
-     5:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 27.853 29.223 3.8010 5.5476 512    0 hanning
-     6:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 32.553 33.821 3.9069 5.2301 512    0 hanning
-     7:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 36.866 38.337 3.6951 5.1771 512    0 hanning
-     8:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes  3.813  4.777 3.7481 4.9125 512    0 hanning
-     9:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 24.033 25.047 3.5364 4.7537 512    0 hanning
-    10:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 28.669 29.354 3.5364 4.5420 512    0 hanning
-    11:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 31.914 32.674 3.4305 4.5949 512    0 hanning
-    12:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 35.307 36.296 3.4834 4.5420 512    0 hanning
-    13:           NA midEarth4_2016-03-26_07-00-00.wav    <NA> Middle Earth Mammals    coyote coyote_general  2.767 18.502 1.4721 3.0600 512    0 hanning
-    14:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other  2.564 10.584 3.5364 6.4474 512    0 hanning
-    15:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other 23.769 41.187 3.1129 5.7594 512    0 hanning
-                   annotation personID
-     1: 58,0a,00,00,00,03,... bbaggins
-     2: 58,0a,00,00,00,03,... bbaggins
-     3: 58,0a,00,00,00,03,... bbaggins
-     4: 58,0a,00,00,00,03,... bbaggins
-     5: 58,0a,00,00,00,03,... bbaggins
-     6: 58,0a,00,00,00,03,... bbaggins
-     7: 58,0a,00,00,00,03,... bbaggins
-     8: 58,0a,00,00,00,03,... bbaggins
-     9: 58,0a,00,00,00,03,... bbaggins
-    10: 58,0a,00,00,00,03,... bbaggins
-    11: 58,0a,00,00,00,03,... bbaggins
-    12: 58,0a,00,00,00,03,... bbaggins
-    13: 58,0a,00,00,00,03,... fbaggins
-    14: 58,0a,00,00,00,03,... fbaggins
-    15: 58,0a,00,00,00,03,... fbaggins
+        annotationID                       recordingID photoID               listID speciesID
+     1:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     2:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     3:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     4:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     5:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     6:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     7:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd
+     8:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd
+     9:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd
+    10:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd
+    11:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd
+    12:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd
+    13:           NA midEarth4_2016-03-26_07-00-00.wav    <NA> Middle Earth Mammals    coyote
+    14:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd
+    15:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd
+             libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn            annotation
+     1:    verd_3notes 13.056 14.680 3.6422 5.7594 512    0 hanning 58,0a,00,00,00,03,...
+     2:    verd_3notes 16.487 18.365 3.6951 5.4947 512    0 hanning 58,0a,00,00,00,03,...
+     3:    verd_2notes 19.633 21.155 3.9598 5.0713 512    0 hanning 58,0a,00,00,00,03,...
+     4:    verd_3notes 23.287 24.606 4.0127 5.1242 512    0 hanning 58,0a,00,00,00,03,...
+     5:    verd_3notes 27.853 29.223 3.8010 5.5476 512    0 hanning 58,0a,00,00,00,03,...
+     6:    verd_2notes 32.553 33.821 3.9069 5.2301 512    0 hanning 58,0a,00,00,00,03,...
+     7:    verd_2notes 36.866 38.337 3.6951 5.1771 512    0 hanning 58,0a,00,00,00,03,...
+     8:    verd_3notes  3.813  4.777 3.7481 4.9125 512    0 hanning 58,0a,00,00,00,03,...
+     9:    verd_3notes 24.033 25.047 3.5364 4.7537 512    0 hanning 58,0a,00,00,00,03,...
+    10:    verd_2notes 28.669 29.354 3.5364 4.5420 512    0 hanning 58,0a,00,00,00,03,...
+    11:    verd_2notes 31.914 32.674 3.4305 4.5949 512    0 hanning 58,0a,00,00,00,03,...
+    12:    verd_3notes 35.307 36.296 3.4834 4.5420 512    0 hanning 58,0a,00,00,00,03,...
+    13: coyote_general  2.767 18.502 1.4721 3.0600 512    0 hanning 58,0a,00,00,00,03,...
+    14:     verd_other  2.564 10.584 3.5364 6.4474 512    0 hanning 58,0a,00,00,00,03,...
+    15:     verd_other 23.769 41.187 3.1129 5.7594 512    0 hanning 58,0a,00,00,00,03,...
+        personID
+     1: bbaggins
+     2: bbaggins
+     3: bbaggins
+     4: bbaggins
+     5: bbaggins
+     6: bbaggins
+     7: bbaggins
+     8: bbaggins
+     9: bbaggins
+    10: bbaggins
+    11: bbaggins
+    12: bbaggins
+    13: fbaggins
+    14: fbaggins
+    15: fbaggins
 
 Annotations are returned in a table formatted according to the
 **annotations** table of the database. These records could have been
