@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 4: The Species, Library, and Lists Tables"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter 4 - Species and Library.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -26,8 +30,6 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) # may or may not be needed
 ```
-
-## Chapter 4: The Species, Library, and Lists Tables
 
 This chapter covers the **species**, **library**, **lists**, and **listItems** tables in the **AMMonitor** database. The **species** and **library** tables can be used to track groups of target monitoring species, as well as the sounds by which they are detected and monitored. The **lists** and **listItems** tables allow users to create lists of items, which can be used to enhance the integrity of the database. 
 
@@ -61,7 +63,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
 The output of this query indicates that 0 rows of data were returned or changed, but that the foreign key constraint has been enabled. We will return to this topic below.
 
 
-### The Species Table in R
+# The Species Table in R
 The **species** table stores all species of monitoring interest, with the option to link each species' Integrated Taxonomic Information System [ITIS](https://www.itis.gov/) number for standardized species tracking. 
 
 We invoke `dbTables()` to see the schema for the **species** table, noting that most of the fields are of the VARCHAR data type (storing up to 255 characters). The *notes* column is TEXT data type, and more than 255 characters may be entered. A *speciesID* is required because it is the table's primary key. 
@@ -70,7 +72,7 @@ We invoke `dbTables()` to see the schema for the **species** table, noting that 
 dbTables(db.path = db.path, table = "species")
 ```
 
-#### Reading records
+## Reading records
 
 If we are confident that the **species** table is small enough to read into memory, we can use `dbReadTable()` to read the entire table into R, specifying the **conx** object in the 'conn' argument, and "species" as the table of interest in the 'name' argument. 
 ```{r}
@@ -123,7 +125,7 @@ str(gnatcatcher, max.level = 1)
 
 A wealth of information is returned for the species, formatted as a list of lists. 
 
-#### Creating records
+## Creating records
 
 As demonstrated in Chapter 3, the easiest way to add records to the database in R is to generate a data.frame of records, and then use `dbWriteTable()` to insert them. We demonstrate with a data.frame of one record, ensuring that all column names in the data.frame exactly match the field names in the database itself, and making sure that the data types in the data.frame match those expected by the database. We then add the contents of this data.frame directly to the species table in the database using `dbWriteTable()`, ensuring that 'overwrite' = FALSE and 'append' = TRUE.
 ```{r}
@@ -142,7 +144,7 @@ RSQLite::dbWriteTable(conn = conx, name = 'species', value = new.species,
              append = TRUE, header = FALSE)
 ```
 
-#### Updating records
+## Updating records
 
 To modify information in an existing record in R, we use an UPDATE statement in `dbExecute()`, ensuring that any VARCHAR or TEXT values are enclosed in quotes. Below, we pass a SQL statement that finds all records in **species** where *commonName* is equal to Phainopepla, and modify the *speciesID* to become 'phai':
 
@@ -164,7 +166,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM species")
 
 Note that *speciesID* is the primary key for the species table, and it has just been updated. As mentioned in Chapter 2, an **AMMonitor** database invokes "cascade updates;" when a primary key is altered, entries in other tables that utilize this primary key will automatically be updated, ensuring that the integrity of the database is maintained. 
 
-####  Deleting records 
+##  Deleting records 
 To delete specific records from a table, we again invoke `dbExecute()`, this time with a DELETE statement. Below, we combine the DELETE statement with a WHERE statement to eliminate any records containing 'Phainopepla' in the *genus* column: 
 ```{r}
 # Get rid of Gimli record
@@ -181,7 +183,7 @@ The query returns the number 9, indicating that our table now contains 9 records
 
 **Records should be deleted with extreme care.** As mentioned in Chapter 2, an **AMMonitor** database does not invoke "cascade delete;" when a record is deleted, entries in other tables that utilize the primary key of the deleted record will not be automatically be deleted. For example, if we delete the record with *speciesID* = "phai" from the **species** table, we may produce dangling records in other tables that reference the *speciesID* "phai" (e.g., tables **annotations**, **speciesList**, **templates**). These tables may reference "phai" as the *speciesID*, but the key now cannot be traced back the parent table. When deleting records, it is the user's responsibility to delete downstream records if desired.
 
-### The Library Table in R
+# The Library Table in R
 
 For acoustic monitoring programs, all target monitoring species will have target sound signals by which they can be positively identified to the species level. Some target monitoring species may have multiple call types, so we might choose to track multiple signals from a single species. All target signals from target monitoring species are named and briefly described in the **library** table. The actual signals of interest are stored in the **templates** table, described in Chapter 15.
 
@@ -209,7 +211,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM library
 
 The *libraryID* denotes a unique ID for each target signal. In rows 1 and 2 of the **library** object, note that the *speciesID* is 'btgn' for both rows. This means we are tracking multiple  vocalization types for the same species. The 'btgn_zhee' record tracks the Black-tailed Gnatcatcher's typical territorial "zhee zhee zhee" advertisement sound. The 'btgn_other' record will serve as a catch-all for any other unspecified Black-tailed Gnatcatcher sound types (it is useful to include such generalized "species_other" records for annotation purposes; these grant annotators the capacity to flag any unanticipated or atypical sounds a species may make; See Chapter 14). We elected to name each *libraryID* by attaching the speciesID at the front, but we could have chosen to name these signals according to any convention. The third column, *type*, is not required, but furnishes the opportunity to distinguish the signal type (if useful). For example, bird sounds are often categorized as songs or calls. Lastly, the *description* column can contain information describing the signal of interest, but is not required.
 
-### The List and listItems Tables in R
+# The List and listItems Tables in R
 
 The **list** table simply stores the names of lists; ultimately each list is a collection of items, like a menu, which are stored in the **listItems** table. A list here means a general list of items that have some sort of grouping; it is not an object of class "list" in R. 
 
@@ -286,33 +288,45 @@ RSQLite::dbDisconnect(conx)
 
 ```
 
-###  The Species and Library Tables in Access
+#  The Species and Library Tables in Access
 
 The **species** table plays a prominent role in **AMMonitor**, and as such is primary tab in the  Access front-end. Selecting the species tab displays the species form, with each form element tagged to a specific column in the **species** table. Further, the **library** form is nested within the **species** form, providing a convenient way to view all library items associated with a given species.
+
+<kbd>
 
 ```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap4_Figs/species.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 4.1.  The Species Table is a primary tab in the AMMonitor navigation form.  All signals related to a given species are located in the library subform.*.
+
 Notice that the library is also a secondary tab under the Species primary tab. This facilitates more generic searching.
 
-###  The List and listItems Tables in Access
+#  The List and listItems Tables in Access
 
 Because lists are so flexible, used in many different capacities in **AMMonitor**, they are listed as a sub-tab under the "Program Mgt" tab. Here, Bilbo's list is displayed on the **list** form (in which listID and description are tagged to the table's columns). The **listItems** form is nested within the **lists** form, providing an easy way to create, read, update, or delete records for any given list.
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, echo = F, out.width = '100%', fig.align = 'center'}
 
 knitr::include_graphics('Chap4_Figs/lists.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 4.2. Lists are  extremely versitile, and are used in many different examples throughout this book*.
+
 Notice at the bottom of this form that Bilbo's List is record 1 of 6 (six lists come with the sample database). We can use the scroll arrows to view other lists, and click on the "sunny" button to create a new list and add new items to it. 
 
 
-### Chapter Summary
+# Chapter Summary
 
 In this chapter, you learned about the **species** and **library** tables. The species table allows species to be identified by ITIS number -- useful if you plan on sharing your data in any way. The **library** table allows the monitoring team to identify different signals issued by a species. These signals will be the subject of Chapter 15: Templates.
 
 You also learned about **lists** and **listItems**, tables that can be used for multiple purposes in an **AMMonitor** framework. We use lists in many of the coming chapters.
 
-### Chapter References
+# Chapter References
