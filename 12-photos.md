@@ -406,6 +406,8 @@ the ‘dir.to’ argument. Lastly, we input our Dropbox API token in
 
     Move in progress, waiting 10 seconds for server to catch up...
 
+    ...Move still in progress, waiting 10 more seconds...
+
     Move status: complete
 
     Added 3 new records to photos table.

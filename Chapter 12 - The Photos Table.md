@@ -351,6 +351,8 @@ the ‘dir.to’ argument. Lastly, we input our Dropbox API token in
 
     Move in progress, waiting 10 seconds for server to catch up...
 
+    ...Move still in progress, waiting 10 more seconds...
+
     Move status: complete
 
     Added 3 new records to photos table.
@@ -360,9 +362,9 @@ the ‘dir.to’ argument. Lastly, we input our Dropbox API token in
     2: midEarth4_2018-09-02_22-30-00.jpg location@2     equip@4 2018-09-02  22:30:00 /photos/midEarth4_2018-09-02_22-30-00.jpg America/Los_Angeles    jpg
     3: midEarth5_2018-09-05_08-30-00.jpg location@3     equip@5 2018-09-05  08:30:00 /photos/midEarth5_2018-09-05_08-30-00.jpg America/Los_Angeles    jpg
                  timestamp
-    1: 2019-06-21 10:34:39
-    2: 2019-06-21 10:34:39
-    3: 2019-06-21 10:34:39
+    1: 2019-06-21 10:40:56
+    2: 2019-06-21 10:40:56
+    3: 2019-06-21 10:40:56
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that files have been moved
@@ -408,9 +410,9 @@ can look at the **photos** table to see what was added:
     2 midEarth4_2018-09-02_22-30-00.jpg location@2     equip@4 2018-09-02  22:30:00 /photos/midEarth4_2018-09-02_22-30-00.jpg America/Los_Angeles    jpg
     3 midEarth5_2018-09-05_08-30-00.jpg location@3     equip@5 2018-09-05  08:30:00 /photos/midEarth5_2018-09-05_08-30-00.jpg America/Los_Angeles    jpg
                 timestamp
-    1 2019-06-21 10:34:39
-    2 2019-06-21 10:34:39
-    3 2019-06-21 10:34:39
+    1 2019-06-21 10:40:56
+    2 2019-06-21 10:40:56
+    3 2019-06-21 10:40:56
 
 The example table contains three photos. Because we followed the
 instructions in the phone set-up guide in the Chapter 7 and xxx in prep,
