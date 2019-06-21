@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 16: The Scores Table"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "16-scores.Rmd", output_format = "md_document", output_file = "Chapter 16 - The Scores Table.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -27,8 +31,6 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
-
-## Chapter 16: The Scores Table
 
 The premise of automated acoustic monitoring is that a research team can efficiently scan new audio recordings for target signals by creating templates, which are models of a target signal. When a template is run against a recording, all detected signals receive a score quantifying similarity between the signal and the template. 
 
@@ -88,7 +90,7 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
 
-### The Scores Table
+# The Scores Table
 
 We begin by viewing a summary of the **scores** table using `dbTables()`:
 
@@ -109,7 +111,7 @@ In all cases, *on_update* is set to CASCADE, meaning that if a key in a primary 
 The **scores** table stores additional information for each detected event from a given recording and template. The *scoreThreshold* provides the user-defined threshold used for detecting events. The *time* field indicates the time (in seconds) when the event was detected on the recording. The *manualVerifyLibraryID* and *manualVerifySpeciesID* columns will be covered in the next chapter (Classifications). The *features* field contains acoustic summary features associated with each detected event. Features are stored as a "blob" data type because SQlite does not accommodate lists or S4 objects (instead, the features have been serialized for compatibility with SQLite). Finally, the *timestamp* field records the system date and time at which the detection was logged. 
 
 
-### Acquiring automatic detections with scoresDetect()
+# Acquiring automatic detections with scoresDetect()
 
 Our task in this chapter is to illustrate the process of acquiring automatic detections with **AMMonitor's** `scoresDetect()` function. Here, we pit templates that come with the sample database (see Chapter 15) against sample recordings (see Chapter 11) in search of target signals from species of interest.
 
@@ -245,7 +247,7 @@ Notice that the first detected event in the recording midEarth3_2016-03-12_07-00
 
 The columns *manualVerifyLibraryID* and *manualVerifySpeciesID* will be filled in later (See Chapter 17: Classifications). The features of each event are stored in the database as a "blob" datatype, which is displaying as "raw 37.41 kB".
 
-### Event Features
+# Event Features
 
 To explore detected event features in greater depth, we query the database and extract the first record from the **scores** table:  
 
@@ -334,26 +336,38 @@ unserialized.features[[1]][1, 1163:1172]
 
 As previously noted, the features for each detected event will be used in our next chapter, 17: Classifications, where they can be used to separate true positive events from false alarms.
 
-### The Scores Table in Access
+# The Scores Table in Access
 
 The scores table is a secondary tab in the Access Navigation Form, located under the 'Recordings' primary tab. Below, we view the Recordings tab, where you can see four recordings are present in the database, and annotations are listed for each recording.
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%',  echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap16_Figs/recordings.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 16.1. The Recordings primary tab shows each recording and any associated annotations.*
+
 Clicking on the secondary tab labeled "Scores" will bring up the scores themselves. 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap16_Figs/scores.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 16.2. Each score is an event that was detected by AMMonitor. This event is identified with a particular recordingID and timestamp.   The registered event may be a true positive event, in which the signal is the signal you seek, or it may be a false alarm, in which it is not the signal you seek.  Each score can be assigned a probability that it is the signal you seek, as described in Chapter 17*. 
+
 Each score is listed individually (here, we are viewing the first of 52 scores in the database). The "Hands Off!" message reiterates that these entries are filled in automatically by the `scoresDetect()` function, not entered manually. Each score can be manually verified, and additionally run through sets of statistical learning classifiers that return the probability that the signal is a target signal. These topics are covered in the Classifications chapter (next). 
 
-### Chapter Summary
+# Chapter Summary
 
 This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain a rich amount of information about each detected signal, which can be used to help the computer separate target signals from false alarms. 
 
-### Chapter References
+# Chapter References

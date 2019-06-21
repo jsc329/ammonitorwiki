@@ -15,3 +15,4 @@
 * [Chapter 13: The Soundscape Table](Chapter 13 - The Soundscape Table)
 * [Chapter 14: The Annotations Table](Chapter 14 - The Annotations Table)
 * [Chapter 15: The Templates Table](Chapter 15 - The Templates Table)
+* [Chapter 16: The Scores Table](Chapter 16 - The Scores Table)
