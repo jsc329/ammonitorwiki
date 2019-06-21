@@ -43,6 +43,8 @@ Below, we create sample data for a few necessary tables using
 `dbCreateSample()`. We will auto-populate the **soundscape** table with
 **AMMonitor** functions later on in the chapter:
 
+<font color='blue'>
+
 ``` r
 > # Load AMMonitor
 > library(AMMonitor)
@@ -64,6 +66,8 @@ Below, we create sample data for a few necessary tables using
 Sample data have been generated for the following tables: 
 accounts, people, equipment, locations, deployment, recordings, schedule
 ```
+
+</font>
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we

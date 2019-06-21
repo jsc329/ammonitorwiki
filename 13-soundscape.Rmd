@@ -72,6 +72,9 @@ An acoustic monitoring program can be used to monitor focal species of interest.
 To illustrate the process of soundscape analysis with **AMMonitor**, we will use the `dbCreateSample()` function to create a database called "Chap13.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Below, we create sample data for a few necessary tables using `dbCreateSample()`. We will auto-populate the **soundscape** table with **AMMonitor** functions later on in the chapter:
+
+<font color='blue'>
+
 ```{r}
 # Load AMMonitor
 library(AMMonitor)
@@ -83,6 +86,7 @@ dbCreateSample(db.name = "Chap13.sqlite",
                            'equipment', 'locations',
                            'accounts', 'schedule', 'recordings'))
 ```
+</font>
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
 ```{r}

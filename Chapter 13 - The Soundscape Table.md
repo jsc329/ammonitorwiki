@@ -33,6 +33,8 @@ Below, we create sample data for a few necessary tables using
 `dbCreateSample()`. We will auto-populate the **soundscape** table with
 **AMMonitor** functions later on in the chapter:
 
+<font color='blue'>
+
     > # Load AMMonitor
     > library(AMMonitor)
     > 
@@ -50,6 +52,8 @@ Below, we create sample data for a few necessary tables using
 
     Sample data have been generated for the following tables: 
     accounts, people, equipment, locations, deployment, recordings, schedule
+
+</font>
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we
@@ -121,21 +125,16 @@ the **recordings** table (see Chapter 11: Recordings).
     > RSQLite::dbGetQuery(conx, 'SELECT * 
     +                            FROM recordings')
 
-                            recordingID locationID equipmentID  startDate startTime
-    1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00
-    2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00
-    3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00
-    4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00
-                                           filepath                  tz format
-    1 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles    wav
-    2 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles    wav
-    3 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles    wav
-    4 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles    wav
-                timestamp
-    1 2018-10-22 17:27:33
-    2 2018-10-22 17:27:33
-    3 2018-10-22 17:27:33
-    4 2018-10-22 17:27:33
+                            recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
+    1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
+    2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
+    3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
+    4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
+      format           timestamp
+    1    wav 2018-10-22 17:27:33
+    2    wav 2018-10-22 17:27:33
+    3    wav 2018-10-22 17:27:33
+    4    wav 2018-10-22 17:27:33
 
 As shown, the metadata for the four recordings are stored in the
 **recordings** table. The actual files reside in the Dropbox
@@ -371,10 +370,8 @@ the function first:
     > # view results
     > results
 
-                             recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex
-    1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398
-            adi      aei minFrq maxFrq  timestamp
-    1: 2.302584 0.000869      0      0 2019-06-21
+                             recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-06-21
 
 It is useful to check the results of the function before inserting to
 the database to confirm that all is well. Once confirmed, users may
@@ -429,18 +426,14 @@ that are stored in the Dropbox cloud by providing the Dropbox token in
 
       Acoustic Evenness Index: 0.000869
 
-                             recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex
-    1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398
-            adi      aei minFrq maxFrq  timestamp
-    1: 2.302584 0.000869      0      0 2019-06-21
+                             recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-06-21
 
     > # Check database to ensure events were added:
     > RSQLite::dbGetQuery(conx, "SELECT * FROM soundscape")
 
-                            recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex
-    1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398
-           adi      aei minFrq maxFrq  timestamp
-    1 2.302584 0.000869      0      0 2019-06-21
+                            recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-06-21
 
 As shown, the results of the `soundscape()` function have been uploaded
 to the **soundscape** table.
