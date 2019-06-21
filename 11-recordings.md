@@ -476,9 +476,6 @@ Dropbox API token in ‘token.path’.
 
     Move in progress, waiting 10 seconds for server to catch up...
 
-    ...Move still in progress, waiting 10 more seconds...
-    ...Move still in progress, waiting 10 more seconds...
-
     Move status: complete
 
     Added 4 new records to recordings table.
@@ -486,10 +483,10 @@ Dropbox API token in ‘token.path’.
     # A tibble: 4 x 9
       recordingID                  locationID equipmentID startDate  startTime filepath                            tz              format timestamp       
       <chr>                        <chr>      <chr>       <chr>      <chr>     <chr>                               <chr>           <chr>  <chr>           
-    1 midEarth3_2016-03-12_07-00-~ location@1 equip@3     2016-03-12 07:00:00  /recordings/midEarth3_2016-03-12_0~ America/Los_An~ wav    2019-06-21 09:2~
-    2 midEarth4_2016-03-26_07-00-~ location@2 equip@4     2016-03-26 07:00:00  /recordings/midEarth4_2016-03-26_0~ America/Los_An~ wav    2019-06-21 09:2~
-    3 midEarth4_2016-03-04_06-00-~ location@2 equip@4     2016-03-04 06:00:00  /recordings/midEarth4_2016-03-04_0~ America/Los_An~ wav    2019-06-21 09:2~
-    4 midEarth5_2016-03-21_07-30-~ location@3 equip@5     2016-03-21 07:30:00  /recordings/midEarth5_2016-03-21_0~ America/Los_An~ wav    2019-06-21 09:2~
+    1 midEarth3_2016-03-12_07-00-~ location@1 equip@3     2016-03-12 07:00:00  /recordings/midEarth3_2016-03-12_0~ America/Los_An~ wav    2019-06-21 10:1~
+    2 midEarth4_2016-03-26_07-00-~ location@2 equip@4     2016-03-26 07:00:00  /recordings/midEarth4_2016-03-26_0~ America/Los_An~ wav    2019-06-21 10:1~
+    3 midEarth4_2016-03-04_06-00-~ location@2 equip@4     2016-03-04 06:00:00  /recordings/midEarth4_2016-03-04_0~ America/Los_An~ wav    2019-06-21 10:1~
+    4 midEarth5_2016-03-21_07-30-~ location@3 equip@5     2016-03-21 07:30:00  /recordings/midEarth5_2016-03-21_0~ America/Los_An~ wav    2019-06-21 10:1~
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -545,10 +542,10 @@ metadata have been added for the four wave files:
     # A tibble: 4 x 9
       recordingID                  locationID equipmentID startDate  startTime filepath                            tz              format timestamp       
       <chr>                        <chr>      <chr>       <chr>      <chr>     <chr>                               <chr>           <chr>  <chr>           
-    1 midEarth3_2016-03-12_07-00-~ location@1 equip@3     2016-03-12 07:00:00  /recordings/midEarth3_2016-03-12_0~ America/Los_An~ wav    2019-06-21 09:2~
-    2 midEarth4_2016-03-26_07-00-~ location@2 equip@4     2016-03-26 07:00:00  /recordings/midEarth4_2016-03-26_0~ America/Los_An~ wav    2019-06-21 09:2~
-    3 midEarth4_2016-03-04_06-00-~ location@2 equip@4     2016-03-04 06:00:00  /recordings/midEarth4_2016-03-04_0~ America/Los_An~ wav    2019-06-21 09:2~
-    4 midEarth5_2016-03-21_07-30-~ location@3 equip@5     2016-03-21 07:30:00  /recordings/midEarth5_2016-03-21_0~ America/Los_An~ wav    2019-06-21 09:2~
+    1 midEarth3_2016-03-12_07-00-~ location@1 equip@3     2016-03-12 07:00:00  /recordings/midEarth3_2016-03-12_0~ America/Los_An~ wav    2019-06-21 10:1~
+    2 midEarth4_2016-03-26_07-00-~ location@2 equip@4     2016-03-26 07:00:00  /recordings/midEarth4_2016-03-26_0~ America/Los_An~ wav    2019-06-21 10:1~
+    3 midEarth4_2016-03-04_06-00-~ location@2 equip@4     2016-03-04 06:00:00  /recordings/midEarth4_2016-03-04_0~ America/Los_An~ wav    2019-06-21 10:1~
+    4 midEarth5_2016-03-21_07-30-~ location@3 equip@5     2016-03-21 07:30:00  /recordings/midEarth5_2016-03-21_0~ America/Los_An~ wav    2019-06-21 10:1~
 
 The table contains four rows. Because we followed the instructions in
 the smartphone set-up guide in the Chapter 7 xxx in prep, *recordingID*

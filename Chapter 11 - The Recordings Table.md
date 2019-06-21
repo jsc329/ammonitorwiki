@@ -426,10 +426,10 @@ Dropbox API token in ‘token.path’.
     3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
        format           timestamp
-    1:    wav 2019-06-21 09:27:33
-    2:    wav 2019-06-21 09:27:33
-    3:    wav 2019-06-21 09:27:33
-    4:    wav 2019-06-21 09:27:33
+    1:    wav 2019-06-21 10:20:38
+    2:    wav 2019-06-21 10:20:38
+    3:    wav 2019-06-21 10:20:38
+    4:    wav 2019-06-21 10:20:38
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -478,10 +478,10 @@ metadata have been added for the four wave files:
     3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
       format           timestamp
-    1    wav 2019-06-21 09:27:33
-    2    wav 2019-06-21 09:27:33
-    3    wav 2019-06-21 09:27:33
-    4    wav 2019-06-21 09:27:33
+    1    wav 2019-06-21 10:20:38
+    2    wav 2019-06-21 10:20:38
+    3    wav 2019-06-21 10:20:38
+    4    wav 2019-06-21 10:20:38
 
 The table contains four rows. Because we followed the instructions in
 the smartphone set-up guide in the Chapter 7 xxx in prep, *recordingID*
