@@ -9,4 +9,5 @@
 - [Chapter 7:  The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
 - [Chapter 8:  The Temporals Table](Chapter 8 - The Temporals Table)
 - [Chapter 9:  The Schedules Table](Chapter 9 - The Schedule Table)
+- [Chapter 10:  The Priorities and Prioritization Tables](Chapter 10 - The Priorities and Prioritization Tables)
 

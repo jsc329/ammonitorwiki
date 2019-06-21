@@ -1,19 +1,19 @@
 ---
-title: "AMMonitor"
-csl: plos.csl
+title: "Chapter 10: The Priorities and Prioritization Tables"
 output:
-  html_document:
-    css: styles.css
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-  word_document:
-    toc: yes
-    toc_depth: '4'
 bibliography: refs.bib
+csl: plos.csl
 ---
 
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "10-prioritization.Rmd", output_format = "md_document", output_file = "Chapter 10 - The Priorities and Prioritization Tables.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -39,7 +39,6 @@ if (length(ammlmodels) > 0 ) {activity <- rmModel(amml = activity, ammlmodels)}
 saveRDS(activity, file = 'ammls/activity.RDS')
 ```
 
-## Chapter 10: The Priorities and Prioritization Tables
 
 In Chapter 9, we introduced the `scheduleSun()` and `scheduleFixed()` functions to populate a Google Calendar for smartphone-based monitoring. In this chapter, we introduce new functions that optimize the recording schedules based on when species are most likely to be captured by smartphone monitoring (i.e. adaptive sampling). This process involves the **temporals**, **priorities**, **prioritization** and **schedule** tables of an **AMMonitor** database.
 
@@ -90,7 +89,7 @@ RSQLite::dbExecute(
 ```
 This action returns a '47' to indicate that 47 records have applied the action of setting *dateRetrieved* equal to '2016-01-20'. 
 
-### The Priorities Table
+# The Priorities Table
 The **priorities** table allows us to store monitoring priorities for focal species at each active monitoring location. Depending on our research program, we might prioritize the capture of certain species more highly than that of other species, and/or we might be particularly interested in capturing activity at certain sites more than others.
 
 We begin by viewing the **priorities** table's metadata with the function `dbTables()`:
@@ -125,7 +124,7 @@ prioritySet(db.path = db.path,
 
 In the above example, monitoring priorities for the three locations are driven by two species of equal monitoring importance. Monitoring for each species at each location will continue until a *pMax* of 0.99 is attained. Because *db.insert* is set to FALSE, this prioritization scheme will not be implemented; the priorities from the sample data will be used in the examples that follow.
 
-### The Prioritization Table
+# The Prioritization Table
 
 While the **priorities** table is filled in manually by the monitoring team, the **prioritization** table is automatically filled by **AMMonitor** functions. The primary purpose of the **prioritization** table is to track, *through time*, the probability that a target species has been captured (on recordings or photos) at a site. This table is populated by **AMMonitor** functions based on the probability that the species has been previously captured, given presence. Users do not interact with this table directly. 
 
@@ -158,24 +157,35 @@ Our goal next is to create future monitoring events (e.g., recordings) that are 
 
 As a preview of the prioritization process, the figure below demonstrates how *pCurrent* and *weight* values change from the beginning (2016-03-01) to the end (2016-03-31) of a hypothetical monitoring scenario for location\@1 only:
 
+<kbd>
 
-```{r, out.width = 450, out.height = 300, echo = F}
+```{r, out.width = '100%', echo = F}
 knitr::include_graphics('Chap10_Figs/example-start-end-priority.png', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 10.1. Hypothetical illustration of how pCurrent and weights change as monitoring progresses.*
 
 In this example, on 2016-03-31, the probability that 'btgn' has been captured at this site is 0.42, while the probability that 'leni' has been captured at this site is 0.88. Because all *pCurrent* scores are less than *pMax*, all monitoring weights are greater than 0 (indicating that some monitoring effort will be applied for each of the four species at this location in the future). The *weight* column indicates that the future monitoring schedule (e.g., tomorrow) will  target 'btgn' much more than the other species, because the *pCurrent* value for 'btgn' remains much lower.
 
 
-### Simulating activity models with simGlm()
+# Simulating activity models with simGlm()
 
 Creating an optimized schedule of future monitoring at various locations requires models that predict activity patterns for each target species across time and space. In this section, we will create "activity" models that reflect our knowledge about when our target species are likely to be detected. Thus, we will be creating models based on our expert opinion.  Models may also be created through analysis of monitoring data.  "Activity" is a generic term that may represent, for example, calling activity in birds or amphibians, movement activity in mammals, or pollination activity in bees. Activity patterns can be a function of julian date, time of day, precipitation, and a host of other factors. These covariates are stored in the **temporals** table of an **AMMonitor** database.
 
 Activity models will ultimately be stored in an AMModels library located in the **ammls** folder within the main **AMMonitor** directory.
 
-```{r, out.width = 400, out.height = 200, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap10_Figs/directories.PNG', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 10.2. All models for a monitoring program should be stored in an accessible location. We store models in the 'ammls' directory within the main AMMonitor directory.*
 
 In Chapter 1, we created an AMModel library called "activity.RDS", which will be dedicated to storing activity-based models. Below, we retrieve this library and view its contents:
 
@@ -296,9 +306,15 @@ We encourage readers to use the `str()` function to look more deeply at each mod
 
 The plot below gives the reader some sense of what the coefficients mean. Each of the four species is plotted in five panels, with the probability of vocalization per unit time on the y-axis. The x-axes vary across the five panels, and demonstrate the influence of several different covariates on vocalization probability by species. 
 
-```{r, out.width = 600, out.height = 400, echo = F}
+<kbd>
+
+```{r, out.width = '100%', echo = F}
 knitr::include_graphics('Chap10_Figs/activity-plot-example.png', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 10.3. Plots showing how probability of vocalization varies as a function of covariates for four species.*
 
 Such activity models are required for **AMMonitor's** adaptive sampling algorithm in `scheduleOptim()` (described below). The models provide predictions of activity given tomorrow's temporal conditions, and thus enable **AMMonitor** to create an optimized sampling scheme for future monitoring at each monitoring location. For example, if tomorrow's forecast calls for 20 km/hr winds at 6am, we would expect that vocalization probability is lowest for 'BTGN' and highest for 'COPO' during that time (assuming both species are present at a site). If their *pCurrent* and *weight* values were equal, the optimization algorithm would target 'COPO' monitoring under these conditions because 'BTGN' will be less vocally available.
 
@@ -360,7 +376,7 @@ Now that we have added metadata for each **amModel** object, we can save the lib
 saveRDS(activity, file = 'ammls/activity.RDS')
 ```
 
-### Setting an optimized schedule with scheduleOptim()
+# Setting an optimized schedule with scheduleOptim()
 
 After establishing monitoring priorities in the **priorities** table, initializing a new monitoring session with `priorityInit()`, and generating models with `simGlm()`, we are situated to conduct optimized monitoring using `scheduleOptim()`. The primary purpose of `scheduleOptim()` is to create an optimized schedule for future monitoring based on monitoring priorities, activity models, and temporal data that contain tomorrow's forecast. The resulting schedule is added to the **schedules** table, where the schedule can be synced with each smartphone's Google Calendar.
 
@@ -446,7 +462,7 @@ This is the schedule that can be pushed to Google Calendar, if desired. Notice t
 
 If we are confident that we understand the test results and everything looks to be in order, we can set 'db.insert' and 'google.push' to TRUE, making sure to add a file path to our Google Calendar service token in the 'calendar.key' argument (the functionality of these arguments is the same as that in Chapter 9: Schedule). 
 
-### Running a simulation experiment on historical temporal data
+# Running a simulation experiment on historical temporal data
 
 In advance of implementing a real-time optimized monitoring program integrated with daily forecast data, users may wish to test the concept out with a simulation of their system using real historical weather data. In such a case, historical data may be collected via `temporalsGet()` for all dates and locations of interest, and stored in the temporals table.
 
@@ -510,35 +526,47 @@ dbDisconnect(conx)
 
 ```
 
-### Running scheduleOptim() in a script
+# Running scheduleOptim() in a script
 
-`scheduleOptim()` may be employed on daily basis to set an optimized schedule pushed to each smartphone's Google calendar. To facilitate the process of manually running this function each day, a monitoring team may opt to automatically run `scheduleOptim()` daily via an "script" which is simply sourced each morning by a member of the monitoring team. Scripts are described in detail in Chapter 20.
+`scheduleOptim()` may be employed on daily basis to set an optimized schedule pushed to each smartphone's Google calendar. To facilitate the process of manually running this function each day, a monitoring team may opt to automatically run `scheduleOptim()` daily via an "script" which is simply sourced each morning by a member of the monitoring team. Scripts are described in detail in Chapter 19.
 
 
-### The Priorities Table in Access
+# The Priorities Table in Access
 
 Because monitoring priorities are established at the discretion of the monitoring team, they can be found under the "Objectives" primary tab of the Access Navigation Form. 
 
-```{r, out.width = 500, out.height = 300, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap10_Figs/priorities.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 10.4. Priorities are set by the monitoring team.  The priorities tab is nested under the main tab, "Objectives".*
+
 Here, we see the built-in data that comes with our Chap10.SQLite sample database, which consists of monitoring weights for four species across three sites. Recall that for any given site, the sum of the weights must equal 1. Also recall that *pMax* provides a stopping rule that dictates when a species can be dropped from monitoring consideration at a site.
 
-### The Prioritization Table in Access
+# The Prioritization Table in Access
 
 The prioritization table is also located under the "Objectives tab".  The data are colored red to remind us that they are automatically filled in by **AMMonitor** functions and are not to be edited by hand.
 
-```{r, out.width = 500, out.height = 300, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap10_Figs/prioritization.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 10.5. The prioritization table is located under the Objectives main tab, and provides the current state of monitoring priority for each species at each location. This table is populated by R and should not be edited by hand.*
+
 The search tool at the bottom of this form can be used to quickly locate current priorities for a given species at a given location.
 
-### Chapter Summary
+# Chapter Summary
 
 This chapter covered the **priorities** and **prioritization** tables, which are used to track the capture probabilities of multiple target monitoring species at active smartphone monitoring locations. `priorityInit()` establishes monitoring priorities at the beginning of a temporally-adaptive monitoring period. `simGlm()` may be used to generate the activity models required by `scheduleOptim()`, which sets a schedule optimized according to temporal forecast data, monitoring priorities, and activity models. In addition to being implemented in a live monitoring context, `scheduleOptim()` may be used with historical data to run simulations. More information about the optimization scheme employed in **AMMonitor** can be found in [@BalanticTemporal].
 
-### Chapter References
+# Chapter References
