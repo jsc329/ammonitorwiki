@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 6: The Locations and Spatials Tables"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "06-locations-spatials.Rmd", output_format = "md_document", output_file = "Chapter 6 - Spatials.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -27,8 +31,6 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 file.remove(db.path) 
 ```
 
-
-## Chapter 6: The Locations and Spatials Tables
 
 This chapter covers the **locations** and **spatials** tables and how they are used in a monitoring program. Connections to these tables can be used to track monitoring locations and associated GIS spatial data.
 
@@ -63,7 +65,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
 
 Now we are ready to begin.
 
-### The Locations Table
+# The Locations Table
 
 The **locations** table tracks all locations of monitoring interest. The function `dbTables()` provides a summary of the field names and data types in the **locations** table. 
 
@@ -101,7 +103,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(locations)
 ```
 The field *personID* in the table **people** references the field *personID* in the **locations** table. Again, notice the default action of CASCADE on update and NO ACTION on delete. 
 
-### The Spatials Table
+# The Spatials Table
 
 The **spatials** table *points* to spatial data associated with a monitoring project, such as rasters or shapefiles; it does not store the files themselves (in **AMMonitor**, the actual files should be stored in the **spatials folder** as described below).
 
@@ -114,11 +116,16 @@ Note that the default **spatials** table has five fields, with a mix of data typ
 
 We assume readers have employed the **AMMonitor** file directory structure created by the function `ammCreateDirectories()` (Chapter 1: Introduction). The working directory is the main **AMMonitor** directory, and subdirectories include a folder called **database** (which houses the SQLite database), as well as a folder called **spatials**. The spatials directory is where we will store the actual spatial files used in the examples below. 
 
-```{r, out.width = 500, out.height = 300, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap6_Figs/directories.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 6.1. All spatial layers may be stored in the spatial directory as RDS files.*
 
 In this section, we will illustrate how spatial files can be stored in the **spatials directory**, and how a spatial file's metadata can be added to the **AMMonitor** database table named **spatials**. 
 
@@ -138,7 +145,7 @@ library(XML)
 ```
 
 
-#### Create a "SpatialPointsDataFrame" of monitoring locations
+## Create a "SpatialPointsDataFrame" of monitoring locations
 
 For our first example, we collect information stored in the **locations** table to generate a shapefile of points. The **sp** package function `SpatialPointsDataFrame()` can be used create an object of class **SpatialPointsDataFrame**. 
 
@@ -227,7 +234,7 @@ RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.sites,
 ```
 
 
-#### Create a "SpatialPolygons" study area shapefile 
+## Create a "SpatialPolygons" study area shapefile 
 
 As a second example, we will now create a simple polygon and store it as a second shapefile for the Middle Earth monitoring program. This simple polygon will encompass all of the monitoring locations, with an additional buffer. 
 
@@ -296,7 +303,7 @@ RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.boundary,
              append = TRUE, header = FALSE)
 ```
 
-#### Create a "RasterLayer"  raster 
+## Create a "RasterLayer"  raster 
 
 As a final example of working with spatial files, we will create a spatial object of class **RasterLayer** that will cover the study area. Here, our raster will consist of 400 pixels, each with a random number from a standard normal distribution (mean = 0, sd = 1). First, we create a matrix of numbers, and then use the `raster()` function to convert the matrix to a raster.
 
@@ -374,33 +381,45 @@ RSQLite::dbDisconnect(conx)
 ```
 
 
-###  The Locations Table in Access
+#  The Locations Table in Access
 
 Locations can be found under the Access Navigation Form's Locations tab, and is a primary tab. Notice that the records are displayed in "form" view, and that the image is diplaying the first of 50 locations that come with the sample database.
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap6_Figs/locations.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 6.2. The Locations table/form is a primary tab on the Access Navigation form.*
+
 Also, notice the 6 secondary tabs associated with the "Locations" tab:  Spatials, Temporals, Equipment, Logs, Deployment, and Schedule.  
 
-###  The Spatials Table in Access
+#  The Spatials Table in Access
 
 The Spatials table can be accessed as a secondary tab under the Locations tab. The default view for this form is "datasheet" view. However, monitoring team members may choose to create more personalized forms if desired. 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap6_Figs/spatials.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 6.3. The Spatials table is nestled under the Location tab.  This table does not store spatial information. Rather, it points to files that contain spatial data via a filepath.*
+
 It is very easy to create many spatial objects (shapefiles or rasters) that can be used in the analysis of monitoring data. The **spatials** table provides a way document each layer, and futher can be used to quickly load the objects to R if the filepath is accurate.
 
 
-### Chapter Summary
+# Chapter Summary
 
 This chapter covered the **locations** table, which stores point locations for a monitoring program. This table is critical, as it is used by a variety of **AMMonitor** functions.
 
 You also learned about the **spatials** table, which *points* to spatial files that may be used in future analysis. In our examples, we created spatial objects with the packages, **sp** and **raster**, and stored all spatial objects as RDS files within a directory called **spatials**. We will revisit these files in future chapters. 
 
-### Chapter References
+# Chapter References
