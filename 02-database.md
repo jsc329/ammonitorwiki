@@ -54,19 +54,24 @@ high-profile projects.” \[2\]
 
 An **AMMonitor** SQLite database is created with the `dbCreate()`
 function, and should be stored in the “database” folder within the main
-AMMonitor
-directory.
+AMMonitor directory.
 
-<img src="Chap2_Figs/directories.PNG" width="50%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/directories.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+</kbd>
 
 > *Figure 2.1. The “database” directory should store the AMMonitor
 > SQLite database file.*
 
 Before we actually create the database, we provide an overview of the
-tables within an **AMMonitor**
-database.
+tables within an **AMMonitor** database.
+
+<kbd>
 
 <img src="Chap2_Figs/ERD2.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.2. AMMonitor database schema, showing key tables with a few
 > columns. Lines between tables indicate how tables are related to each
@@ -194,10 +199,10 @@ SQLite database named “Chap2.sqlite”. Below, we fill all tables with
 sample data by specifying ‘all’ for the tables argument.
 
 ``` r
-# Create a sample database for this chapter
-dbCreateSample(db.name = "Chap2.sqlite", 
-               file.path = paste0(getwd(),"/database"), 
-               tables =  'all')
+> # Create a sample database for this chapter
+> dbCreateSample(db.name = "Chap2.sqlite", 
++                file.path = paste0(getwd(),"/database"), 
++                tables =  'all')
 ```
 
     An AMMonitor database has been created with the name Chap2.sqlite which consists of the following tables: 
@@ -214,20 +219,20 @@ Next, we connect to the database in R using RSQLite’s `dbConnect()`
 function, where we identify the SQLite driver in the ‘drv’ argument:
 
 ``` r
-# Establish the database file path as db.path
-db.path <- paste0(getwd(), '/database/Chap2.sqlite')
-
-# Connect to the database
-conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+> # Establish the database file path as db.path
+> db.path <- paste0(getwd(), '/database/Chap2.sqlite')
+> 
+> # Connect to the database
+> conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 ```
 
 Finally, we send a SQLite statement to enforce foreign key constraints:
 
 ``` r
-# Turn the SQLite foreign constraints on
-RSQLite::dbExecute(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+> # Turn the SQLite foreign constraints on
+> RSQLite::dbExecute(conn = conx, statement = 
++               "PRAGMA foreign_keys = ON;"
++           )
 ```
 
     [1] 0
@@ -248,8 +253,8 @@ functions. For example, throughout this vignette, we will be using the
 data it stores, and its primary keys. For example:
 
 ``` r
-# Look at the structure of the deployment table
-dbTables(db.path = db.path, table = 'deployment')
+> # Look at the structure of the deployment table
+> dbTables(db.path = db.path, table = 'deployment')
 ```
 
 ``` 
@@ -297,8 +302,8 @@ foreign key information for the **deployment** table with the following
 code:
 
 ``` r
-# Return foreign key information for the deployment table
-RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
+> # Return foreign key information for the deployment table
+> RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
 ```
 
     # A tibble: 3 x 8
@@ -340,11 +345,11 @@ specify our **conx** object in the ‘conn’ argument, and “people” as the
 table of interest in the ‘name’ argument.
 
 ``` r
-# Read the entire table and store as get.people
-get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
-
-# Look at the entire table (printed as a tibble)
-get.people
+> # Read the entire table and store as get.people
+> get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
+> 
+> # Look at the entire table (printed as a tibble)
+> get.people
 ```
 
     # A tibble: 2 x 6
@@ -370,10 +375,10 @@ program by passing an ALTER TABLE SQL command to the function
 data.
 
 ``` r
-# Add a new column called StartDate
-RSQLite::dbExecute(conn = conx, statement = 
-          "ALTER TABLE people ADD COLUMN startDate varchar;"
-) 
+> # Add a new column called StartDate
+> RSQLite::dbExecute(conn = conx, statement = 
++           "ALTER TABLE people ADD COLUMN startDate varchar;"
++ ) 
 ```
 
 ALTER TABLE may also be used to delete columns. However, we strongly
@@ -389,10 +394,13 @@ R, and may prefer an alternative database interface. To that end,
 **AMMonitor** comes with a Microsoft Access “front end”, which is simply
 an Access navigation form that connects to the SQLite database. This
 front end provides users with a form-like feel for entering or updating
-records. The actual data, however, remain in the SQLite
-database.
+records. The actual data, however, remain in the SQLite database.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/NavigationForm.PNG" width="100%" style="display: block; margin: auto;" />
+
+</kbd>
 
 > *Figure 2.3. The AMMonitor Access front end is a navigation form,
 > which is a collection of many different forms.*
@@ -425,10 +433,10 @@ file name “AMMonitor\_sqlite.accdb”, and you can save it to your
 database folder as “Chap2\_sqlite.accdb” with the following code:
 
 ``` r
-# Save the Access form to your database directory
-save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
-            package = "AMMonitor"), 
-     file = "database/Chap2_demo.accdb")
+> # Save the Access form to your database directory
+> save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
++             package = "AMMonitor"), 
++      file = "database/Chap2_demo.accdb")
 ```
 
 Hopefully, you now have the Access file in your **AMMonitor** database
@@ -453,19 +461,25 @@ steps for Windows users (Mac users may need a different approach):
 
 1.  Navigate to your computer’s ODBC Data Source Administrator. You can
     likely search on “ODBC” to find this, and it should look something
-    like shown below. Under the User DSN tab, click the Add
-button.
+    like shown below. Under the User DSN tab, click the Add button.
 
-<img src="Chap2_Figs/odbc1.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/odbc1.PNG" width="100%" style="display: block; margin: auto;" />
+
+</kbd>
 
 > *Figure 2.4. The ODBC Data Source Administrator dialogue box allows
 > you to create new ODBC connections (Open Data Base Connectivity)*.
 
 2.  A new dialogue box will open, prompting you to select a driver.
-    Locate the SQLite3 ODBC Driver you just installed, and click
-Finish.
+    Locate the SQLite3 ODBC Driver you just installed, and click Finish.
 
-<img src="Chap2_Figs/odbc2.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/odbc2.PNG" width="100%" style="display: block; margin: auto;" />
+
+</kbd>
 
 > *Figure 2.5. Select the SQLite3 ODBC Driver to let your computer
 > communicate with the SQLite database*.
@@ -483,7 +497,11 @@ Finish.
     dialogue box can be found
     [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
-<img src="Chap2_Figs/odbc3.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/odbc3.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.6. Give your connection a unique name, and browse to your
 > SQLite database file.*
@@ -492,10 +510,13 @@ Finish.
     it will allow you to connect to your sqlite database. You may have
     many data sources (e.g., one for each chapter if you wish). When it
     is time to launch your own monitoring program, however, the data
-    source will connect to your program’s **AMMonitor** SQLite
-database.
+    source will connect to your program’s **AMMonitor** SQLite database.
 
-<img src="Chap2_Figs/odbc4.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/odbc4.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.7. The new DNS should now be listed in your ODBC Data Source
 > dialogue box.*
@@ -512,19 +533,23 @@ required steps.
 2.  Click the External Data tab. This tab allows us to connect Access to
     an external database, such as an Excel file, another Access
     database, a text file or XML file. Here, we will use an ODBC
-    connection, where ODBC stands for Open Database
-Connectivity.
+    connection, where ODBC stands for Open Database Connectivity. <kbd>
 
-<img src="Chap2_Figs/ExternalTab.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap2_Figs/ExternalTab.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.8. Open Access, and click on the External Data tab.*
 
 3.  Clicking on the ODBC Database button will bring up a new dialogue
     box. Here, we want to **link** to the data source by creating a
-    linked table. Press
-OK.
+    linked table. Press OK.
 
-<img src="Chap2_Figs/AccessLink.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/AccessLink.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.9. Indicate that you would like to link to the SQLite
 > database (as opposed to importing the database into Access.*
@@ -532,20 +557,26 @@ OK.
 4.  Now, we wish to locate and use the data source we just created
     (which uses a SQLite3 driver to connect to our SQLite database). It
     will likely be listed under the Machine Data Source tab, and is
-    highlighted in blue when clicked. Press
-OK.
+    highlighted in blue when clicked. Press OK.
 
-<img src="Chap2_Figs/selectDS.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/selectDS.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.10. Locate your new database connection.*
 
 5.  The previous action will display a new dialogue box. This new box
     will ask which SQLite tables you wish to connect to. Press the
     Select All button to the right, which will highlight all of the
-    tables in blue. Then press
-OK.
+    tables in blue. Then press OK.
 
-<img src="Chap2_Figs/sqliteTables.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/sqliteTables.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.11. Press the Select All button to connect all the SQLite
 > tables to Access.*
@@ -553,18 +584,24 @@ OK.
 6.  Under the “All Access Objects” left menu, you will see the tables.
     Each table has a globe symbol and arrow, indicating that each table
     is linked to the SQLite database table. This means we can now use
-    Access to work with the data in our database
-tables.
+    Access to work with the data in our database tables.
 
-<img src="Chap2_Figs/sqliteConnected.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/sqliteConnected.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.12. The linked tables appear as “globes” in the left menu.*
 
 Click on the **people** table, and you will see the two records
-currently in the SQLite database in a spreadsheet
-view:
+currently in the SQLite database in a spreadsheet view:
 
-<img src="Chap2_Figs/people.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/people.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.13. You can work with tables in Access, but most tables will
 > be filled in by R\!*
@@ -578,10 +615,13 @@ populated by **AMMonitor** functions.
 Though you may work with tables directly as above, you can alternatively
 use the Navigation form introduced earlier in the chapter. Locate the
 Navigation form by collapsing the list of Tables (press the double arrow
-icon to the right of the word “Tables”), and opening the list of
-Forms.
+icon to the right of the word “Tables”), and opening the list of Forms.
 
-<img src="Chap2_Figs/AccessForms.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/AccessForms.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.14. The Access forms are diplayed in the left menu. The
 > Navigation Form is the master form.*
@@ -589,10 +629,13 @@ Forms.
 Here, you can see that the AMMonitor front end comes with many
 individual forms that can be customized; these individual forms are
 combined into the Navigation Form. Opening the Navigation will bring you
-to AMMonitor Navigation Form introduced earlier in the
-chapter.
+to AMMonitor Navigation Form introduced earlier in the chapter.
 
-<img src="Chap2_Figs/NavigationForm.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/NavigationForm.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.15. The AMMonitor Navigation Form. This form can be
 > customized to your liking.*
@@ -600,10 +643,13 @@ chapter.
 The Navigation Form can be set as the default form that appears when the
 Access database is first opened. This can be achieved by going to File |
 Options | Current Database, and setting the Navigation Form as the
-Display Form. You may also add a customized title and icon here as
-well.
+Display Form. You may also add a customized title and icon here as well.
 
-<img src="Chap2_Figs/splash.PNG" width="70%" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+
+<img src="Chap2_Figs/splash.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
 
 > *Figure 2.16. Force the Navigation Form to open when you open the
 > Access file.*
