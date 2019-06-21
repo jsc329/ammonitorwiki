@@ -294,7 +294,7 @@ The **species** table plays a prominent role in **AMMonitor**, and as such is pr
 
 <kbd>
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap4_Figs/species.PNG', dpi = 500)
 ```

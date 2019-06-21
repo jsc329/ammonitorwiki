@@ -553,7 +553,7 @@ library items associated with a given species.
 
 <kbd>
 
-<img src="Chap4_Figs/species.PNG" width="700" height="400" style="display: block; margin: auto;" />
+<img src="Chap4_Figs/species.PNG" width="100%" style="display: block; margin: auto;" />
 
 </kbd>
 
