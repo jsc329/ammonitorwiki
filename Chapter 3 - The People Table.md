@@ -382,7 +382,14 @@ selected (e.g., the Program Mgt tab has been selected), the left menu
 displays a set of secondary tabs (3.1b). Thus, “People” fall under the
 realm of Program Mgt (3.1c).
 
+<kbd>
+
 <img src="Chap3_Figs/NavigationForm.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
+
+</kbd>
+
+> \*Figure 3.1. The People form is located under the Program Mgt primary
+> tab.
 
 This table’s fields are displayed in a form-like view above, and can
 alternatively be displayed in a spreadsheet view. As previously
