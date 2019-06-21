@@ -11,4 +11,5 @@
 - [Chapter 9:  The Schedules Table](Chapter 9 - The Schedule Table)
 - [Chapter 10:  The Priorities and Prioritization Tables](Chapter 10 - The Priorities and Prioritization Tables)
 - [Chapter 11:  The Recordings Table](Chapter 11 - The Recordings Table)
+- [Chapter 12:  The Photos Table](Chapter 11 - The Photos Table)
 

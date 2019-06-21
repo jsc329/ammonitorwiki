@@ -1,15 +1,19 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 12: The Photos Table"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
+
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "12-photos.Rmd", output_format = "md_document", output_file = "Chapter 12 - The Photos Table.md")
+
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -63,16 +67,22 @@ if (file.exists('db.path'))
 unlink(db.path) 
 ```
 
-## Chapter 12: The Photos Table
+
 
 This chapter covers the **photos** table of an **AMMonitor** database, which stores metadata about photos. Physical photos or motion captures themselves are stored in the **photos** or **motion** folders within the main **AMMonitor** directory. The only difference between these two folders is that the **photos** folder stores photos captured as a scheduled photograph, while the **motion** folders stores photos that were triggered by a motion-detection smartphone app. If you have recently read Chapter 11 (Recordings), note that several of the concepts and functions will be identical for photos. 
 
 To begin, recall the standardized AMMonitor file directory structure. We used the function `ammCreateDirectories()` to establish the standardized file directory located within Dropbox. Ideally, this Dropbox account is associated with the monitoring program and does not contain any personal information. Below, we confirm the file structure, assuming that your working directory is the main **AMMonitor** directory (top-level directory):
 
-```{r, out.width = 500, out.height = 300, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap12_Figs/directories.PNG', dpi = 500)
 ```
+
+</kbd>
+
+>*Figure 12.1.  Photos should be placed (manually or automatically) into the "photo_drop" directory or into the "motion_drop" directory (if captured by motion trigger).  AMMonitor functions will move them to the more permanent "photos" directory, and log each file's metadata into the database.*
 
 For this chapter, the directories (folders) of interest are the 'photo_drop', 'photos', 'motion_drop', and 'motion' directories, which store photos for photo monitoring. Folders may end up storing many terabytes of data, and this content is best left in the cloud until needed. The 'photo_drop' and 'motion_drop' folders are landing folders for any new photo files collected by the monitoring team. These files may be manually collected by the monitoring team and placed there, or automatically placed in the drop folder via the cellular network (as described in chapters 9 and 10; also see xxx in prep).
 
@@ -138,12 +148,12 @@ magick::image_write(kitfox, path = "photo_drop/midEarth4_2018-09-02_22-30-00.jpg
 magick::image_write(toad, path = "photo_drop/midEarth5_2018-09-05_08-30-00.jpg", format = "jpeg")
 ```
 
-Notice that each file name is standardized as "accountID_date_time.jpg", as described in [xxx in prep]. If your monitoring program does not use smartphones, the locationID may be used instead of accountID.  We have just simulated the process by which photos are populated into the 'photo_drop' folder in your **AMMonitor** Dropbox directory. In practice, files may be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
+Notice that each file name is standardized as "accountID_date_time.jpg", as described in [Donovan et al. in prep]. If your monitoring program does not use smartphones, the locationID may be used instead of accountID.  We have just simulated the process by which photos are populated into the 'photo_drop' folder in your **AMMonitor** Dropbox directory. In practice, files may be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
 
 The next step is to move these files out of the 'photo_drop' directory to the more permanent 'photos' directory. During this process, we create metadata entries in the **photos** database table for each photo. Logging this metadata is critical because **AMMonitor** needs an easy way to track all files collected by the monitoring team. To move files from 'photo_drop' to the 'photos' directory (and simultaneously log new audio file metadata in the **photos** table), we use the function `dropboxMoveBatch()`. 
 
 
-### The Photos Table
+# The Photos Table
 
 Before asking `dropboxMoveBatch()` to move our sample photos to the 'photos' directory, we will view a summary of the **photos** table using `dbTables()`:
 
@@ -257,7 +267,7 @@ RSQLite::dbGetQuery(conn = conx,
 
 The example table contains three photos. Because we followed the instructions in the phone set-up guide in the Chapter 7 and xxx in prep, *photoID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, *tz*, and *timestamp* columns were also auto-populated.
 
-### Downloading and looking at photos
+# Downloading and looking at photos
 
 All of the photos remain in Dropbox cloud storage until retrieved and called into R. The function `dropboxGetOneFile()` can be used for this purpose. Here, we will retrieve a photo file stored in the **photos** folder on the cloud, and save this file to our working directory. This *copies* the file from the cloud to a directory of interest; it is not yet readable by R. We put the file's name in the 'file' argument, specify 'photos' as the 'directory', and indicate the path to our Dropbox token in 'token.path'. Lastly, the 'local.directory' argument allows us to specify where the file should land locally on our machine. Here, we have indicated that we want the file to land in our current working directory.
 
@@ -283,7 +293,7 @@ magick::image_browse(img)
 
 The image should now be opened in a new window on your computer.
 
-### Assessing the performance of equipment at active monitoring locations
+# Assessing the performance of equipment at active monitoring locations
 
 If your monitoring program takes advantage of the **schedule** table, the function `photosCheck()` can be used to check the number of photos logged in the **photos** table against the number of photos *scheduled* in the **schedules** table. If there is a mismatch -- where photos are being scheduled but not taken -- `photosCheck()` offers a convenient method for users to see which equipment might need attention. 
 
@@ -327,19 +337,25 @@ If scheduled photos are not arriving in Dropbox, the monitoring team may visit a
 
 An important consideration in using `photosCheck()` is that it will check scheduled photographs versus delivery. This works fine for timed-photographs, but may show quite different results for motion-triggered photographs. With the motion-triggered schedule, an event is scheduled which tells the phone when to run the motion-trigger app, and photos are collected as triggered. If nothing triggers a photo, we would expect no photos to be logged. However, if an animal repeatedly triggers a photo to be taken, multiple photographs may be received for one scheduled event. 
 
-### The Photos Table in Access
+# The Photos Table in Access
 
 The photos table is a primary tab in the Access Navigation Form. 
 
-```{r, out.width = 700, out.height = 400, echo = F, fig.align = 'center'}
+<kbd>
+
+```{r, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('Chap12_Figs/photos.PNG', dpi = 500)
 ```
 
+</kbd>
+
+>*Figure 12.2. The photos table is populated by R.*
+
 Notice that there are three photos in the sample database. The not-so-friendly 'Hands Off' note indicates that photos are logged automatically by R. Photos can be annotated by members of the monitoring team, in which case a team member views each photo and identifies target signals within it. Each photos's annotations are displayed (in this case, none). We will illustrate how to annotate files in Chapter 14. 
 
-### Chapter Summary
+# Chapter Summary
  
 In this chapter, you learned that the **AMMonitor** approach is to store photos in the **photo_drop** folder or the **motion_drop** folder in the cloud. The function`dropboxMoveBatch()` relocates files to the more permanant **photos** or **motion** directory, and simultaneously logs metadata entries into the database **photos** table. This allows the monitoring team to track all photos within the database. If the **schedules** table is used to push timed photo schedules to each phone's Google calendar, `photosCheck()` can be used to assess phone performance.
 
-### Chapter References
+# Chapter References
