@@ -28,11 +28,13 @@ In this chapter, we outline the R package **AMMonitor**, and provide guidance on
 
 As previously mentioned, **AMMonitor** was developed as a prototype for monitoring wildlife in sunny California, USA. Our prototype included the following elements (keyed to Figure 1.1).  
 
-
-```{r, eval = T, out.width = '100%', echo = F, fig.align = 'left', out.extra='style="background-color:  #d3d3d3; padding:10px; display: inline-block;"'}
+<kbd>
+```{r, eval = T, out.width = '100%', echo = F, results='asis', fig.align = 'left'}
 
 knitr::include_graphics('Chap1_Figs/overview.png', dpi = 700)
+
 ```
+</kbd>
 
 >*Figure 1.1. A generalized overview of the AMMonitor approach.*
 

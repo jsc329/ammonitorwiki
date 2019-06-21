@@ -18,10 +18,11 @@ of monitoring data.
 
 As previously mentioned, **AMMonitor** was developed as a prototype for
 monitoring wildlife in sunny California, USA. Our prototype included the
-following elements (keyed to Figure
-1.1).
+following elements (keyed to Figure 1.1).
 
-<img src="Chap1_Figs/overview.png" width="100%" style="background-color:  #d3d3d3; padding:10px; display: inline-block;" style="display: block; margin: auto auto auto 0;" />
+<kbd>
+<img src="Chap1_Figs/overview.png" width="100%" style="display: block; margin: auto auto auto 0;" />
+</kbd>
 
 > *Figure 1.1. A generalized overview of the AMMonitor approach.*
 
@@ -403,7 +404,7 @@ doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.160530
 
 <div id="ref-BalanticOccupancy">
 
-3\. Balantic C, Donovan T. Dynamic wildlife occupancy models using
+3\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
