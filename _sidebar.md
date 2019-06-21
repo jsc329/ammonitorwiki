@@ -12,4 +12,5 @@
 - [Chapter 10:  The Priorities and Prioritization Tables](Chapter 10 - The Priorities and Prioritization Tables)
 - [Chapter 11:  The Recordings Table](Chapter 11 - The Recordings Table)
 - [Chapter 12:  The Photos Table](Chapter 12 - The Photos Table)
+- [Chapter 13:  The Soundscape Table](Chapter 13 - The Soundscape Table)
 
