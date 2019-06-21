@@ -1,16 +1,22 @@
 ---
-title: "AMMonitor"
-output: 
-  html_document:
-    css: styles.css
+title: "Chapter 18: Analyses"
+output:
+  github_document:
+    toc: true
+    toc_depth: 3
     df_print: tibble
-    fig_caption: yes
-    toc: yes
-    toc_depth: 4
-csl: plos.csl
 bibliography: refs.bib
+csl: plos.csl
 ---
 
+```{r, echo = F}
+# to create md file for the code.usgs.gov wiki, in the console type:
+# rmarkdown::render(input = "18-analyses.Rmd", output_format = "md_document", output_file = "Chapter 18 - Analyses.md")
+
+
+# cool emoji's at https://gist.github.com/rxaviers/7360908
+# https://github.com/montlikadani/TabList/wiki/Symbols
+```
 
 ```{r echo = F}
 # Set up chapter table and figure counters; figure folder
@@ -59,7 +65,7 @@ saveRDS(amml, 'ammls/classifiers.RDS')
 
 ```
 
-## Chapter 18: Analyses
+
 
 The previous chapter, Classifications, explained how each detected event from an acoustic recording or photograph is assigned a probability that it is the target signal you seek. This table provides the raw material for a wide range of ecological analyses. For example, you may be interested in:
 
@@ -71,7 +77,7 @@ The previous chapter, Classifications, explained how each detected event from an
 
 In other words, there are many, many ways to analyze data stored in the classifications tabl. In this chapter, we illustrate how data stored in the **classifications** table can be analyzed to assess species trends through time. 
 
-### Dynamic Occupancy Models 
+# Dynamic Occupancy Models 
 
 One way to monitor changes in species distribution patterns over time is to use a dynamic occupancy model, also known as a multi-season occupancy model. Occupancy models were largely developed by researchers at the Patuxent Wildlife Research Center, and now play a central role in monitoring species worldwide. The data input to the original dynamic occupancy model [@MacKenzie2003] are a log of the presence or absence of a target species across both space and time. The main outputs are a current estimate of occupancy rate, along with information about factors that influence **changes** in occupancy through time. 
 To illustrate an input, suppose a single study site was searched for a target species three times each summer for four years. The "encounter history" for this site might look like the following:
@@ -90,12 +96,12 @@ This history has four primary periods (years, in this case), and three secondary
 
 With dynamic models, a large number of sites are typically surveyed through time. In addition to the encounter histories themselves, researchers may collect a number of site-level covariates (such as the patch size associated with each monitoring location), and survey-level covariates (such as prevailing weather conditions during a given survey). The encounter histories, along with site- and survey-level covariates, are inputs to the dynamic occupancy model. For outputs, the model returns estimates of the following parameters (along with estimates of the influence of covariates on these parameters):
 
-- psi ($\psi$):  the probability a site is occupied.
-- $p$: the probability a species will be detected during a survey, given presence.
-- epsilon ($\epsilon$): the probability an occupied site will go locally extinct in the next primary period.
-- gamma ($\gamma$): the probability an unoccupied site will be locally colonized in the next primary period.
+- psi (\psi):  the probability a site is occupied.
+- p: the probability a species will be detected during a survey, given presence.
+- epsilon (\epsilon): the probability an occupied site will go locally extinct in the next primary period.
+- gamma (\gamma): the probability an unoccupied site will be locally colonized in the next primary period.
 
-Thus, the dynamic occupancy framework is an ideal framework for testing metapopulation theory.
+Thus, the dynamic occupancy framework is an ideal framework for testing metapopulation theory.  Now that's cool!  :sunglasses:
 
 In 2013, David Miller and colleagues contributed an important paper entitled [Determining Occurrence Dynamics when False Positives Occur: Estimating the Range Dynamics of Wolves from Public Survey Data](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0065808) [@Miller2013]. In this paper, the authors extended the dynamic model to include the possibility that some detections may be false positives, wherein a species is detected even though it is not present (hereafter, the "Miller model"). For example, the third primary period in the above encounter history was recorded as 100. The species was recorded as present, but if we relax the standard occupancy assumption that no false positives are possible, we now consider that this detection occurred in error. To accommodate the possibility of false positives, the Miller model requires a subset of detections to be verified by a second methodology in which false positives are not possible. If the alternative methodology confirms that the target species is indeed present, the survey is logged with a '2' instead of a '1'. For example, the encounter history above, 
 
@@ -109,14 +115,14 @@ In this example, we confirmed the presence of the target species in the third su
 
 In addition to the four parameters listed above (psi, p, epsilon, gamma), the Miller model uses maximum likelihood methods to estimate:
 
-- $p_{10}$:  the probability of a false positive detection at an unoccupied site.
-- $b$: the probability the detection will be certain, conditional on detecting the species at an occupied site.
+- p_{10}:  the probability of a false positive detection at an unoccupied site.
+- b: the probability the detection will be certain, conditional on detecting the species at an occupied site.
 
 Our goal for this chapter is to illustrate a Miller model analysis within the **AMMonitor** framework. In **AMMonitor**, we use detections in the **scores** table or **classifications** table to create the binary portion of the encounter history (0s and 1s), while annotations and verifications, stored in the **annotations** and **scores** tables, respectively, are used to "confirm" surveys (signified by 2s in the encounter history). From these data, we create Miller-type occupancy encounter histories for each site, and then send the data to the program, PRESENCE [@Presence], for analysis. The outputs of this model provide not only site-occupancy estimates, but also may identify covariates that can be managed to influence the system toward a desired occupancy level (a topic we will visit in the next chapter). We tested the bias and precision of the Miller model in automated acoustic monitoring, and found that the model performed well under a variety of conditions [@Balantic2019]. 
 
 Our target species for this chapter is the Verdin (*Auriparus flaviceps*), a small songbird found in the southwestern United States.
 
-### RPresence
+# RPresence
 
 The Miller model can be run in R via the package RPresence [@RPresence]. To use RPresence, you will need to download both PRESENCE and RPresence from https://www.mbr-pwrc.usgs.gov/software/presence.html. PRESENCE software can be installed to your machine; the RPresence package comes as a zipped folder, and you will need to unzip it and add it to your site library. Recall that base R packages (the ones that come when you download R) are typically maintained in your Programs directory of your computer, while "add-on" packages (such as RPresence) are typically stored in your "site library". To find your own library locations, use the `.libPaths()` function. 
 
@@ -208,7 +214,7 @@ As shown, 22 records (scores) were updated for events detected by 'verd1', and 2
 
 Our next task is to combine verifications, annotations, and scores into encounter histories that can be passed to the Miller model. 
 
-### shapeOccupancy()
+# shapeOccupancy()
 
 The `shapeOccupancy()` function converts detection data into an encounter history for the Miller model. This encounter history will be an N x M matrix, where N, the number of rows, is equal to the number of study locations in a monitoring program, and M, the number of columns, is equal to the combined total number of surveys taken across all sampling seasons. 
 
@@ -293,7 +299,7 @@ Here, recall that we added verifications at the level of the libraryID (*manualV
 
 This brings us to an important point about `shapeOccupancy()` -- it generates encounter histories strictly at the *species-level*, and not at the level of the libraryID. So regardless of which template is used to generate automatic detections, `shapeOccupancy()` is working under the hood to link this templateID to a speciesID, therefore finding ANY species-level annotations or verifications to generate confirmed presence (2s) in the encounter history. 
 
-### Ensemble Classifications
+# Ensemble Classifications
 
 We will look at two more examples of how to use `shapeOccupancy()` with the classifications table. Above, we used the `shapeOccupancy()` setting table = 'classifications', and we input a single model to the 'models' element of the **mod.list** object input to the model.list argument. However, as mentioned in Chapter 17: Classifications, we can combine the power of multiple classifiers to make predictions about the target signal probability of each detection. `shapeOccupancy()` runs the `classifierEnsemble()` function to do this. 
 
@@ -373,7 +379,7 @@ shapeOccupancy(db.path = db.path,
 ```
 
 
-### Generating encounter histories from the scores table
+# Generating encounter histories from the scores table
 One final option is to construct encounter histories directly from the **scores** table instead of the **classifications** table. This option may be suitable if users have not undergone the process of verifying detections and training classifiers as described in Chapter 17: Classifiers. Instead, templates are run against recordings, resulting in records that populate the **scores** table, and encounter histories can be generated directly from those detections. 
 
 To use this option in `shapeOccupancy()`, arguments are similar to those in the previous examples, with a few major exceptions: first, we must set table = 'scores'. Secondly, the 'model.list', 'ensemble', 'amml', and 'cull.FA' arguments can be omitted entirely, since they are not relevant if using table = 'scores'. Finally, instead of inputting a model.list, this time we are inputting a template.list, with one or more templates. Each template.list element, named according to a valid templateID in the database, contains a single numeric value that indicates the detection threshold. **Here, instead of an aggregated probability as in the table = 'classifications' option, now this threshold value merely stands for the actual template score detection threshold we should use to log a detection.** For example, if using a spectrogram cross-correlation template, we might decide to log a detection if this record exceeds a correlation score of 0.20 or 0.22 (as below). (If using a binary point matching template, the score might be more like 5, or 10, or anything suitable.)
@@ -402,7 +408,7 @@ Notice that regardless of whether you are using the scores or classifications ta
 
 Because annotations for photos are also included in the **annotations** table, it is theoretically possible to create encounter histories based on photographs, but `shapeOccupancy()` does not currently implement this functionality. 
 
-### Running RPresence for Miller model analysis
+# Running RPresence for Miller model analysis
 
 Once we have generated encounter histories with `shapeOccupancy()`, we can pass the output to RPresence to analyze the data with the Miller model. Below, we run `shapeOccupancy()` and store the output as an object named **eh.list**. We set locationID = 'all' to include all 50 locations in the workflow: 
 ```{r}
@@ -548,10 +554,10 @@ dbGetQuery(conn = conx,
 
 In our next chapter, we will use our Miller model to assess the state of a system (verdin occupancy rate), and compare it to the verdin management objective. 
 
-### Chapter Summary
+# Chapter Summary
 
 This chapter described a workflow for moving from automated target signal detections to dynamic occupancy models that accommodate false positives (as in [@Miller2013]). The `shapeOccupancy()` function can be used to generate encounter histories formatted for the Miller model. `shapeOccupancy()` searches the **classifications** or **scores** tables in an AMMonitor database, along with the **annotations** table, to produce 0s, 1s, and 2s in the Miller model encounter history, with a variety of options for aggregating the data. Encounter histories from `shapeOccupancy()` can be fit in the RPresence function `occMod()` to estimate parameters. The `occupancySim()` function offers an option for simulating Miller model encounter histories that can be used to test the workflow. `shapeOccupancyTemporals()` and `shapeOccupancySpatials()` allow temporal and spatial covariates to be included in calls to `occMod()`. Useful models can be saved in the **do_fp** AMModels library of the **ammls** directory, and called into action through time to track progress toward monitoring objectives. 
 
 
-### Chapter References
+# Chapter References
 
