@@ -6,5 +6,5 @@
 - [Chapter 4:  The Species, Library, and Lists Tables](Chapter 4 - Species and Library)
 - [Chapter 5:  Objectives](Chapter 5 - Objectives)
 - [Chapter 6:  The Locations and Spatials Tables](Chapter 6 - Spatials)
-- [Chapter 7:  Chapter 7: The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
+- [Chapter 7:  The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
 
