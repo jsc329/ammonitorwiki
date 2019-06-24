@@ -115,19 +115,19 @@ To begin, use the `install.packages()` function to install
 **AMMonitor**.
 
 ``` r
-> library(devtools)
-> devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
+library(devtools)
+devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
 ```
 
 The package overview and function index page can be accessed with the
 following code:
 
 ``` r
-> # View package overview
-> help("AMMonitor")
-> 
-> # View function index page
-> help(package = "AMMonitor")
+# View package overview
+help("AMMonitor")
+
+# View function index page
+help(package = "AMMonitor")
 ```
 
 The package itself contains many functions and built-in datasets, which
@@ -135,30 +135,28 @@ we will introduce over the course of this book. Below, we display the
 functions and datasets:
 
 ``` r
-> # List the functions in AMMonitor
-> ls("package:AMMonitor")
+# List the functions in AMMonitor
+ls("package:AMMonitor")
 ```
 
-``` 
- [1] "accounts"                 "activity_amml"            "ammCreateDirectories"     "analysis"                 "annotatePhoto"           
- [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "classifications"          "classifier_practice"     
-[11] "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"    "classifierPredict"       
-[16] "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"            "dbCreate"                
-[21] "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"               "dropboxGetOneFile"       
-[26] "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"     "generateRDS"             
-[31] "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"                "lists"                   
-[36] "locations"                "locationsShape"           "logs"                     "modelsInsert"             "objectives"              
-[41] "occupancySim"             "people"                   "photos"                   "photosCheck"              "plotAnnotations"         
-[46] "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"     "pr"                      
-[51] "priorities"               "prioritization"           "priorityInit"             "prioritySet"              "qry"                     
-[56] "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"             "recordings"              
-[61] "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                 "scheduleAddVars"         
-[66] "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"             "scheduleSun"             
-[71] "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"      "scriptArgs"              
-[76] "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"               "spatials"                
-[81] "species"                  "templates"                "templatesInsert"          "templatesUnserialize"     "temporals"               
-[86] "temporalsDarksky"         "temporalsGet"            
-```
+    ##  [1] "accounts"                 "activity_amml"            "ammCreateDirectories"     "analysis"                 "annotatePhoto"           
+    ##  [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "classifications"          "classifier_practice"     
+    ## [11] "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"    "classifierPredict"       
+    ## [16] "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"            "dbCreate"                
+    ## [21] "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"               "dropboxGetOneFile"       
+    ## [26] "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"     "generateRDS"             
+    ## [31] "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"                "lists"                   
+    ## [36] "locations"                "locationsShape"           "logs"                     "modelsInsert"             "objectives"              
+    ## [41] "occupancySim"             "people"                   "photos"                   "photosCheck"              "plotAnnotations"         
+    ## [46] "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"     "pr"                      
+    ## [51] "priorities"               "prioritization"           "priorityInit"             "prioritySet"              "qry"                     
+    ## [56] "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"             "recordings"              
+    ## [61] "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                 "scheduleAddVars"         
+    ## [66] "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"             "scheduleSun"             
+    ## [71] "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"      "scriptArgs"              
+    ## [76] "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"               "spatials"                
+    ## [81] "species"                  "templates"                "templatesInsert"          "templatesUnserialize"     "temporals"               
+    ## [86] "temporalsDarksky"         "temporalsGet"
 
 **AMMonitor** has a handful of package dependencies. These include:
 
@@ -213,9 +211,9 @@ illustrates how to set up a primary directory called **AMMonitor** on
 the E drive in a directory called **Dropbox**.
 
 ``` r
-> # Create the AMMonitor directory structure
-> ammCreateDirectories(amm.dir.name = "AMMonitor", 
-+                      file.path = "E:/Dropbox")
+# Create the AMMonitor directory structure
+ammCreateDirectories(amm.dir.name = "AMMonitor", 
+                     file.path = "E:/Dropbox")
 ```
 
 **Important note: Ensure that this folder is a top-level Dropbox
@@ -303,56 +301,54 @@ separate model libraries. `amModelLib()` requires only a description
 field, but additional metadata may also be included:
 
 ``` r
-> library(AMModels)
-> 
-> # look at the AMModels help page
-> # help("AMModels")
-> 
-> # Create a  library called "activity"
-> activity <- AMModels::amModelLib(description = "This library stores models that predict species activity patterns.")
-> 
-> # Create a library called  classifiers 
-> classifiers <- AMModels::amModelLib(description = "This library stores classification models (machine learning models) that can be used to predict the probability that a detected signal is from a target species.")
-> 
-> # Create a  library called soundscape
-> soundscape <- AMModels::amModelLib(description = "This library stores results of a soundscape analysis.")
-> 
-> # Create a library called do_fp
-> do_fp <- AMModels::amModelLib(description = "This library stores results of dynamic occupancy analyses that can handle false positive detections.")
-> 
-> # Create a list of metadata to be added to each library
-> info <- list(PI = 'Bilbo Baggins', 
-+              Organization = 'Middle Earth Conservancy')
-> 
-> # Add metadata to each library
-> ammlInfo(activity) <- info
-> ammlInfo(classifiers) <- info
-> ammlInfo(soundscape) <- info
-> ammlInfo(do_fp) <- info
-> 
-> # Look at one of the libraries
-> activity
+library(AMModels)
+
+# look at the AMModels help page
+# help("AMModels")
+
+# Create a  library called "activity"
+activity <- AMModels::amModelLib(description = "This library stores models that predict species activity patterns.")
+
+# Create a library called  classifiers 
+classifiers <- AMModels::amModelLib(description = "This library stores classification models (machine learning models) that can be used to predict the probability that a detected signal is from a target species.")
+
+# Create a  library called soundscape
+soundscape <- AMModels::amModelLib(description = "This library stores results of a soundscape analysis.")
+
+# Create a library called do_fp
+do_fp <- AMModels::amModelLib(description = "This library stores results of dynamic occupancy analyses that can handle false positive detections.")
+
+# Create a list of metadata to be added to each library
+info <- list(PI = 'Bilbo Baggins', 
+             Organization = 'Middle Earth Conservancy')
+
+# Add metadata to each library
+ammlInfo(activity) <- info
+ammlInfo(classifiers) <- info
+ammlInfo(soundscape) <- info
+ammlInfo(do_fp) <- info
+
+# Look at one of the libraries
+activity
 ```
 
-``` 
-
-Description:
-[1] This library stores models that predict species activity patterns.
-
-Info:
-  PI 
-   [1] Bilbo Baggins
-  Organization 
-   [1] Middle Earth Conservancy
-
-Models:
-
- --- There are no models --- 
-
-Data:
-
- --- There are no datasets --- 
-```
+    ## 
+    ## Description:
+    ## [1] This library stores models that predict species activity patterns.
+    ## 
+    ## Info:
+    ##   PI 
+    ##    [1] Bilbo Baggins
+    ##   Organization 
+    ##    [1] Middle Earth Conservancy
+    ## 
+    ## Models:
+    ## 
+    ##  --- There are no models --- 
+    ## 
+    ## Data:
+    ## 
+    ##  --- There are no datasets ---
 
 Here, we view the “activity” library, used to store models that predict
 when species will be active and available for detection. For now, all of
@@ -370,11 +366,11 @@ For now, we simply need to save the libraries to our **ammls**
 directory.
 
 ``` r
-> # Save the libraries to the AMMonitor amml folder
-> saveRDS(object = activity, file = "ammls/activity.RDS")
-> saveRDS(object = classifiers, file = "ammls/classifiers.RDS")
-> saveRDS(object = soundscape, file = "ammls/soundscape.RDS")
-> saveRDS(object = do_fp, file = "ammls/do_fp.RDS")
+# Save the libraries to the AMMonitor amml folder
+saveRDS(object = activity, file = "ammls/activity.RDS")
+saveRDS(object = classifiers, file = "ammls/classifiers.RDS")
+saveRDS(object = soundscape, file = "ammls/soundscape.RDS")
+saveRDS(object = do_fp, file = "ammls/do_fp.RDS")
 ```
 
 Thoughout this book, we will add models to these libraries.

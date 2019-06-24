@@ -29,11 +29,11 @@ opts_knit$set(base.dir = './', out.format = 'markdown', fig_caption = TRUE)
 
 
 # set default chunk options
-opts_chunk$set(prompt = TRUE,
+opts_chunk$set(prompt = FALSE,  # testing prompt = FALSE & comment = 
                warning = FALSE,
                echo = TRUE,
                eval = TRUE,
-               comment = NA,
+               comment = '##', # testing prompt = FALSE & comment = 
                eval = TRUE,
                fig.align = "left",
                dev = 'png',
