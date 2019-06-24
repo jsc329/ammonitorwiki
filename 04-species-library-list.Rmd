@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter 4 - Species and Library.md")
+# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter-04-Species-and-Library.md")
 
 ```
 
@@ -33,7 +33,7 @@ file.remove(db.path) # may or may not be needed
 
 This chapter covers the **species**, **library**, **lists**, and **listItems** tables in the **AMMonitor** database. The **species** and **library** tables can be used to track groups of target monitoring species, as well as the sounds by which they are detected and monitored. The **lists** and **listItems** tables allow users to create lists of items, which can be used to enhance the integrity of the database. 
 
-In this chapter, we will use `dbCreateSample()` to create a database called "Chap4.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes in this chapter, we will only pre-populate the **species**, **lists**, **listItems**, and **library** tables.
+In this chapter, we will use `dbCreateSample()` to create a database called "Chap4.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes in this chapter, we will only pre-populate the **species**, **lists**, **listItems**, and **library** tables.
 
 ```{r}
 # Create a sample database for this chapter
@@ -56,9 +56,7 @@ Finally, we send a SQL statement that will enforce foreign key constraints.
 
 ```{r}
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 The output of this query indicates that 0 rows of data were returned or changed, but that the foreign key constraint has been enabled. We will return to this topic below.
 
@@ -123,7 +121,23 @@ str(gnatcatcher, max.level = 1)
  
 ```
 
-A wealth of information is returned for the species, formatted as a list of lists. 
+
+Recall from chapter 3 that you may opt to read data in using the **AMMonitor** `qry()` function, which only requires a **db.path** object input to the 'db.path' argument, and either a table name input to the 'table' argument (if you wish to read an entire table into memory), or a SQLite statement input to the 'statement' argument. `qry()` acts as a wrapper function for either `dbReadTable()` or `dbGetQuery()`, and takes care of connecting and disconnecting from the database for you. It returns the results as a data.table in R. The below code shows how you can use `qry()` to read in an entire table, or to use a SQLite statement to select records of interest: 
+```{r}
+
+# Read in the entire species table
+qry(db.path = db.path, 
+    table = 'species')
+
+# Only select the Black-tailed Gnatcatcher record
+qry(db.path = db.path, 
+    table = NULL,
+    statement = "SELECT * 
+                 FROM species 
+                 WHERE commonName = 'Black-tailed Gnatcatcher' ") 
+```
+
+The `qry()` approach is essentially the same as `dbReadTable()` or `dbGetQuery()`, except that it allows you to input a **db.path** object rather than a **conx** object. 
 
 ## Creating records
 
@@ -140,8 +154,8 @@ new.species <- data.frame(speciesID = 'phaino',
 
 # Add the record to the database
 RSQLite::dbWriteTable(conn = conx, name = 'species', value = new.species,
-             row.names = FALSE, overwrite = FALSE,
-             append = TRUE, header = FALSE)
+                      row.names = FALSE, overwrite = FALSE,
+                      append = TRUE, header = FALSE)
 ```
 
 ## Updating records
@@ -150,11 +164,10 @@ To modify information in an existing record in R, we use an UPDATE statement in 
 
 ```{r}
 # Update speciesID for Phainopepla
-RSQLite::dbExecute(conn = conx, statement = 
-              "UPDATE species 
-               SET speciesID = 'phai'
-               WHERE commonName = 'Phainopepla' "
-          )
+RSQLite::dbExecute(conn = conx, 
+                   statement = "UPDATE species 
+                                SET speciesID = 'phai'
+                                WHERE commonName = 'Phainopepla' ")
 ```
 This action returns a "1" to convey that 1 record was updated. We can also make updates using `dbWriteTable()` by storing the record to be updated as a data.frame, and then passing in TRUE for the 'overwrite' argument. 
 
@@ -169,9 +182,10 @@ Note that *speciesID* is the primary key for the species table, and it has just 
 ##  Deleting records 
 To delete specific records from a table, we again invoke `dbExecute()`, this time with a DELETE statement. Below, we combine the DELETE statement with a WHERE statement to eliminate any records containing 'Phainopepla' in the *genus* column: 
 ```{r}
-# Get rid of Gimli record
-RSQLite::dbExecute(conn = conx, statement = "DELETE FROM species 
-          WHERE genus = 'Phainopepla' ")
+# Get rid of unwanted record
+RSQLite::dbExecute(conn = conx, 
+                   statement = "DELETE FROM species 
+                                WHERE genus = 'Phainopepla' ")
 ```
 This operation returns a "1" to indicate that one record was deleted from the table. We can confirm this with a SELECT COUNT(*) command, and count the number of records in the species table.  
 ```{r}
@@ -203,10 +217,10 @@ RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(library);"
 
 Thus, any attempt to enter a new library record that does have an entry in the **species** table will throw an error. Human-made sounds that may be of monitoring interest, such as mechanical sounds [@Mporas2016],  traffic, or others, should be be connected to a "Homo sapiens" record (TSN 180092) in the **species** table.
 
-We can view the contents of the sample **library** table using either `dbReadTable()` or the more customizable `dbGetQuery()`:
+We can view the contents of the sample **library** table using either `dbReadTable()`, the more customizable `dbGetQuery()`, or the `qry()` wrapper function:
 ```{r}
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM library
-           LIMIT 5")
+qry(db.path = db.path, 
+    statement = "SELECT * FROM library LIMIT 5")
 ```
 
 The *libraryID* denotes a unique ID for each target signal. In rows 1 and 2 of the **library** object, note that the *speciesID* is 'btgn' for both rows. This means we are tracking multiple  vocalization types for the same species. The 'btgn_zhee' record tracks the Black-tailed Gnatcatcher's typical territorial "zhee zhee zhee" advertisement sound. The 'btgn_other' record will serve as a catch-all for any other unspecified Black-tailed Gnatcatcher sound types (it is useful to include such generalized "species_other" records for annotation purposes; these grant annotators the capacity to flag any unanticipated or atypical sounds a species may make; See Chapter 14). We elected to name each *libraryID* by attaching the speciesID at the front, but we could have chosen to name these signals according to any convention. The third column, *type*, is not required, but furnishes the opportunity to distinguish the signal type (if useful). For example, bird sounds are often categorized as songs or calls. Lastly, the *description* column can contain information describing the signal of interest, but is not required.
@@ -224,11 +238,12 @@ Lists provide a flexible way to enforce structure in a database. To illustrate, 
 dbTables(db.path = db.path, table = "lists")
 ```
 
-This table has only two fields; the *listID* field serves as the primary key, and *description* field stores a brief description of what the list will hold. We can view the contents of the sample **lists** table with `dbReadTable()`:
+This table has only two fields; the *listID* field serves as the primary key, and *description* field stores a brief description of what the list will hold. We can view the contents of the sample **lists** table with `dbReadTable()` or `qry()`:
 
 ```{r}
 # Return  the lists table from the database (shown as a tibble)
 RSQLite::dbReadTable(conn = conx, name = "lists")
+
 ```
 
 Our **lists** table identifies six lists. The descriptions indicate that five of these are lists of species (subsets of the **species** table), while the sixth is a list of templates used for automatic scanning of audio recordings (See Chapter 15).
@@ -237,16 +252,17 @@ To see the items associated with a given list, we can query the **listItems** ta
 
 ```{r}
 # Return  the listItems table from the database (shown as a tibble)
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT * 
-                                     FROM listItems
-                                     WHERE listID = 'Frodo''s List' ")
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM listItems
+                                 WHERE listID = 'Frodo''s List' ")
 ```
 
 Here, we see a list called "Frodo's List" containing three items (ecdo, gaqu, and verd). These items originate from the *speciesID* column in the **species** table. Notice also the double apostrophe used in the SQLite query to avoid issues with the quote in "Frodo's list". 
 
 "Frodo's List" contains the three speciesIDs that indicate the species for which Frodo is an expert. "Bilbo's List" contains five species. These lists will be explained in Chapter 14: Annotations, where we will illustrate how Frodo can annotate an audio recording or photo, focusing  attention on only those species within "Frodo's List"; in doing so, he will indicate the presence or absence of three species for each file he annotates. In contrast, when Bilbo annotates a file, he will be focusing on five species in which he has expertise. Thus, the **listItems** table allows different members of a monitoring team to have unique expertise. 
 
-Importantly, all entries in the *listID* column must match a *listID* present in the **lists** table. The field *listID* in the **listItems** table is foreign key that references a primary key in another table. We confirm this with the following statement:   
+Importantly, all entries in the *listID* column must match a *listID* present in the **lists** table. The field *listID* in the **listItems** table is a foreign key that references a primary key in another table. We confirm this with the following statement:   
 
 ```{r, eval = T}
 # Return foreign key information for the listItems table
@@ -261,7 +277,8 @@ Because of the foreign key constraint, a user may not add records to the **listI
 
 ```{r, error=TRUE}
 # Insert a new record using SQL syntax; note that it will fail
-RSQLite::dbExecute(conn = conx, statement = 
+RSQLite::dbExecute(conn = conx, 
+                   statement = 
                "INSERT INTO listItems (
                   listID, 
                   dbTable,
@@ -278,7 +295,7 @@ RSQLite::dbExecute(conn = conx, statement =
 ) # close the dbExecute statement
 ```
 
-Note, however, that if "Gandalf's List" did exist, this entry would have been acceptable even though 'orc' is not listed in the **species** table. List items can be mostly anything so long as a **listID** exists in the **lists** table. The columns *dbTable* and *dbColumn* are not enforced in the table *per se*, but are useful for tracking items if desired. (Note: the can be enforced through the Microsoft Access front-end if desired.) 
+Note, however, that if "Gandalf's List" did exist, this entry would have been acceptable even though 'orc' is not listed in the **species** table. List items can be mostly anything so long as a **listID** exists in the **lists** table. The columns *dbTable* and *dbColumn* are not enforced in the table *per se*, but are useful for tracking items if desired. (Note: these can be enforced through the Microsoft Access front-end if desired.) 
 
 When you are finished with your **AMMonitor** session, make sure to disconnect from the database:
 ```{r}
@@ -290,7 +307,7 @@ RSQLite::dbDisconnect(conx)
 
 #  The Species and Library Tables in Access
 
-The **species** table plays a prominent role in **AMMonitor**, and as such is primary tab in the  Access front-end. Selecting the species tab displays the species form, with each form element tagged to a specific column in the **species** table. Further, the **library** form is nested within the **species** form, providing a convenient way to view all library items associated with a given species.
+The **species** table plays a prominent role in **AMMonitor**, and as such is a primary tab in the  Access front end. Selecting the species tab displays the species form, with each form element tagged to a specific column in the **species** table. Further, the **library** form is nested within the **species** form, providing a convenient way to view all library items associated with a given species.
 
 <kbd>
 
@@ -307,7 +324,7 @@ Notice that the library is also a secondary tab under the Species primary tab. T
 
 #  The List and listItems Tables in Access
 
-Because lists are so flexible, used in many different capacities in **AMMonitor**, they are listed as a sub-tab under the "Program Mgt" tab. Here, Bilbo's list is displayed on the **list** form (in which listID and description are tagged to the table's columns). The **listItems** form is nested within the **lists** form, providing an easy way to create, read, update, or delete records for any given list.
+Because lists are so flexible and used in many different capacities in **AMMonitor**, they are listed as a sub-tab under the "Program Mgt" tab. Here, Bilbo's list is displayed on the **list** form (in which listID and description are tagged to the table's columns). The **listItems** form is nested within the **lists** form, providing an easy way to create, read, update, or delete records for any given list.
 
 <kbd>
 
@@ -318,14 +335,14 @@ knitr::include_graphics('Chap4_Figs/lists.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 4.2. Lists are  extremely versitile, and are used in many different examples throughout this book*.
+>*Figure 4.2. Lists are  extremely versatile, and are used in many different examples throughout this book*.
 
-Notice at the bottom of this form that Bilbo's List is record 1 of 6 (six lists come with the sample database). We can use the scroll arrows to view other lists, and click on the "sunny" button to create a new list and add new items to it. 
+Notice at the bottom of this form that Bilbo's List is record 1 of 6 (six lists come with the sample database). We can use the scroll arrows to view other lists, and click on the sun icon button to create a new list and add new items to it. 
 
 
 # Chapter Summary
 
-In this chapter, you learned about the **species** and **library** tables. The species table allows species to be identified by ITIS number -- useful if you plan on sharing your data in any way. The **library** table allows the monitoring team to identify different signals issued by a species. These signals will be the subject of Chapter 15: Templates.
+In this chapter, you learned about the **species** and **library** tables. The **species** table allows species to be identified by ITIS number -- useful if you plan on sharing your data in any way. The **library** table allows the monitoring team to identify different signals issued by a species. These signals will be the subject of Chapter 15: Templates.
 
 You also learned about **lists** and **listItems**, tables that can be used for multiple purposes in an **AMMonitor** framework. We use lists in many of the coming chapters.
 
