@@ -2,10 +2,12 @@ Chapter 2: The AMMonitor Database
 ================
 
   - [Keys](#keys)
+      - [Primary Keys](#primary-keys)
+      - [Foreign Keys](#foreign-keys)
   - [Create the database](#create-the-database)
   - [Interacting with Tables](#interacting-with-tables)
-  - [The AMMonitor Database “Front
-    End”](#the-ammonitor-database-front-end)
+  - [The AMMonitor Database Front
+    End](#the-ammonitor-database-front-end)
       - [SQLite ODBC](#sqlite-odbc)
       - [Linking Access to the SQLite
         database](#linking-access-to-the-sqlite-database)
@@ -17,7 +19,7 @@ The primary goal of **AMMonitor** is to provide a system that
 efficiently processes remotely captured data so that agencies or
 organizations tasked with managing natural resources can easily compare
 the current state of the ecosystem (e.g., species occupancy patterns) to
-management objectives. Automated Monitoring Units (AMUs) have the
+management objectives. Autonomous Monitoring Units (AMUs) have the
 capacity to collect a massive amount of information in a short period of
 time, requiring that monitoring teams have an effective data management
 plan in place.
@@ -36,25 +38,26 @@ tables that are related in some way. Each table stores specific
 information, and specific columns in one table may be formally linked to
 other tables. Information stored in or across tables can be retrieved
 using a language called SQL, which stands for Structured Query Language.
-We will learn some basic SQL commands, but much of your work will done
-in R.
+You will learn some basic SQL commands in this chapter, but much of your
+work will done in R.
 
 Typically, SQL databases are stored on a large server (such as the
-server at a university or agency) that requires a management and
-oversight by a database administrator. In contrast, a SQLite database
-does not require a server or administrator. Instead, the entire database
-is stored as a single file, which may reside on a single computer or in
-the cloud. The SQLite home page explains: “SQLite is an in-process
-library that implements a self-contained, serverless,
-zero-configuration, transactional SQL database engine. The code for
-SQLite is in the public domain and is thus free for use for any purpose,
-commercial or private. SQLite is the most widely deployed database in
-the world with more applications than we can count, including several
-high-profile projects.” \[2\]
+server at a university or agency) that requires management and oversight
+by a database administrator. In contrast, a SQLite database does not
+require a server or administrator. Instead, the entire database is
+stored as a single file, which may reside on a single computer or in the
+cloud. The SQLite home page explains: “SQLite is an in-process library
+that implements a self-contained, serverless, zero-configuration,
+transactional SQL database engine. The code for SQLite is in the public
+domain and is thus free for use for any purpose, commercial or private.
+SQLite is the most widely deployed database in the world with more
+applications than we can count, including several high-profile
+projects.” \[2\]
 
 An **AMMonitor** SQLite database is created with the `dbCreate()`
 function, and should be stored in the “database” folder within the main
-AMMonitor directory.
+AMMonitor
+directory.
 
 <kbd>
 
@@ -65,7 +68,8 @@ AMMonitor directory.
 > SQLite database file.*
 
 Before we actually create the database, we provide an overview of the
-tables within an **AMMonitor** database.
+tables within an **AMMonitor**
+database.
 
 <kbd>
 
@@ -77,9 +81,9 @@ tables within an **AMMonitor** database.
 > columns. Lines between tables indicate how tables are related to each
 > other.*
 
-If you are new to relational databases, relax. Think of a database as
-several Excel worksheets (a workbook), where each sheet is a table that
-stores specific information; the tables are linked in a specific way.
+If you are new to relational databases, think of a database as several
+Excel worksheets (a workbook), where each sheet is a table that stores
+specific information. The tables are linked in a specific way.
 
 Database tables (keyed to Figure 2.2 in this paragraph) store data and
 metadata about the overall monitoring effort. Each rectangle in Figure
@@ -103,25 +107,26 @@ Collected audio and photo files are delivered to and remain in the cloud
 and **recordings** tables (2.2k). Team members can manually search files
 for target **species** (2.2p) or target signals, identified in a signal
 **library** (2.2o), and log **annotations** (2.2r) for any targets found
-manually. General features of an audio file are summarized and stored in
-the **soundscapes** table (2.2j). To facilitate automated detection of
-target sounds, team members can create **templates** of target signals
-(2.2m). After a template is run against a recording, the **scores**
-table (2.2l) stores metrics indicating the closeness of a signal to the
-template. Subsets of these scores can be verified manually by people.
-Verified scores are then used to develop and test several machine
-learning classifiers to return the probability that a detected event is
-a target signal, stored in the **classifications** table (2.2s).
-Classifications, along with annotations, can be used in a variety of
-statistical approaches to analyze the state of the ecosystem with
-respect to management objectives (2.2t), bringing us back to the
-beginning. The **analysis** table (2.2y) identifies the model library
-that houses the analytical results, and the **assessments** table (not
-shown) matches an analysis with a particular objective. The tables
-**lists** (2.2u) and **listItems** (2.2v) are general purpose tables
-that control what values can be entered into a particular table. The
-tables **scripts** (2.2w) and **scriptArgs** (2.2x) store information
-that allows some **AMMonitor** functions to be run semi-automatically.
+manually. General acoustic features of an audio file are summarized and
+stored in the **soundscapes** table (2.2j). To facilitate automated
+detection of target sounds, team members can create **templates** of
+target signals (2.2m). After a template is run against a recording, the
+**scores** table (2.2l) stores metrics indicating the closeness of a
+signal to the template. Subsets of these scores can be verified manually
+by people on the research team. Verified scores are then used to develop
+and test several machine learning classifiers to return the probability
+that a detected event is a target signal, stored in the
+**classifications** table (2.2s). Classifications, along with
+annotations, can be used in a variety of statistical approaches to
+analyze the state of the ecosystem with respect to management objectives
+(2.2t), bringing us back to the beginning. The **analysis** table (2.2y)
+identifies the model library that houses the analytical results, and the
+**assessments** table (not shown) matches an analysis with a particular
+objective. The tables **lists** (2.2u) and **listItems** (2.2v) are
+general purpose tables that control what values can be entered into a
+particular table. The tables **scripts** (2.2w) and **scriptArgs**
+(2.2x) store information that allow certain **AMMonitor** functions to
+be run semi-automatically.
 
 Though Fig. 2.2 provides an overview of the **AMMonitor** database, we
 will introduce each table in depth in the coming chapters.
@@ -131,43 +136,45 @@ will introduce each table in depth in the coming chapters.
 Keys are an important concept in relational databases. We highlight two
 types of keys below:
 
-  - Primary keys: Each table has a “primary” key, which is a column or
-    columns used to identify a unique record (row) in the table. For
-    example, in the **people** table (Figure 2.1a), the column labeled
-    *personID* has a small key symbol next to it, indicating that this
-    column is the table’s primary key. You can see that the table has
-    two other columns, labeled *firstName* and *lastName*. Thus, a
-    record (a row in the table) in this table may have an entry such as
-    *personID* = “bbaggins”, *firstName* = “Bilbo”, and *lastName* =
-    “Baggins”. We can use SQLite code to retrieve this unique row in
-    the table by simply finding the record where the ‘personID’ column
-    has a value of “bbaggins”. The primary key cannot be duplicated,
-    thus ‘bbaggins’ will always point to Bilbo’s record.
-    
-    In some tables, mutiple columns compose the primary key. For
-    example, the **deployment** table (2.1b) uses three columns as the
-    primary key, referred to as a “composite primary key”. The columns
-    *equipmentID*, *locationID*, and *dateDeployed* combine to make the
-    primary key in this table because all three entries are required to
-    identify a unique deployment (a row that identifies a specific piece
-    of equipment deployed at a specific location on a specific date).
+### Primary Keys
 
-  - Foreign keys are used to link two tables together, wherein a foreign
-    key in one table refers to a primary key in another table. For
-    example, notice the column named *personID* in the **deployment**
-    table (Figure 2.1b). This is a foreign key that connects back to the
-    **people** table (Figure 2.1a), where *personID* is a primary key.
-    Thus, if Bilbo Baggins deploys an AMU at a given location on a given
-    date, we can expect to see “bbaggins” listed in the *personID*
-    column of the **deployment** table. If we need to know more about
-    “bbaggins”, we can find his information in the **people** table by
-    extracting the row associated with this key.
+Each table has a “primary” key, which is a column or columns used to
+identify a unique record (row) in the table. For example, in the
+**people** table (Figure 2.1a), the column labeled *personID* has a
+small key symbol next to it, indicating that this column is the table’s
+primary key. You can see that the table has two other columns, labeled
+*firstName* and *lastName*. Thus, a record (a row in the table) in this
+table may have an entry such as *personID* = “bbaggins”, *firstName* =
+“Bilbo”, and *lastName* = “Baggins”. We can use SQLite code to
+retrieve this unique row in the table by simply finding the record where
+the ‘personID’ column has a value of “bbaggins”. The primary key cannot
+be duplicated, thus “bbaggins” will always point to Bilbo’s record.
+
+In some tables, mutiple columns compose the primary key. For example,
+the **deployment** table (2.1b) uses three columns as the primary key,
+referred to as a “composite primary key”. The columns *equipmentID*,
+*locationID*, and *dateDeployed* combine to make the primary key in this
+table because all three entries are required to identify a unique
+deployment (a row that identifies a specific piece of equipment deployed
+at a specific location on a specific date).
+
+### Foreign Keys
+
+Foreign keys are used to link two tables together, wherein a foreign key
+in one table refers to a primary key in another table. For example,
+notice the column named *personID* in the **deployment** table (Figure
+2.1b). This is a foreign key that connects back to the **people** table
+(Figure 2.1a), where *personID* is a primary key. Thus, if Bilbo Baggins
+deploys an AMU at a given location on a given date, we can expect to see
+“bbaggins” listed in the *personID* column of the **deployment** table.
+If we need to know more about “bbaggins”, we can find his information in
+the **people** table by extracting the row associated with this key.
 
 The concept of primary keys and foreign keys is essential to relational
-databases. They allow information to be distributed across tables so
-that the same information is never duplicated, and help maintain the
-integrity of the data collected. We will be examining the table
-relationships as a matter of practice in future chapters. For more
+databases. Primary and foreign keys allow information to be distributed
+across tables so that the same information is never duplicated, and they
+help maintain the integrity of the data collected. We will examine the
+table relationships as a matter of practice in future chapters. For more
 information, view a
 [tutorial](https://www.tutorialspoint.com/sql/sql-rdbms-concepts.htm) on
 relational database concepts.
@@ -180,8 +187,8 @@ have two options:
 1.  Use the `dbCreate()` function to create a blank database. This is
     what users should do after reading or skimming through the entire
     book and are ready to launch a monitoring program. This function has
-    two arguments: the *db.name* (desired name of the database) and the
-    *file.path* (where to store this SQLite file). All tables and keys
+    two arguments: the ‘db.name’ (desired name of the database) and the
+    ‘file.path’ (where to store this SQLite file). All tables and keys
     are generated automatically. Tables are empty, but fully equipped to
     intake new information.
 
@@ -190,52 +197,50 @@ have two options:
     `dbCreateSample()` generates all tables in an **AMMonitor**
     database, and, for demonstration purposes, pre-populates certain
     tables with sample data that comes with the package. This function
-    has three arguments: the *db.name*, *file.path*, and *tables* (the
+    has three arguments: the ‘db.name’, ‘file.path’, and ‘tables’ (the
     names of the database tables that should be filled with sample data;
     all other tables are present but empty).
 
-For this chapter, we will use `dbCreateSample()` to create a sample
+For this chapter, we will use `dbCreateSample()` to generate a sample
 SQLite database named “Chap2.sqlite”. Below, we fill all tables with
 sample data by specifying ‘all’ for the tables argument.
 
 ``` r
-> # Create a sample database for this chapter
-> dbCreateSample(db.name = "Chap2.sqlite", 
-+                file.path = paste0(getwd(),"/database"), 
-+                tables =  'all')
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap2.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  'all')
 ```
 
-    An AMMonitor database has been created with the name Chap2.sqlite which consists of the following tables: 
+    ## An AMMonitor database has been created with the name Chap2.sqlite which consists of the following tables:
 
-    accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
+    ## accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
 
-``` 
-
-Sample data have been generated for the following tables: 
-accounts, lists, people, species, spatials, scripts, equipment, locations, deployment, library, listItems, objectives, priorities, prioritization, recordings, photos, annotations, schedule, templates, scores, classifications, soundscape, temporals, scriptArgs, analysis, logs, assessments
-```
+    ## 
+    ## Sample data have been generated for the following tables: 
+    ## accounts, lists, people, species, spatials, scripts, equipment, locations, deployment, library, listItems, objectives, priorities, prioritization, recordings, photos, annotations, schedule, templates, scores, classifications, soundscape, temporals, scriptArgs, analysis, logs, assessments
 
 Next, we connect to the database in R using RSQLite’s `dbConnect()`
 function, where we identify the SQLite driver in the ‘drv’ argument:
 
 ``` r
-> # Establish the database file path as db.path
-> db.path <- paste0(getwd(), '/database/Chap2.sqlite')
-> 
-> # Connect to the database
-> conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap2.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 ```
 
 Finally, we send a SQLite statement to enforce foreign key constraints:
 
 ``` r
-> # Turn the SQLite foreign constraints on
-> RSQLite::dbExecute(conn = conx, statement = 
-+               "PRAGMA foreign_keys = ON;"
-+           )
+# Turn the SQLite foreign constraints on
+RSQLite::dbExecute(conn = conx, statement = 
+              "PRAGMA foreign_keys = ON;"
+          )
 ```
 
-    [1] 0
+    ## [1] 0
 
 This is our first look at SQLite syntax, passed through the
 `dbExecute()` ‘statement’ argument. The word PRAGMA (from “pragmatic”)
@@ -253,20 +258,18 @@ functions. For example, throughout this vignette, we will be using the
 data it stores, and its primary keys. For example:
 
 ``` r
-> # Look at the structure of the deployment table
-> dbTables(db.path = db.path, table = 'deployment')
+# Look at the structure of the deployment table
+dbTables(db.path = db.path, table = 'deployment')
 ```
 
-``` 
-$deployment
-  cid          name         type notnull dflt_value pk comment
-1   0   equipmentID VARCHAR(255)       1         NA  1        
-2   1    locationID VARCHAR(255)       1         NA  2        
-3   2  dateDeployed VARCHAR(255)       1         NA  3        
-4   3 dateRetrieved VARCHAR(255)       0         NA  0        
-5   4      personID VARCHAR(255)       0         NA  0        
-6   5         notes         TEXT       0         NA  0        
-```
+    ## $deployment
+    ##   cid          name         type notnull dflt_value pk comment
+    ## 1   0   equipmentID VARCHAR(255)       1         NA  1        
+    ## 2   1    locationID VARCHAR(255)       1         NA  2        
+    ## 3   2  dateDeployed VARCHAR(255)       1         NA  3        
+    ## 4   3 dateRetrieved VARCHAR(255)       0         NA  0        
+    ## 5   4      personID VARCHAR(255)       0         NA  0        
+    ## 6   5         notes         TEXT       0         NA  0
 
 Here, the output tells us about each of the columns (fields) in the
 **deployment** table. The field *cid* is simply the column identifier
@@ -302,16 +305,16 @@ foreign key information for the **deployment** table with the following
 code:
 
 ``` r
-> # Return foreign key information for the deployment table
-> RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
+# Return foreign key information for the deployment table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
 ```
 
-    # A tibble: 3 x 8
-         id   seq table     from        to          on_update on_delete match
-      <int> <int> <chr>     <chr>       <chr>       <chr>     <chr>     <chr>
-    1     0     0 people    personID    personID    CASCADE   NO ACTION NONE 
-    2     1     0 locations locationID  locationID  CASCADE   NO ACTION NONE 
-    3     2     0 equipment equipmentID equipmentID CASCADE   NO ACTION NONE 
+    ## # A tibble: 3 x 8
+    ##      id   seq table     from        to          on_update on_delete match
+    ##   <int> <int> <chr>     <chr>       <chr>       <chr>     <chr>     <chr>
+    ## 1     0     0 people    personID    personID    CASCADE   NO ACTION NONE 
+    ## 2     1     0 locations locationID  locationID  CASCADE   NO ACTION NONE 
+    ## 3     2     0 equipment equipmentID equipmentID CASCADE   NO ACTION NONE
 
 Here, we use the `dbGetQuery()` function to send a SQLite query to the
 database (i.e., we are asking for something from the database). We
@@ -345,24 +348,25 @@ specify our **conx** object in the ‘conn’ argument, and “people” as the
 table of interest in the ‘name’ argument.
 
 ``` r
-> # Read the entire table and store as get.people
-> get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
-> 
-> # Look at the entire table (printed as a tibble)
-> get.people
+# Read the entire table and store as get.people
+get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
+
+# Look at the entire table (printed as a tibble)
+get.people
 ```
 
-    # A tibble: 2 x 6
-      personID firstName lastName projectRole          email                    phone       
-      <chr>    <chr>     <chr>    <chr>                <chr>                    <chr>       
-    1 bbaggins Bilbo     Baggins  Lead Ring Monitor I  ringmaster2001@shire.net none        
-    2 fbaggins Frodo     Baggins  Lead Ring Monitor II fbaggins@shire.net       888-ONE-RING
+    ## # A tibble: 2 x 6
+    ##   personID firstName lastName projectRole          email                    phone       
+    ##   <chr>    <chr>     <chr>    <chr>                <chr>                    <chr>       
+    ## 1 bbaggins Bilbo     Baggins  Lead Ring Monitor I  ringmaster2001@shire.net none        
+    ## 2 fbaggins Frodo     Baggins  Lead Ring Monitor II fbaggins@shire.net       888-ONE-RING
 
 As shown, the sample **people** table has two records. There are four
-primary ways to work with records, often called CRUD operations. C means
-“Create a new record”, R means “Read a record”, U means “Update a
-record” and D means “Delete a record”. We will demonstrate the CRUD
-operations in Chapter 3, when we look at the **people** table in depth.
+primary ways to work with records: Create, Read, Update, or Delete
+(CRUD). C means “Create a new record”, R means “Read a record”, U means
+“Update a record” and D means “Delete a record”. We will demonstrate
+the CRUD operations in Chapter 3, when we look at the **people** table
+in depth.
 
 The standard **people** table comes with six columns. The *personID* is
 the primary key of this table, and uniquely identifies each record in
@@ -375,26 +379,27 @@ program by passing an ALTER TABLE SQL command to the function
 data.
 
 ``` r
-> # Add a new column called StartDate
-> RSQLite::dbExecute(conn = conx, statement = 
-+           "ALTER TABLE people ADD COLUMN startDate varchar;"
-+ ) 
+# Add a new column called StartDate
+RSQLite::dbExecute(conn = conx, statement = 
+          "ALTER TABLE people ADD COLUMN startDate varchar;"
+) 
 ```
 
 ALTER TABLE may also be used to delete columns. However, we strongly
 advise against deleting any default **AMMonitor** tables or columns –
 doing so may produce function errors, and we will not be able to assist
-you in fixing them\!
+you in fixing them.
 
-# The AMMonitor Database “Front End”
+# The AMMonitor Database Front End
 
 While a monitoring team member can always interact with the database
 through R (as shown above), not all team members will be proficient in
 R, and may prefer an alternative database interface. To that end,
-**AMMonitor** comes with a Microsoft Access “front end”, which is simply
+**AMMonitor** comes with a Microsoft Access front end, which is simply
 an Access navigation form that connects to the SQLite database. This
 front end provides users with a form-like feel for entering or updating
-records. The actual data, however, remain in the SQLite database.
+records. The actual data, however, remain in the SQLite
+database.
 
 <kbd>
 
@@ -428,15 +433,16 @@ customize Microsoft Access forms to your liking. If you do not have
 Access, you may consider using the [Open Office
 Base](https://www.openoffice.org/product/base.html) program instead.
 
-This form is stored in the “ext” folder of the package itself with the
-file name “AMMonitor\_sqlite.accdb”, and you can save it to your
-database folder as “Chap2\_sqlite.accdb” with the following code:
+This form is stored in the **ext** folder of the **AMMonitor** package
+itself with the file name “AMMonitor\_sqlite.accdb”, and you can save it
+to your **database** folder as “Chap2\_sqlite.accdb” with the following
+code:
 
 ``` r
-> # Save the Access form to your database directory
-> save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
-+             package = "AMMonitor"), 
-+      file = "database/Chap2_demo.accdb")
+# Save the Access form to your database directory
+save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
+            package = "AMMonitor"), 
+     file = "database/Chap2_demo.accdb")
 ```
 
 Hopefully, you now have the Access file in your **AMMonitor** database
@@ -447,21 +453,22 @@ step is to actually make that connection.
 
 ## SQLite ODBC
 
-To connect Access to our Chap2.sqlite database, we need a **driver**, a
-bit of code that will allow the SQLite database to connect to Microsoft
-Access. We will be using an ODBC driver, which stands for Open Database
-Connectivity. You can obtain the SQLite driver from
+To connect Access to our Chap2.sqlite database, we need a “driver”,
+which is a code snippet that will allow the SQLite database to connect
+to Microsoft Access. We will be using an ODBC driver, which stands for
+Open Database Connectivity. You can obtain the SQLite driver from
 <http://www.ch-werner.de/sqliteodbc/>. Make sure you select the
-appropriate driver for your machine (Windows or Mac), and install it. As
-of this writing, we have been using the SQLite3 ODBC Driver on a machine
-running Windows 10 with no problems.
+appropriate driver for your machine’s operating system, and install it.
+As of this writing, we have been using the SQLite3 ODBC Driver on a
+machine running Windows 10 with no problems.
 
-Download the driver for your machine, and install it. Then follow these
+Download the driver for your machine and install it. Then follow these
 steps for Windows users (Mac users may need a different approach):
 
 1.  Navigate to your computer’s ODBC Data Source Administrator. You can
-    likely search on “ODBC” to find this, and it should look something
-    like shown below. Under the User DSN tab, click the Add button.
+    likely search “ODBC” to find this on your machine, and it should
+    look something like the below. Under the User DSN tab, click the Add
+    button.
 
 <kbd>
 
@@ -473,7 +480,8 @@ steps for Windows users (Mac users may need a different approach):
 > you to create new ODBC connections (Open Data Base Connectivity)*.
 
 2.  A new dialogue box will open, prompting you to select a driver.
-    Locate the SQLite3 ODBC Driver you just installed, and click Finish.
+    Locate the SQLite3 ODBC Driver you just installed, and click
+Finish.
 
 <kbd>
 
@@ -488,14 +496,14 @@ steps for Windows users (Mac users may need a different approach):
     source, navigate to a particular SQLite database, and press OK.
     Here, we are naming our data source Chap2\_sqlite, and will connect
     to the sqlite database called chap2.sqlite using the Browse button.
-    It is a good idea to have the data source name match up (at least
-    loosely) with the name of the database so that you can identify the
-    database based on the data source name. Additionally, there are a
-    few options that may be enforced, including a timeout entry (if
-    there is database inactivity after a given period of time, the
-    connection will automatically break). Other options for this
-    dialogue box can be found
-    [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
+    It is a good idea to have the data source name match up with the
+    name of the database so that you can identify the database based on
+    the data source name. Additionally, there are a few options that may
+    be enforced, including a timeout entry (if there is database
+    inactivity after a given period of time, the connection will
+    automatically break). Other options for this dialogue box can be
+    found
+[here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
 <kbd>
 
@@ -507,10 +515,11 @@ steps for Windows users (Mac users may need a different approach):
 > SQLite database file.*
 
 4.  You should now see this new data source listed in the User DSN tab;
-    it will allow you to connect to your sqlite database. You may have
+    it will allow you to connect to your SQLite database. You may have
     many data sources (e.g., one for each chapter if you wish). When it
     is time to launch your own monitoring program, however, the data
-    source will connect to your program’s **AMMonitor** SQLite database.
+    source will connect to your program’s **AMMonitor** SQLite
+database.
 
 <kbd>
 
@@ -533,7 +542,8 @@ required steps.
 2.  Click the External Data tab. This tab allows us to connect Access to
     an external database, such as an Excel file, another Access
     database, a text file or XML file. Here, we will use an ODBC
-    connection, where ODBC stands for Open Database Connectivity. <kbd>
+    connection, where ODBC stands for Open Database Connectivity.
+<kbd>
 
 <img src="Chap2_Figs/ExternalTab.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
 
@@ -543,7 +553,8 @@ required steps.
 
 3.  Clicking on the ODBC Database button will bring up a new dialogue
     box. Here, we want to **link** to the data source by creating a
-    linked table. Press OK.
+    linked table. Press
+OK.
 
 <kbd>
 
@@ -557,7 +568,8 @@ required steps.
 4.  Now, we wish to locate and use the data source we just created
     (which uses a SQLite3 driver to connect to our SQLite database). It
     will likely be listed under the Machine Data Source tab, and is
-    highlighted in blue when clicked. Press OK.
+    highlighted in blue when clicked. Press
+OK.
 
 <kbd>
 
@@ -570,7 +582,8 @@ required steps.
 5.  The previous action will display a new dialogue box. This new box
     will ask which SQLite tables you wish to connect to. Press the
     Select All button to the right, which will highlight all of the
-    tables in blue. Then press OK.
+    tables in blue. Then press
+OK.
 
 <kbd>
 
@@ -584,7 +597,8 @@ required steps.
 6.  Under the “All Access Objects” left menu, you will see the tables.
     Each table has a globe symbol and arrow, indicating that each table
     is linked to the SQLite database table. This means we can now use
-    Access to work with the data in our database tables.
+    Access to work with the data in our database
+tables.
 
 <kbd>
 
@@ -595,7 +609,8 @@ required steps.
 > *Figure 2.12. The linked tables appear as “globes” in the left menu.*
 
 Click on the **people** table, and you will see the two records
-currently in the SQLite database in a spreadsheet view:
+currently in the SQLite database in a spreadsheet
+view:
 
 <kbd>
 
@@ -615,7 +630,8 @@ populated by **AMMonitor** functions.
 Though you may work with tables directly as above, you can alternatively
 use the Navigation form introduced earlier in the chapter. Locate the
 Navigation form by collapsing the list of Tables (press the double arrow
-icon to the right of the word “Tables”), and opening the list of Forms.
+icon to the right of the word “Tables”), and opening the list of
+Forms.
 
 <kbd>
 
@@ -629,7 +645,8 @@ icon to the right of the word “Tables”), and opening the list of Forms.
 Here, you can see that the AMMonitor front end comes with many
 individual forms that can be customized; these individual forms are
 combined into the Navigation Form. Opening the Navigation will bring you
-to AMMonitor Navigation Form introduced earlier in the chapter.
+to AMMonitor Navigation Form introduced earlier in the
+chapter.
 
 <kbd>
 
@@ -643,7 +660,8 @@ to AMMonitor Navigation Form introduced earlier in the chapter.
 The Navigation Form can be set as the default form that appears when the
 Access database is first opened. This can be achieved by going to File |
 Options | Current Database, and setting the Navigation Form as the
-Display Form. You may also add a customized title and icon here as well.
+Display Form. You may also add a customized title and icon here as
+well.
 
 <kbd>
 
