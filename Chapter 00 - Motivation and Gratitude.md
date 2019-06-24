@@ -18,7 +18,7 @@ posteriori* \[8\].
 However, automated methods have several limitations. First, individual
 AMUs can be expensive, running over $800 USD for commercial devices
 \[9\], although cost-effective models are becoming more common \[10\].
-Second, data are typically stored on AMUs until researchers can retrieve
+Second, data is typically stored on AMUs until researchers can retrieve
 it, causing time lapses between data collection, analysis, and results.
 Such delays hamper the ability to efficiently address pressing
 ecological challenges and track progress toward management objectives.
@@ -33,15 +33,14 @@ management decisions \[12–18\].
 
 **AMMonitor** is an open source R package dedicated to collecting,
 storing, and analyzing AMU information in a way that 1) is
-cost-effective, 2) can efficiently process and store information, 3) can
-mitigate false positive and false negative detections, and 4) can take
-advantage of the vast and growing community of R analytics. We created
-AMMonitor for the U.S. Bureau of Land Management to monitor high
+cost-effective, 2) can efficiently process and store information, and 3)
+can take advantage of the vast and growing community of R analytics. We
+created **AMMonitor** for the Bureau of Land Management to monitor high
 priority wildlife across the southern California Solar Energy Zone
 (SEZ), including the Couch’s Spadefoot (*Scaphiopus couchii*), kit fox
 (*Vuples macrotis*), coyote (*Canis latrans*), and a variety of bird
 species, such as the Verdin (*Auriparus flaviceps*), Black-tailed
-Gnatcatcher (*Polioptila melanura*), and Eurasian Collared-dove
+Gnatcatcher (*Polioptila melanura*), and Eurasian Collared-Dove
 (*Streptopelia decaocto*). The agency has established management
 objectives (benchmarks) to ensure the persistence of sensitive species
 and minimize the spread of invasive species across the SEZ as solar
@@ -74,13 +73,13 @@ Thus, the **AMMonitor** package places the monitoring data into an
 > research hypotheses or applied resource management objectives
 > (boxed).*
 
-The **AMMonitor** approach was developed with a prototype of 20 AMU
-units (smartphones) \[20–22\]. Since then, we have added the capacity to
-use the smartphone’s camera by enabling timed photographs as well as
-motion-triggered photographs, allowing the smartphones to act as
-“cam-trackers.” However, the **AMMonitor** approach does not require the
-use of smartphones. Its flexibility allows the analyis of data collected
-by other autonomous devices, and further permits the storage of results
+The **AMMonitor** approach was developed with a prototype of 20
+smartphone-based AMUs \[20–22\]. Since then, we have added the capacity
+to use the smartphone’s camera by enabling timed photographs as well as
+motion-triggered photographs, allowing the smartphones to act as camera
+traps. However, the **AMMonitor** approach does not require the use of
+smartphones. Its flexibility allows the analyis of data collected by
+other autonomous devices, and further permits the storage of results
 from other analytical systems for additional processing in R.
 
 This guide provides step-by-step instructions for using **AMMonitor** in
@@ -91,7 +90,10 @@ interested in improving or building on our approach.
 Gratitude
 =========
 
-We thank Mark Massar and the BLM for ….Jon Katz….Jim Hines….John Sauer
+We thank Mark Massar and the Bureau of Land Management for essential
+field support and guidance, Jon Katz and Jim Hines for programming
+assistance, and John Sauer for critical review of the software and
+documentation.
 
 References
 ==========
@@ -125,7 +127,7 @@ al. Wildlife camera trapping: A review and recommendations for linking
 surveys to ecological processes. Journal of Applied Ecology. 2015;52:
 675–685.
 
-8. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg SL.
+8. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
 Acoustic surveys of birds using electronic recordings: New potential
 from an omnidirectional microphone system. Wildlife Society Bulletin.
 2002;30: 709–720.
@@ -175,10 +177,10 @@ positives from template-detected data in automated acoustic wildlife
 monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
-21. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
+21. Balantic C, Donovan T. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
-22. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
+22. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution.
