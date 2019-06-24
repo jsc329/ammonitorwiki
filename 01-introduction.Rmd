@@ -54,10 +54,12 @@ This guide will explain each step of the **AMMonitor** approach in detail.
 
 To begin, use the `install.packages()` function to install **AMMonitor**.
 
+
 ```{r, eval = F}
 library(devtools)
 devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
 ```
+
 
 The package overview and function index page can be accessed with the following code:
 
@@ -70,7 +72,12 @@ help(package = "AMMonitor")
 ```
 
 The package itself contains many functions and built-in datasets, which we will introduce over the course of this book. Below, we display the functions and datasets:
-```{r, eval = T}
+```{r, eval = F, echo = T}
+# List the functions in AMMonitor
+ls("package:AMMonitor")
+```
+
+```{r, eval = T, echo = F}
 # List the functions in AMMonitor
 ls("package:AMMonitor")
 ```
