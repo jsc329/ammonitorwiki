@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "01-introduction.Rmd", output_format = "md_document", output_options = list(hitheme = zenburn) output_file = "Chapter 1 - Getting Started with AMMonitor.md")
+# rmarkdown::render(input = "01-introduction.Rmd", output_format = "md_document", output_file = "Chapter 1 - Getting Started with AMMonitor.md")
 
 ```
 
@@ -24,9 +24,9 @@ knitr::opts_chunk$set(fig.path = 'Chap1_Figs/')
 ```
 
 
-In this chapter, we outline the R package **AMMonitor**, and provide guidance on getting started. **AMMonitor** is a multi-purpose monitoring platform that utilizes (1) AMUs such as smartphones to collect data, (2) SQLite as a database engine for storing and tracking all components of the monitoring effort, and (3) a suite of R-based functions for analysis of monitoring data. 
+In this chapter, we outline the R package **AMMonitor** and provide guidance on getting started. **AMMonitor** is a multi-purpose monitoring platform that uses (1) Autonomous Monitoring Units (AMUs) to collect data, (2) SQLite as a database engine for storing and tracking all components of the monitoring effort, and (3) a suite of R-based functions for analysis of monitoring data. 
 
-As previously mentioned, **AMMonitor** was developed as a prototype for monitoring wildlife in sunny California, USA. Our prototype included the following elements (keyed to Figure 1.1).  
+As previously mentioned, **AMMonitor** was developed as a prototype for monitoring wildlife on Bureau of Land Management land in California, USA. Our prototype included the following elements (keyed to Figure 1.1). 
 
 <kbd>
 ```{r, eval = T, out.width = '100%', echo = F, results='asis', fig.align = 'left'}
@@ -39,15 +39,15 @@ knitr::include_graphics('Chap1_Figs/overview.png', dpi = 700)
 >*Figure 1.1. A generalized overview of the AMMonitor approach.*
 
 
-- Smart phone monitoring:  Each cell phone station is fully plug-and-play, with an Android cell phone and external microphone stored in a weather-proof box mounted to a pole (Figure 1.1a). Stations are remote and powered by solar panels. Each cell phone is connected to a Google account and receives its recording/photo schedule daily via a Google calendar connection when in data transmission mode. Audio files, photos, and performance logs are sent directly to a linked to a cloud-based account (e.g., Dropbox) daily, where they are then archived and analyzed using AMMonitor functions (Figure 1.1b). The recording/photo schedules may be optimized by AMMonitor functions based on previously logged detections (Figure 1.1e).
+- **Smartphone-based Monitoring**:  Each smartphone station is fully plug-and-play, with an Android smartphone and external microphone stored in a weather-proof box mounted to a pole (Figure 1.1a). Stations are remote and powered by solar panels. Each smartphone is connected to a Google account and receives its recording/photo sampling schedule daily from Google calendar when in data transmission mode. Audio files, photos, and performance logs are sent to a cloud-based account (e.g., Dropbox) daily, where they are then archived and analyzed using **AMMonitor** functions (Figure 1.1b). The recording/photo schedules may be optimized by **AMMonitor** functions based on previously logged detections (Figure 1.1e).
 
-- Data Storage and Handling:  Raw data, along with some automatically processed data, are stored within a SQLite database (Figure 1.1c).  We will dive deeply into the **AMMonitor** database in Chapter 3.  In a nutshell, SQLite is a self-contained, high-reliability, embedded, full-featured, public-domain, SQL database engine. It is the most used database engine in the world, with a maximum storage of 140 terabytes. **AMMonitor** uses the R package, RSQLite [@RSQLite] to connect R with the database.  Database tables (highlighted in bold in this paragraph) store data and metadata about the overall monitoring effort.  First, a monitoring effort is driven by an agency’s or researcher’s **objectives**. These objectives are often, but not always, **species**-centered.  The **people** table stores information about members of the monitoring team.  They deploy **equipment** across various locations to monitor ecosystems via cell phones, each connected to a Google account and tracked through the **deployment** table.  Location-specific temporal and spatial information are stored in the **temporals** and **spatials** tables.  The deployed equipment collects photos and/or recordings on a **schedule** transmitted to each phone’s Google calendar daily.  The collected files are delivered to and remain in the cloud -- metadata about cloud-based files are stored in the **photos** and **recordings** tables.  Team members can manually search files for target species or target signals, identified in a signal **library**, by logging **annotations** (a process known as labeling).  General features of an audio file are summarized and stored in the **soundscapes** table.  To facilitate automated detection of target sounds, team members can create **templates** of target signals.  Templates are run against incoming recordings; the **scores** table stores metrics indicating the closeness of a signal to the template.  Machine learning (ML) classifiers are used to return the probability that a detected event is the target signal, stored in the **classifications** table.  Classifications, along with annotations, can be used in a variety of statistical approaches to analyze the state of the ecosystem with respect to research hypotheses or management objectives.  And we’ve come full-circle. 
+- **Data Storage and Handling**:  Raw data, along with some automatically processed data, are stored within a SQLite database (Figure 1.1c). We will dive deeply into the **AMMonitor** database in Chapter 3. In short, SQLite is a self-contained, high-reliability, embedded, full-featured, public-domain, SQL database engine. It is the most used database engine in the world, with a maximum storage of 140 terabytes. **AMMonitor** uses the R package RSQLite [@RSQLite] to connect R with the database. Database tables (highlighted in bold in this paragraph) store data and metadata about the overall monitoring effort. First, a monitoring effort is driven by an agency’s or researcher’s **objectives**. These objectives are often, but not always, **species**-centered. The **people** table stores information about members of the monitoring team. People deploy **equipment** across various locations to monitor ecosystems via smartphones, each connected to a Google account and tracked through the **deployment** table. Location-specific temporal and spatial information is stored in the **temporals** and **spatials** tables. The deployed equipment collects photos and/or recordings on a **schedule** transmitted to each phone’s Google calendar daily. The collected files are delivered to and remain in the cloud -- metadata about cloud-based files are stored in the **photos** and **recordings** tables. Team members can manually search files for target species or target signals, identified in a signal **library**, by logging **annotations** (a process known as labeling). General features of an audio file are summarized and stored in the **soundscapes** table. To facilitate automated detection of target sounds, team members can create **templates** of target signals. Templates are run against incoming recordings; the **scores** table stores metrics indicating the closeness of a signal to the template. Machine learning classifiers are used to return the probability that a detected event is the target signal, stored in the **classifications** table. Classifications, along with annotations, can be used in a variety of statistical approaches to analyze the state of the ecosystem with respect to research hypotheses or management objectives. 
  
-- Analyses:  Audio and photo data are analyzed in R with a variety of methods.  For example, audio files scanned with a template-basedapproach ultimately provides the probability that any given signal is the target signal you seek [@BalanticStatistical] (Figure 1.1d).  These probabilities can be aggregated in many ways to address ecological questions. For example, they may be inputs into a multi-season occupancy analysis [@BalanticOccupancy] to ascertain the status and population trend (increasing, decreasing, stable) of a target species (Figure 1.1f). 
+- **Analyses**:  Audio and photo data can be analyzed in R using a variety of methods. For example, semi-automated detection of target signals can provide the probability that any given signal is a target signal sought by the researcher [@BalanticStatistical] (Figure 1.1d). These probabilities can be aggregated to address ecological questions. For example, the probabilities may be inputs to a dynamic occupancy analysis [@BalanticOccupancy] to ascertain the status and population trend (increasing, decreasing, stable) of a target species (Figure 1.1f). 
 
-- Storage of Analyses: While the SQLite database stores much of the processed data, most analytical outputs are stored in an **AMModels** library [@AMModels; @Donovan2018].  The concept of an AMModels library is extremely simple: a library stores the outputs of an R analysis (often in the form of a model), along with descriptive metadata, so that they may be easily recalled and used in the future.  As a brief example, an R user may invoke the ‘lm’ function to analyze a dataset in a simple linear regression framework. The ‘lm’ function outputs are stored as an object of class ‘lm’, which contains a vast amount of information, including model inputs, model coefficients, fitting information, and residuals.  This model, along with its metadata, can be stored in an **AMModels** library. This model can be used to generate predictions on new data.  In the context of **AMMonitor**, we use an **AMModel** library to store 1) models that predict species activity patterns (e.g., singing) as a function of covariates, 2) machine learning classification models that provide the probability that a signal is a target signal of interest, and 3) analytical results, such as an occupancy analysis or soundscape analysis.  
+- **Storage of Analyses**: While the SQLite database stores much of the processed data, most analytical outputs are stored in an AMModels library [@AMModels; @Donovan2018]. The concept of an AMModels library is extremely simple: a library stores the outputs of an R analysis (often in the form of a model), along with descriptive metadata, so that outputs may be easily recalled and used in the future. As a brief example, an R user may invoke the `lm()` function to analyze a dataset in a simple linear regression framework. The ‘lm’ function outputs are stored as an object of class `lm()`, which contains a vast amount of information, including model inputs, model coefficients, fitting information, and residuals. This model, along with its metadata, can be stored in an AMModels library. This model can be used to generate predictions on new data. In the context of **AMMonitor**, we use an AMModels library to store 1) models that predict species activity patterns (e.g., singing) as a function of covariates, 2) machine learning classification models that provide the probability that a signal is a target signal of interest, and 3) analytical results, such as an occupancy analysis or soundscape analysis. 
 
-This guide will explain each step of the **AMMonitor** approach in detail.  
+This guide will explain each step of the **AMMonitor** approach in detail. 
 
 
 # Installing AMMonitor
@@ -90,13 +90,13 @@ ls("package:AMMonitor")
 - monitoR [@monitoR]- pits templates against collected recordings to search for target signals.
 - caret [@caret] - provides machine learning functions for refining the performance of automated detection via **monitoR** templates.
 
-These should be automatically installed when you install **AMMonitor**. If not, use the `install.packages()` function to do so manually.
+These packages should be automatically installed when you install **AMMonitor**. If not, use the `install.packages()` function to install them manually.
 
 # Cloud-Based Account
 
 The **AMMonitor** framework assumes that files are stored on a cloud-based system to promote collaboration. Such a system will also save your own personal computer from filling up with terabytes of monitoring data. Currently, **AMMonitor** functions assume Dropbox is the primary cloud-based solution. Future upgrades to the package may include other solutions, such as Google Drive or Amazon.
 
-Set up your Dropbox account at http://www.dropbox.com. Because monitoring with AMUs can generate a massive amount of data in a short amount of time, your program may require a subscription account that accommodates many terabytes of data. The email account you link to Dropbox should be an email that represents the main monitoring project (e.g., a gmail account that represents the project rather than any one individual). In this vignette, our Dropbox account is associated with 'midEarthMgt\@gmail.com'. 
+Set up your Dropbox account at http://www.dropbox.com. Because AMU-based monitoring can generate a massive amount of data in a short amount of time, your program may require a subscription account that accommodates many terabytes of data. The email account you link to Dropbox should be an email that represents the main monitoring project (e.g., a gmail account that represents the project rather than any one individual). In this vignette, our Dropbox account is associated with 'midEarthMgt\@gmail.com'. 
 
 After creating a Dropbox account, users can download the DropboxInstaller from https://www.dropbox.com/install, which allows your personal computer to connect to and sync with the Dropbox account in the cloud. You do not need to sync the entire Dropbox account to your computer (and likely would not want to unless the computer has ample storage space). 
 
@@ -104,7 +104,7 @@ After creating a Dropbox account, users can download the DropboxInstaller from h
 
 **AMMonitor** is a multi-purpose monitoring platform, and the **functions within it rely on a specific directory structure that we assume all users will implement**. 
 
-The function `ammCreateDirectories()` is the first function users will run to set up a monitoring program with **AMMonitor**. The code below illustrates how to set up a primary directory called "AMMonitor" on the E drive in a directory called "Dropbox". 
+The function `ammCreateDirectories()` is the first function users will run to set up a monitoring program with **AMMonitor**. The code below illustrates how to set up a primary directory called **AMMonitor** on the E drive in a directory called **Dropbox**. 
 
 ```{r, eval = F}
 # Create the AMMonitor directory structure
@@ -124,7 +124,7 @@ knitr::include_graphics('Chap1_Figs/filestructure2.PNG', dpi = 500)
 ```
 </kbd>
 
->*Figure 1.2.  Directory structure that is required by the AMMonitor approach.*
+>*Figure 1.2. Directory structure that is required by the AMMonitor approach.*
 
 
 
@@ -132,8 +132,8 @@ Each (currently empty) directory will store specific types of information as int
 
 - **ammls**:  Stores AMModel libraries (discussed below). 
 - **database**: Stores the SQLite database (Chapter 2).
-- **log_drop**:  Stores incoming logs collected by the Tasker Android application on smartphone performance (Appendix 2).
-- **logs**:  Stores archived logs collected by the Tasker Android application on smartphone performance (Appendix 2).
+- **log_drop**:  Stores incoming logs tracking smartphone-based AMU performance, collected by the Tasker Android application (Appendix 2).
+- **logs**:  Stores archived logs tracking smartphone-based AMU performance, collected by the Tasker Android application (Appendix 2).
 - **motion_drop**:  Stores incoming photos triggered by a motion-detection smartphone application (Chapter 12) . 
 - **motion**:  Stores archived photos collected by the smartphone as motion-triggered events (Chapter 12).
 - **photo_drop**:  Stores incoming photos collected by the smartphone as timed events (Chapter 12).
@@ -144,15 +144,15 @@ Each (currently empty) directory will store specific types of information as int
 - **settings**: Stores files needed to access accounts (e.g., Google or Dropbox) via R (multiple chapters).
 - **spatials**: Stores spatial layers associated with locations in a monitoring program (rasters and/or shapefiles) as RDS files (Chapter 6).
 
-We will describe each directory in detail as they become relevant in the **AMMonitor** workflow. For example, we introduce users to the **AMModel libraries** below, wherein we will create several libraries to be stored in the **amml** directory. In the next chapter, we introduce users to the **AMMonitor** database, where we will create a SQLite database and store it in the **database** directory.
+We will describe each directory in detail as they become relevant in the **AMMonitor** workflow. For example, we introduce users to the **AMModel libraries** below, wherein we will create several libraries to be stored in the **ammls** directory. In the next chapter, we introduce users to the **AMMonitor** database, where we will create a SQLite database and store it in the **database** directory.
 
 # AMModels: A Vehicle for Storing Models in a Model Library
 
-The **AMMonitor** SQLite database does much of the heavy lifting for managing AMMonitor data by tracking people, equipment, metadata about recordings and photos, and more. To store and manage models, however, we use the R package,  **AMModels** [@AMModels]. Generally speaking, a "model" is typically the result of some analysis. An **AMModel** "library" stores a collection of models as a single R object (the "model library") that can be saved to an .RDS file, thus allowing models to be retrieved for future use. Models may be used for a variety of purposes: a) to generate predictions, b) to serve as a prior model to be updated with Bayesian methods as new data are collected, c) to assess the system state with respect to management objectives, and d) to predict responses to management activities. Models stored in an **AMModels** library retain their original R class, can be associated with metadata, and can be easily saved and retrieved when needed.
+The **AMMonitor** SQLite database does much of the heavy lifting for managing AMMonitor data by tracking people, equipment, metadata about recordings and photos, and more. To store and manage models, however, we use the R package,  **AMModels** [@AMModels]. Generally speaking, a "model" is typically the result of some analysis. An AMModels "library" stores a collection of models as a single R object (the "model library") that can be saved to an .RDS file, thus allowing models to be retrieved for future use. Models may be used for a variety of purposes: (a) to generate predictions, (b) to serve as a prior model to be updated with Bayesian methods as new data are collected, (c) to assess the system state with respect to management objectives, and (d) to predict responses to management activities. Models stored in an AMModels library retain their original R class, can be associated with metadata, and can be easily saved and retrieved when needed.
 
 In the context of **AMMonitor**, models are used to: (1) inform when target species are likely to be available for detection (either acoustically or visually), (2) classify automatically detected targets as true target signals or false alarms, (3) predict conditions associated with an overall soundscape, and (4) identify patterns of species occurrence through time with dynamic occupancy models. 
 
-Next, we use the **AMModels** function `amModelLib()` to create four separate model libraries. `amModelLib()` requires only a description field, but additional metadata may also be included: 
+Next, we use the AMModels function `amModelLib()` to create four separate model libraries. `amModelLib()` requires only a description field, but additional metadata may also be included: 
 
 ```{r, eval = T}
 library(AMModels)
@@ -192,7 +192,7 @@ Here, we view the "activity" library, used to store models that predict when spe
 
 Note that we have elected to create four distinct model libraries. However, we could have created a single library which would store all models related to a monitoring project. **AMMonitor** functions that require a model will ask you to identify the name of the model library and the name of the model. As long as you can point to a specific library and model name, the function will be able to retrieve the model.
 
-For now, we simply need to save the libraries to our "ammls" directory.
+For now, we simply need to save the libraries to our **ammls** directory.
 
 ```{r, eval = F}
 # Save the libraries to the AMMonitor amml folder
@@ -207,9 +207,9 @@ Thoughout this book, we will add models to these libraries. **AMMonitor** functi
 
 # Chapter Summary
 
-At this point, you have 1) created a file directory required by AMMonitor, and 2) created four **AMModels** libraries in the **ammls** directory. You are now ready to create the SQLite database, which stores information about the entire monitoring effort. 
+At this point, you have (1) created a file directory required by AMMonitor, and (2) created four **AMModels** libraries in the **ammls** directory. You are now ready to create the SQLite database, which stores information about the entire monitoring effort. 
 
-# Bibliography 
+# References 
 
 ```{r 'biblio', echo=FALSE, comment=NA} 
 bibliography("HTML") 
