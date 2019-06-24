@@ -113,14 +113,10 @@ detail.
 To begin, use the `install.packages()` function to install
 **AMMonitor**.
 
-<div class="warning">
-
 ``` r
 > library(devtools)
 > devtools::install_git(url = "https://code.usgs.gov/vtcfwru/ammonitor")
 ```
-
-</div>
 
 The package overview and function index page can be accessed with the
 following code:
