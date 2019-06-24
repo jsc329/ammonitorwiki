@@ -24,22 +24,24 @@ all tables of an **AMMonitor** database, and then pre-populates sample
 data into tables specified by the user. For demonstration purposes in
 this chapter, we will only pre-populate the **people** table.
 
-``` r
-> # Create a sample database for this chapter
-> dbCreateSample(db.name = "Chap3.sqlite", 
-+                file.path = paste0(getwd(),"/database"), 
-+                tables =  "people")
-```
-
-    An AMMonitor database has been created with the name Chap3.sqlite which consists of the following tables: 
-
-    accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
-
-``` 
-
-Sample data have been generated for the following tables: 
-people
-```
+> 
+> 
+> ``` r
+> > # Create a sample database for this chapter
+> > dbCreateSample(db.name = "Chap3.sqlite", 
+> +                file.path = paste0(getwd(),"/database"), 
+> +                tables =  "people")
+> ```
+> 
+>     An AMMonitor database has been created with the name Chap3.sqlite which consists of the following tables: 
+> 
+>     accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
+> 
+> ``` 
+> 
+> Sample data have been generated for the following tables: 
+> people
+> ```
 
 Next, we connect to the database with RSQLite’s `dbConnect()` function,
 where we must identify the SQLite driver in the ‘drv’ argument:

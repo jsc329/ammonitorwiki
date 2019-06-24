@@ -5,8 +5,6 @@ output:
     toc: true
     toc_depth: 3
     df_print: tibble
-    fig_height: 7
-    fig_width: 7
 bibliography: refs.bib
 csl: plos.csl
 ---

@@ -35,13 +35,15 @@ unlink(db.path)
 The **people** table in an **AMMonitor** SQLite database tracks information about all members involved in a monitoring program. In addition to providing a convenient contact book, this table is used to identify project members who annotate species presence or absence in an audio or image file, or who deploy monitoring equipment at a monitoring station. 
 
 For this chapter, we will use `dbCreateSample()` to create a database called "Chap3.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes in this chapter, we will only pre-populate the **people** table. 
-
+  
 ```{r}
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap3.sqlite", 
                file.path = paste0(getwd(),"/database"), 
                tables =  "people")
 ```
+
+
 Next, we connect to the database with RSQLite's `dbConnect()` function, where we must identify the SQLite driver in the 'drv' argument:
 
 ```{r}
