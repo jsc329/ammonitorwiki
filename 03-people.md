@@ -56,9 +56,7 @@ constraints:
 
 ``` r
 # Turn the SQLite foreign constraints on
-RSQLite::dbExecute(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbExecute(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 
     ## [1] 0
@@ -236,6 +234,51 @@ RSQLite::dbGetQuery(conn = conx,
 
 As with `dbReadTable()`, results returned from `dbGetQuery()` can be
 stored as a data.frame for further manipulation in R.
+
+Note that both the `dbReadTable()` and `dbGetQuery()` functions require
+you be be actively connected to the database via a **conx** object in
+order to return table information. Depending on your workflow, it may be
+more useful to avoid creating a **conx** object in order to avert
+database conflicts among multiple users. In this case, you may opt to
+use the **AMMonitor** `qry()` function, which only requires a
+**db.path** object input to the ‘db.path’ argument, and either a table
+name input to the ‘table’ argument (if you wish to read an entire table
+into memory), or a SQLite statement input to the ‘statement’ argument.
+`qry()` acts as a wrapper function for either `dbReadTable()` or
+`dbGetQuery()`, and takes care of connecting and disconnecting from the
+database for you. It returns the results as a data.table in R. The below
+code shows how you can use `qry()` to read in an entire table, or to use
+a SQLite statement to select records of interest:
+
+``` r
+# Read in the entire people table
+qry(db.path = db.path, 
+    table = 'people')
+```
+
+    ## # A tibble: 2 x 6
+    ##   personID firstName lastName projectRole          email                    phone       
+    ##   <chr>    <chr>     <chr>    <chr>                <chr>                    <chr>       
+    ## 1 bbaggins Bilbo     Baggins  Lead Ring Monitor I  ringmaster2001@shire.net none        
+    ## 2 fbaggins Frodo     Baggins  Lead Ring Monitor II fbaggins@shire.net       888-ONE-RING
+
+``` r
+# Only select records with "Frodo" in the firstName column
+qry(db.path = db.path, 
+    table = NULL,
+    statement = "SELECT * 
+                 FROM people 
+                 WHERE firstName = 'Frodo' ") 
+```
+
+    ## # A tibble: 1 x 6
+    ##   personID firstName lastName projectRole          email              phone       
+    ##   <chr>    <chr>     <chr>    <chr>                <chr>              <chr>       
+    ## 1 fbaggins Frodo     Baggins  Lead Ring Monitor II fbaggins@shire.net 888-ONE-RING
+
+The `qry()` approach is essentially the same as `dbReadTable()` or
+`dbGetQuery()`, except that it allows you to input a **db.path** object
+rather than a **conx** object.
 
 ## Creating records
 
