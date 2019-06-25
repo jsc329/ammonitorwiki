@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "06-locations-spatials.Rmd", output_format = "md_document", output_file = "Chapter 6 - Spatials.md")
+# rmarkdown::render(input = "06-locations-spatials.Rmd", output_format = "md_document", output_file = "Chapter-06-Spatials.md")
 
 ```
 
@@ -34,7 +34,7 @@ file.remove(db.path)
 
 This chapter covers the **locations** and **spatials** tables and how they are used in a monitoring program. Connections to these tables can be used to track monitoring locations and associated GIS spatial data.
 
-As in past chapters, we will use `dbCreateSample()` to create a database called "Chap6.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes in this chapter, we will only pre-populate the **people** and **locations** tables. The **spatials** table will start out empty, and we will populate it ourselves later in the chapter.
+As in past chapters, we will use `dbCreateSample()` to create a database called "Chap6.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes in this chapter, we will only pre-populate the **people** and **locations** tables. The **spatials** table will start out empty, and we will populate it ourselves later in the chapter.
 
 ```{r}
 # Create a sample database for this chapter
@@ -58,9 +58,7 @@ Finally, we send a SQL statement that will enforce foreign key constraints withi
 
 ```{r}
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 
 Now we are ready to begin.
@@ -78,7 +76,7 @@ Note that the locations table has 12 fields, with a mix of VARCHAR, TEXT, REAL (
 
 Previous chapters have covered CRUD operations for creating, reading, updating, or deleting records from a table. These operations are applicable to all tables. Moving forward, we will focus on the contents of the sample tables rather than reviewing CRUD operations for each table.
 
-As always, we can view records in the sample **locations** table using either `dbReadTable()` or the more customizable `dbGetQuery()`:
+As always, we can view records in the sample **locations** table using either `qry()`, `dbReadTable()`, or `dbGetQuery()`, depending on our needs with respect to the size of the table, how many records we want to read in, and whether we want to interact via a **conx** object or a **db.path** object:
 
 ```{r}
 # Return the first 5 records from the locations table (printed as a tibble)
@@ -92,9 +90,9 @@ As explained at http://rspatial.org/spatial/rst/1-introduction.html: "A very imp
 
 Columns for *description*, *address*, *city*, *state*, and *country* are not required but may be useful to some users. The *tz* column is required, and must contain an [Olson names-formatted time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) that lets R know the timezone of the location. [Read more about timezones in R](http://stat.ethz.ch/R-manual/R-devel/library/base/html/timezones.html). 
 
-The *personID* column is also not required. The intention here is to provide associate a person with a location, such as a landowner or the primary person responsible for the monitoring station. Note that the *personID* is a foreign key that links to the **people** table, so information about the person would be stored in this table.
+The *personID* column is also not required. The intention here is to provide a means for associating a person with a location, such as a landowner or the primary person responsible for the monitoring station. Note that the *personID* is a foreign key that links to the **people** table.
 
-The mapping of the *personID* field can be confirmed with the following SQL statement. 
+The mapping of the *personID* field can be confirmed with the following SQLite statement. 
 
 ```{r, eval = T}
 # Return foreign key information for the locations table
@@ -178,7 +176,7 @@ The string contains + signs to indicate tags used by PROJ.4, but not every spati
 
 - +proj specifies the projection (e.g. "longlat", "utm", or "aea").
 - +datum refers to the 0,0 reference for the coordinate system used in the projection (e.g., WGS84, NAD83) 
-- +units specificies the units; m indicates meters.
+- +units specifies the units; m indicates meters.
 - +ellps conveys the ellipsoid (how the earth's roundess is calculated). 
 - +towgs serves as a conversion factor, necessary if a datum conversion is required.
 
@@ -219,7 +217,7 @@ Notice the naming convention used in this example. We saved the object **study_l
 
 Before continuing, we add a record to the **AMMonitor** SQLite database **spatials** table to document our new spatial layer. 
 ```{r}
-# Create a dataframe with study locations metadata
+# Create a data.frame with study locations metadata
 add.sites <- data.frame(spatialID = 'study_locations',
                         type = 'shapefile',
                         class = 'SpatialPointsDataFrame',
@@ -290,7 +288,7 @@ save(study_area, file = "spatials/study_area.RDS")
 Now we have two shapefiles in our **spatials directory** associated with the Middle Earth monitoring program. We need to add our second shapefile's information to the **spatials** table in the database.
 
 ```{r}
-# Create dataframe with data to be inserted to spatials table
+# Create data.frame with data to be inserted to the spatials table
 add.boundary <- data.frame(spatialID = 'study_area',
                            type = 'shapefile',
                            class = 'SpatialPolygons',
@@ -299,8 +297,8 @@ add.boundary <- data.frame(spatialID = 'study_area',
 
 # Add the record to the spatials database table 
 RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.boundary,
-             row.names = FALSE, overwrite = FALSE,
-             append = TRUE, header = FALSE)
+                      row.names = FALSE, overwrite = FALSE,
+                      append = TRUE, header = FALSE)
 ```
 
 ## Create a "RasterLayer"  raster 
@@ -364,8 +362,8 @@ add.raster <- data.frame(spatialID = 'study_raster',
 
 # Add the record to the spatials database table 
 RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.raster,
-             row.names = FALSE, overwrite = FALSE,
-             append = TRUE, header = FALSE)
+                      row.names = FALSE, overwrite = FALSE,
+                      append = TRUE, header = FALSE)
 
 ```
 
@@ -396,7 +394,7 @@ knitr::include_graphics('Chap6_Figs/locations.PNG', dpi = 500)
 
 >*Figure 6.2. The Locations table/form is a primary tab on the Access Navigation form.*
 
-Also, notice the 6 secondary tabs associated with the "Locations" tab:  Spatials, Temporals, Equipment, Logs, Deployment, and Schedule.  
+Also, notice the 6 secondary tabs associated with the "Locations" tab:  Spatials, Temporals, Equipment, Logs, Deployment, and Schedule. 
 
 #  The Spatials Table in Access
 
@@ -411,9 +409,9 @@ knitr::include_graphics('Chap6_Figs/spatials.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 6.3. The Spatials table is nestled under the Location tab.  This table does not store spatial information. Rather, it points to files that contain spatial data via a filepath.*
+>*Figure 6.3. The Spatials table is nestled under the Location tab. This table does not store spatial information. Rather, it points to files that contain spatial data via a filepath.*
 
-It is very easy to create many spatial objects (shapefiles or rasters) that can be used in the analysis of monitoring data. The **spatials** table provides a way document each layer, and futher can be used to quickly load the objects to R if the filepath is accurate.
+It is very easy to create many spatial objects (shapefiles or rasters) that can be used in the analysis of monitoring data. The **spatials** table provides a way document each layer, and futher can be used to quickly load the objects to R if the file path is accurate.
 
 
 # Chapter Summary

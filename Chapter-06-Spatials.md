@@ -4,50 +4,48 @@ be used to track monitoring locations and associated GIS spatial data.
 
 As in past chapters, we will use `dbCreateSample()` to create a database
 called “Chap6.sqlite”, which will be stored in a folder (directory)
-called “database” within the **AMMonitor** main directory, which should
-be your working directory in R. Recall that `dbCreateSample()` generates
-all tables of an **AMMonitor** database, and then pre-populates sample
-data into tables specified by the user. For demonstration purposes in
-this chapter, we will only pre-populate the **people** and **locations**
-tables. The **spatials** table will start out empty, and we will
-populate it ourselves later in the chapter.
+called **database** within the **AMMonitor** main directory, which
+should be your working directory in R. Recall that `dbCreateSample()`
+generates all tables of an **AMMonitor** database, and then
+pre-populates sample data into tables specified by the user. For
+demonstration purposes in this chapter, we will only pre-populate the
+**people** and **locations** tables. The **spatials** table will start
+out empty, and we will populate it ourselves later in the chapter.
 
-    > # Create a sample database for this chapter
-    > dbCreateSample(db.name = "Chap6.sqlite", 
-    +                file.path = paste0(getwd(),"/database"), 
-    +                tables =  c("people", "locations"))
+    # Create a sample database for this chapter
+    dbCreateSample(db.name = "Chap6.sqlite", 
+                   file.path = paste0(getwd(),"/database"), 
+                   tables =  c("people", "locations"))
 
-    An AMMonitor database has been created with the name Chap6.sqlite which consists of the following tables: 
+    ## An AMMonitor database has been created with the name Chap6.sqlite which consists of the following tables:
 
-    accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
+    ## accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
 
-
-    Sample data have been generated for the following tables: 
-    people, locations
+    ## 
+    ## Sample data have been generated for the following tables: 
+    ## people, locations
 
 Next, we initialize a character object, **db.path**, that holds the
 database’s full file path. We connect to the database with RSQLite’s
 `dbConnect()` function, where we must identify the SQLite driver in the
 ‘drv’ argument:
 
-    > # Establish the database file path as db.path
-    > db.path <- paste0(getwd(), '/database/Chap6.sqlite')
-    > 
-    > # Connect to the database
-    > conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+    # Establish the database file path as db.path
+    db.path <- paste0(getwd(), '/database/Chap6.sqlite')
+
+    # Connect to the database
+    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 
 Finally, we send a SQL statement that will enforce foreign key
 constraints within the database.
 
-    > # Turn the SQLite foreign constraints on
-    > RSQLite::dbSendQuery(conn = conx, statement = 
-    +               "PRAGMA foreign_keys = ON;"
-    +           )
+    # Turn the SQLite foreign constraints on
+    RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
-    <SQLiteResult>
-      SQL  PRAGMA foreign_keys = ON;
-      ROWS Fetched: 0 [complete]
-           Changed: 0
+    ## <SQLiteResult>
+    ##   SQL  PRAGMA foreign_keys = ON;
+    ##   ROWS Fetched: 0 [complete]
+    ##        Changed: 0
 
 Now we are ready to begin.
 
@@ -58,23 +56,23 @@ The **locations** table tracks all locations of monitoring interest. The
 function `dbTables()` provides a summary of the field names and data
 types in the **locations** table.
 
-    > # Look at information about the locations table
-    > dbTables(db.path = db.path, table = "locations")
+    # Look at information about the locations table
+    dbTables(db.path = db.path, table = "locations")
 
-    $locations
-       cid        name         type notnull dflt_value pk comment
-    1    0  locationID VARCHAR(255)       1         NA  1        
-    2    1        type VARCHAR(255)       0         NA  0        
-    3    2         lat         REAL       1         NA  0        
-    4    3        long         REAL       1         NA  0        
-    5    4       datum   VARCH(255)       0         NA  0        
-    6    5 description         TEXT       0         NA  0        
-    7    6     address VARCHAR(255)       0         NA  0        
-    8    7        city VARCHAR(255)       0         NA  0        
-    9    8       state VARCHAR(255)       0         NA  0        
-    10   9     country VARCHAR(255)       0         NA  0        
-    11  10          tz VARCHAR(255)       1         NA  0        
-    12  11    personID VARCHAR(255)       0         NA  0        
+    ## $locations
+    ##    cid        name         type notnull dflt_value pk comment
+    ## 1    0  locationID VARCHAR(255)       1         NA  1        
+    ## 2    1        type VARCHAR(255)       0         NA  0        
+    ## 3    2         lat         REAL       1         NA  0        
+    ## 4    3        long         REAL       1         NA  0        
+    ## 5    4       datum   VARCH(255)       0         NA  0        
+    ## 6    5 description         TEXT       0         NA  0        
+    ## 7    6     address VARCHAR(255)       0         NA  0        
+    ## 8    7        city VARCHAR(255)       0         NA  0        
+    ## 9    8       state VARCHAR(255)       0         NA  0        
+    ## 10   9     country VARCHAR(255)       0         NA  0        
+    ## 11  10          tz VARCHAR(255)       1         NA  0        
+    ## 12  11    personID VARCHAR(255)       0         NA  0
 
 Note that the locations table has 12 fields, with a mix of VARCHAR,
 TEXT, REAL (numeric), and INTEGER data. The *locationID* serves as the
@@ -88,17 +86,13 @@ of the sample tables rather than reviewing CRUD operations for each
 table.
 
 As always, we can view records in the sample **locations** table using
-either `dbReadTable()` or the more customizable `dbGetQuery()`:
+either `qry()`, `dbReadTable()`, or `dbGetQuery()`, depending on our
+needs with respect to the size of the table, how many records we want to
+read in, and whether we want to interact via a **conx** object or a
+**db.path** object:
 
-    > # Return the first 5 records from the locations table (printed as a tibble)
-    > RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM locations LIMIT 5")
-
-      locationID               type      lat      long datum description address city     state      country                  tz personID
-    1 location@1 Monitoring station 33.62687 -115.1551 WGS84        <NA>    <NA> <NA>     Rohan Middle Earth America/Los_Angeles bbaggins
-    2 location@2 Monitoring station 33.57669 -114.8350 WGS84        <NA>    <NA> <NA>     Rohan Middle Earth America/Los_Angeles fbaggins
-    3 location@3 Monitoring station 33.60673 -115.2148 WGS84        <NA>    <NA> <NA>    Gondor Middle Earth America/Los_Angeles fbaggins
-    4 location@4 Monitoring station 33.67328 -115.0898 WGS84        <NA>    <NA> <NA> The Shire Middle Earth America/Los_Angeles fbaggins
-    5 location@5 Monitoring station 33.52128 -115.2446 WGS84        <NA>    <NA> <NA>    Gondor Middle Earth America/Los_Angeles fbaggins
+    # Return the first 5 records from the locations table (printed as a tibble)
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM locations LIMIT 5")
 
 Our sample data set contains 50 locations, but above we retrieve only
 the first five records. The *locationID* can be any identifier we want.
@@ -136,19 +130,16 @@ timezones in
 R](http://stat.ethz.ch/R-manual/R-devel/library/base/html/timezones.html).
 
 The *personID* column is also not required. The intention here is to
-provide associate a person with a location, such as a landowner or the
-primary person responsible for the monitoring station. Note that the
-*personID* is a foreign key that links to the **people** table, so
-information about the person would be stored in this table.
+provide a means for associating a person with a location, such as a
+landowner or the primary person responsible for the monitoring station.
+Note that the *personID* is a foreign key that links to the **people**
+table.
 
 The mapping of the *personID* field can be confirmed with the following
-SQL statement.
+SQLite statement.
 
-    > # Return foreign key information for the locations table
-    > RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(locations);")
-
-      id seq  table     from       to on_update on_delete match
-    1  0   0 people personID personID   CASCADE NO ACTION  NONE
+    # Return foreign key information for the locations table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(locations);")
 
 The field *personID* in the table **people** references the field
 *personID* in the **locations** table. Again, notice the default action
@@ -165,16 +156,16 @@ the **spatials folder** as described below).
 The function `dbTables()` provides a summary of the field names and data
 types in the **spatials** table.
 
-    > # Look at information about the spatials table
-    > dbTables(db.path = db.path, table = "spatials")
+    # Look at information about the spatials table
+    dbTables(db.path = db.path, table = "spatials")
 
-    $spatials
-      cid        name         type notnull dflt_value pk comment
-    1   0   spatialID VARCHAR(255)       1         NA  1        
-    2   1        type VARCHAR(255)       0         NA  0        
-    3   2       class VARCHAR(255)       0         NA  0        
-    4   3    filepath VARCHAR(255)       0         NA  0        
-    5   4 description         TEXT       0         NA  0        
+    ## $spatials
+    ##   cid        name         type notnull dflt_value pk comment
+    ## 1   0   spatialID VARCHAR(255)       1         NA  1        
+    ## 2   1        type VARCHAR(255)       0         NA  0        
+    ## 3   2       class VARCHAR(255)       0         NA  0        
+    ## 4   3    filepath VARCHAR(255)       0         NA  0        
+    ## 5   4 description         TEXT       0         NA  0
 
 Note that the default **spatials** table has five fields, with a mix of
 data types. The *spatialID* serves as the primary key, and is the only
@@ -216,10 +207,10 @@ Users new to spatial analysis in R may consult these helpful tutorials:
 For our spatial analyses, we will load and use the R packages **sp**
 \[1\] and **raster** \[2\].
 
-    > # Load packages used for spatial analysis
-    > library(sp)
-    > library(raster)
-    > library(XML)
+    # Load packages used for spatial analysis
+    library(sp)
+    library(raster)
+    library(XML)
 
 Create a “SpatialPointsDataFrame” of monitoring locations
 ---------------------------------------------------------
@@ -229,27 +220,27 @@ For our first example, we collect information stored in the
 package function `SpatialPointsDataFrame()` can be used create an object
 of class **SpatialPointsDataFrame**.
 
-    > # Read in the locations data as a table
-    > locs <- RSQLite::dbReadTable(conn = conx, name = 'locations')
-    > 
-    > # Convert to spatialPointsDataFrame
-    > # For the coords argument, specify long (x) before lat (y)
-    > study_locations <- sp::SpatialPointsDataFrame(
-    +                     coords = locs[,c('long','lat')], 
-    +                     data = locs, 
-    +                     proj4string = CRS("+proj=longlat +datum=WGS84"))
-    > 
-    > # Look at the structure of this shapefile
-    > str(object = study_locations, max.level = 2)
+    # Read in the locations data as a table
+    locs <- RSQLite::dbReadTable(conn = conx, name = 'locations')
 
-    Formal class 'SpatialPointsDataFrame' [package "sp"] with 5 slots
-      ..@ data       :'data.frame': 50 obs. of  12 variables:
-      ..@ coords.nrs : num(0) 
-      ..@ coords     : num [1:50, 1:2] -115 -115 -115 -115 -115 ...
-      .. ..- attr(*, "dimnames")=List of 2
-      ..@ bbox       : num [1:2, 1:2] -115.3 33.5 -114.8 33.7
-      .. ..- attr(*, "dimnames")=List of 2
-      ..@ proj4string:Formal class 'CRS' [package "sp"] with 1 slot
+    # Convert to spatialPointsDataFrame
+    # For the coords argument, specify long (x) before lat (y)
+    study_locations <- sp::SpatialPointsDataFrame(
+                        coords = locs[,c('long','lat')], 
+                        data = locs, 
+                        proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+    # Look at the structure of this shapefile
+    str(object = study_locations, max.level = 2)
+
+    ## Formal class 'SpatialPointsDataFrame' [package "sp"] with 5 slots
+    ##   ..@ data       :'data.frame':  50 obs. of  12 variables:
+    ##   ..@ coords.nrs : num(0) 
+    ##   ..@ coords     : num [1:50, 1:2] -115 -115 -115 -115 -115 ...
+    ##   .. ..- attr(*, "dimnames")=List of 2
+    ##   ..@ bbox       : num [1:2, 1:2] -115.3 33.5 -114.8 33.7
+    ##   .. ..- attr(*, "dimnames")=List of 2
+    ##   ..@ proj4string:Formal class 'CRS' [package "sp"] with 1 slot
 
 As shown, an object of class **SpatialPointsDataFrame** is an S4 object
 with 5 slots. This is an R object containing spatial points. The
@@ -266,10 +257,10 @@ The lower case `proj4string()` method provides a simple way to retrieve
 the coordinate reference and projection information stored in the
 **proj4string** slot.
 
-    > # Use the proj4string method to return the CRS from study_locations
-    > sp::proj4string(study_locations)
+    # Use the proj4string method to return the CRS from study_locations
+    sp::proj4string(study_locations)
 
-    [1] "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
+    ## [1] "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
 This string is an example of a “PROJ.4 string”, which provides critical
 information about the spatial layer’s projection, datum, and coordinate
@@ -285,7 +276,7 @@ every spatial object will contain every type of tag:
 -   +proj specifies the projection (e.g. “longlat”, “utm”, or “aea”).
 -   +datum refers to the 0,0 reference for the coordinate system used in
     the projection (e.g., WGS84, NAD83)
--   +units specificies the units; m indicates meters.
+-   +units specifies the units; m indicates meters.
 -   +ellps conveys the ellipsoid (how the earth’s roundess is
     calculated).
 -   +towgs serves as a conversion factor, necessary if a datum
@@ -304,21 +295,21 @@ reference system object containing the proj4string for our desired
 reference. We do this below, indicating that we aim to transform the
 current CRS to “+init=epsg:3310”:
 
-    > # Reproject the shapefile to CRS EPSG:3310
-    > study_locations <- sp::spTransform(x = study_locations, 
-    +                                CRSobj = CRS("+init=epsg:3310")
-    +                                )
+    # Reproject the shapefile to CRS EPSG:3310
+    study_locations <- sp::spTransform(x = study_locations, 
+                                   CRSobj = CRS("+init=epsg:3310")
+                                   )
 
 The [Spatial Reference List](http://spatialreference.org/ref/) provides
 a comprehensive record of CRS options, and epsg:3310 is one of them.
 Passing this value to the CRS function creates the PROJ.4 string
 associated with epsg:3310:
 
-    > CRS("+init=epsg:3310")
+    CRS("+init=epsg:3310")
 
-    CRS arguments:
-     +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80
-    +towgs84=0,0,0 
+    ## CRS arguments:
+    ##  +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80
+    ## +towgs84=0,0,0
 
 Thus, we have reprojected the **study\_locations** shapefile to a new
 datum (NAD83) for Middle Earth. The units are in meters, and the
@@ -327,17 +318,17 @@ mapped, the projection is Albers Equal Area.
 
 We `plot()` the transformed object to see our study locations:
 
-    > # Plot the locations
-    > plot(study_locations, xlab = "x coordinate - longitude", 
-    +      ylab = "y coordinate - latitude")
+    # Plot the locations
+    plot(study_locations, xlab = "x coordinate - longitude", 
+         ylab = "y coordinate - latitude")
 
-<img src="Chap6_Figs/unnamed-chunk-17-1.png" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap6_Figs/unnamed-chunk-18-1.png" style="display: block; margin: auto auto auto 0;" />
 
 Finally, we store this object as an RDS file within the **spatials
 directory** for future use.
 
-    > # Save the shapefile as an RDS file
-    > saveRDS(object = study_locations, file = 'spatials/study_locations.RDS')
+    # Save the shapefile as an RDS file
+    saveRDS(object = study_locations, file = 'spatials/study_locations.RDS')
 
 Notice the naming convention used in this example. We saved the object
 **study\_locations** as an RDS file with the same name. You may
@@ -349,17 +340,17 @@ assigned any name.
 Before continuing, we add a record to the **AMMonitor** SQLite database
 **spatials** table to document our new spatial layer.
 
-    > # Create a dataframe with study locations metadata
-    > add.sites <- data.frame(spatialID = 'study_locations',
-    +                         type = 'shapefile',
-    +                         class = 'SpatialPointsDataFrame',
-    +                         filepath = 'spatials/study_locations.RDS',
-    +                         description = "Study locations point layer for the Middle Earth monitoring program.")
-    > 
-    > # Add the record to the spatials database table 
-    > RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.sites,
-    +              row.names = FALSE, overwrite = FALSE,
-    +              append = TRUE, header = FALSE)
+    # Create a data.frame with study locations metadata
+    add.sites <- data.frame(spatialID = 'study_locations',
+                            type = 'shapefile',
+                            class = 'SpatialPointsDataFrame',
+                            filepath = 'spatials/study_locations.RDS',
+                            description = "Study locations point layer for the Middle Earth monitoring program.")
+
+    # Add the record to the spatials database table 
+    RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.sites,
+                 row.names = FALSE, overwrite = FALSE,
+                 append = TRUE, header = FALSE)
 
 Create a “SpatialPolygons” study area shapefile
 -----------------------------------------------
@@ -372,15 +363,15 @@ additional buffer.
 Invoking the `bbox()` function yields the coordinates that encompass all
 of the points within **study\_locations**:
 
-    > # Extract the bounding box coordinates
-    > coords <- sp::bbox(study_locations)
-    > 
-    > # Look at the coordinates
-    > coords
+    # Extract the bounding box coordinates
+    coords <- sp::bbox(study_locations)
 
-               min       max
-    long  432121.6  480861.6
-    lat  -489907.7 -463886.8
+    # Look at the coordinates
+    coords
+
+    ##            min       max
+    ## long  432121.6  480861.6
+    ## lat  -489907.7 -463886.8
 
 The coordinates are returned as a matrix that shows the minimum and
 maximum longitude (x coordinates) and latitude (y coordinates). Notice
@@ -390,27 +381,27 @@ with in the database **locations** table. We will add a buffer to these
 coordinates so that our study area encompasses not only each study
 location, but a cushion of space beyond them.
 
-    > # Add a buffer to minimum
-    > coords[,'min'] <- coords[,'min'] - 3000 
-    > 
-    > # Add a buffer to the maximum
-    > coords[,'max'] <- coords[,'max'] + 3000
+    # Add a buffer to minimum
+    coords[,'min'] <- coords[,'min'] - 3000 
+
+    # Add a buffer to the maximum
+    coords[,'max'] <- coords[,'max'] + 3000
 
 We then use the package **raster**’s `extent()` function, in conjunction
 with the `as()` coercion function, to convert our coordinates to an
 object of class **SpatialPolygons**:
 
-    > # Convert to a polygon using the raster package extent function
-    > study_area <- as(object = raster::extent(coords), 
-    +                  Class = "SpatialPolygons")
-    > 
-    > # Show the metadata
-    > study_area
+    # Convert to a polygon using the raster package extent function
+    study_area <- as(object = raster::extent(coords), 
+                     Class = "SpatialPolygons")
 
-    class       : SpatialPolygons 
-    features    : 1 
-    extent      : 429121.6, 483861.6, -492907.7, -460886.8  (xmin, xmax, ymin, ymax)
-    crs         : NA 
+    # Show the metadata
+    study_area
+
+    ## class       : SpatialPolygons 
+    ## features    : 1 
+    ## extent      : 429121.6, 483861.6, -492907.7, -460886.8  (xmin, xmax, ymin, ymax)
+    ## crs         : NA
 
 As shown, this is an object of class **SpatialPolygons**. Note that the
 coordinate reference system is missing from this S4 object. We first
@@ -418,37 +409,37 @@ need to fill in the coordinate referenence information with the
 `proj4string()` function. Then, we can plot the study locations and
 extent objects together to confirm that they align spatially.
 
-    > # Assign the CRS
-    > sp::proj4string(study_area) <- sp::CRS("+init=epsg:3310")
-    > 
-    > # Plot the objects together to confirm alignment
-    > plot(study_area, 
-    +      main = "Middle Earth Study Area and Monitoring Locations")
-    > 
-    > plot(study_locations, add = TRUE)
+    # Assign the CRS
+    sp::proj4string(study_area) <- sp::CRS("+init=epsg:3310")
 
-<img src="Chap6_Figs/unnamed-chunk-23-1.png" style="display: block; margin: auto auto auto 0;" />
+    # Plot the objects together to confirm alignment
+    plot(study_area, 
+         main = "Middle Earth Study Area and Monitoring Locations")
+
+    plot(study_locations, add = TRUE)
+
+<img src="Chap6_Figs/unnamed-chunk-24-1.png" style="display: block; margin: auto auto auto 0;" />
 
 We can then save the finalized object as an RDS file.
 
-    > # Save the object as an RDS file
-    > save(study_area, file = "spatials/study_area.RDS")
+    # Save the object as an RDS file
+    save(study_area, file = "spatials/study_area.RDS")
 
 Now we have two shapefiles in our **spatials directory** associated with
 the Middle Earth monitoring program. We need to add our second
 shapefile’s information to the **spatials** table in the database.
 
-    > # Create dataframe with data to be inserted to spatials table
-    > add.boundary <- data.frame(spatialID = 'study_area',
-    +                            type = 'shapefile',
-    +                            class = 'SpatialPolygons',
-    +                            filepath = 'spatials/study_area.RDS',
-    +                            description = "Polygon outlining the Middle Earth Study Area.")
-    > 
-    > # Add the record to the spatials database table 
-    > RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.boundary,
-    +              row.names = FALSE, overwrite = FALSE,
-    +              append = TRUE, header = FALSE)
+    # Create data.frame with data to be inserted to the spatials table
+    add.boundary <- data.frame(spatialID = 'study_area',
+                               type = 'shapefile',
+                               class = 'SpatialPolygons',
+                               filepath = 'spatials/study_area.RDS',
+                               description = "Polygon outlining the Middle Earth Study Area.")
+
+    # Add the record to the spatials database table 
+    RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.boundary,
+                          row.names = FALSE, overwrite = FALSE,
+                          append = TRUE, header = FALSE)
 
 Create a “RasterLayer” raster
 -----------------------------
@@ -460,27 +451,27 @@ from a standard normal distribution (mean = 0, sd = 1). First, we create
 a matrix of numbers, and then use the `raster()` function to convert the
 matrix to a raster.
 
-    > # Set a random number seed (for reproducibility)
-    > set.seed(100)
-    > 
-    > # Create a 20 row * 20 column matrix
-    > data <- matrix(rnorm(n = 400, mean = 0, sd = 1),
-    +                nrow = 20, ncol = 20)
-    > 
-    > # Turn the matrix into a raster
-    > study_raster <- raster::raster(data)
-    > 
-    > # Show a summary
-    > study_raster
+    # Set a random number seed (for reproducibility)
+    set.seed(100)
 
-    class      : RasterLayer 
-    dimensions : 20, 20, 400  (nrow, ncol, ncell)
-    resolution : 0.05, 0.05  (x, y)
-    extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
-    crs        : NA 
-    source     : memory
-    names      : layer 
-    values     : -3.020814, 3.304151  (min, max)
+    # Create a 20 row * 20 column matrix
+    data <- matrix(rnorm(n = 400, mean = 0, sd = 1),
+                   nrow = 20, ncol = 20)
+
+    # Turn the matrix into a raster
+    study_raster <- raster::raster(data)
+
+    # Show a summary
+    study_raster
+
+    ## class      : RasterLayer 
+    ## dimensions : 20, 20, 400  (nrow, ncol, ncell)
+    ## resolution : 0.05, 0.05  (x, y)
+    ## extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
+    ## crs        : NA 
+    ## source     : memory
+    ## names      : layer 
+    ## values     : -3.020814, 3.304151  (min, max)
 
 This raster is an R object of type **RasterLayer**. It consists of 400
 cells (ncell), with a minimum value of -3.020814 and maximum value of
@@ -490,52 +481,52 @@ biomass, road density, or risk of Orc attack. Notice that the raster has
 no coordinate reference system, and also no extent. We will need to
 assign these.
 
-    > # Set the extent to the study_area bounding box
-    > raster::extent(study_raster) <- sp::bbox(study_area)
-    > 
-    > # Assign a projection to this raster
-    > raster::projection(study_raster) <- sp::CRS("+init=epsg:3310")
-    > 
-    > # Project the raster
-    > study_raster2 <- raster::projectRaster(from = study_raster, crs = sp::CRS("+init=epsg:3310"))
-    > 
-    > # Confirm projection has been assigned
-    > study_raster2
+    # Set the extent to the study_area bounding box
+    raster::extent(study_raster) <- sp::bbox(study_area)
 
-    class      : RasterLayer 
-    dimensions : 26, 24, 624  (nrow, ncol, ncell)
-    resolution : 2740, 1600  (x, y)
-    extent     : 423641.6, 489401.6, -497686.8, -456086.8  (xmin, xmax, ymin, ymax)
-    crs        : +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 
-    source     : memory
-    names      : layer 
-    values     : -2.959704, 3.233738  (min, max)
+    # Assign a projection to this raster
+    raster::projection(study_raster) <- sp::CRS("+init=epsg:3310")
 
-    > # Plot the raster
-    > plot(study_raster2)
-    > 
-    > # Add in the monitoring stations
-    > plot(study_locations, add = TRUE)
+    # Project the raster
+    study_raster2 <- raster::projectRaster(from = study_raster, crs = sp::CRS("+init=epsg:3310"))
 
-<img src="Chap6_Figs/unnamed-chunk-28-1.png" style="display: block; margin: auto auto auto 0;" />
+    # Confirm projection has been assigned
+    study_raster2
+
+    ## class      : RasterLayer 
+    ## dimensions : 26, 24, 624  (nrow, ncol, ncell)
+    ## resolution : 2740, 1600  (x, y)
+    ## extent     : 423641.6, 489401.6, -497686.8, -456086.8  (xmin, xmax, ymin, ymax)
+    ## crs        : +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 
+    ## source     : memory
+    ## names      : layer 
+    ## values     : -2.959704, 3.233738  (min, max)
+
+    # Plot the raster
+    plot(study_raster2)
+
+    # Add in the monitoring stations
+    plot(study_locations, add = TRUE)
+
+<img src="Chap6_Figs/unnamed-chunk-29-1.png" style="display: block; margin: auto auto auto 0;" />
 
 Once satisfed, we save this layer to the **spatials directory** as an
 RDS file, and add information about the file to the **spatials** table:
 
-    > # Save the shapefile as an RDS file
-    > save(study_raster2, file = 'spatials/study_raster.RDS')
-    > 
-    > # Prepare to add information to the database
-    > add.raster <- data.frame(spatialID = 'study_raster',
-    +                          type = 'raster',
-    +                          class = 'RasterLayer',
-    +                          filepath = 'spatials/study_raster.RDS',
-    +                          description = "Middle Earth Raster")
-    > 
-    > # Add the record to the spatials database table 
-    > RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.raster,
-    +              row.names = FALSE, overwrite = FALSE,
-    +              append = TRUE, header = FALSE)
+    # Save the shapefile as an RDS file
+    save(study_raster2, file = 'spatials/study_raster.RDS')
+
+    # Prepare to add information to the database
+    add.raster <- data.frame(spatialID = 'study_raster',
+                             type = 'raster',
+                             class = 'RasterLayer',
+                             filepath = 'spatials/study_raster.RDS',
+                             description = "Middle Earth Raster")
+
+    # Add the record to the spatials database table 
+    RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.raster,
+                          row.names = FALSE, overwrite = FALSE,
+                          append = TRUE, header = FALSE)
 
 The **spatials** directory now contains three RDS files that store
 spatial information about a monitoring program. Information about each
@@ -546,8 +537,8 @@ We will use these spatial layers in future chapters.
 
 Finally, when we are finished with the database, we disconnect from it:
 
-    > # Disconnect from the database
-    > RSQLite::dbDisconnect(conx)
+    # Disconnect from the database
+    RSQLite::dbDisconnect(conx)
 
 The Locations Table in Access
 =============================
@@ -590,7 +581,7 @@ forms if desired.
 It is very easy to create many spatial objects (shapefiles or rasters)
 that can be used in the analysis of monitoring data. The **spatials**
 table provides a way document each layer, and futher can be used to
-quickly load the objects to R if the filepath is accurate.
+quickly load the objects to R if the file path is accurate.
 
 Chapter Summary
 ===============
