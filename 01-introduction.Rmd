@@ -209,7 +209,7 @@ Thoughout this book, we will add models to these libraries. **AMMonitor** functi
 
 At this point, you have (1) created a file directory required by AMMonitor, and (2) created four **AMModels** libraries in the **ammls** directory. You are now ready to create the SQLite database, which stores information about the entire monitoring effort. 
 
-# References 
+# Chapter References 
 
 ```{r 'biblio', echo=FALSE, comment=NA} 
 bibliography("HTML") 

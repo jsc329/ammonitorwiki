@@ -95,8 +95,8 @@ field support and guidance, Jon Katz and Jim Hines for programming
 assistance, and John Sauer for critical review of the software and
 documentation.
 
-References
-==========
+Chapter References
+==================
 
 1. Holling CS, United Nations Environment Programme. Adaptive
 environmental assessment and management. Laxenburg, Austria; Chichester,

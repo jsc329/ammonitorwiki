@@ -124,23 +124,23 @@ functions and datasets:
     ls("package:AMMonitor")
 
     ##  [1] "accounts"                 "activity_amml"            "ammCreateDirectories"     "analysis"                 "annotatePhoto"           
-    ##  [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "classifications"          "classifier_practice"     
-    ## [11] "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"    "classifierPredict"       
-    ## [16] "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"            "dbCreate"                
-    ## [21] "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"               "dropboxGetOneFile"       
-    ## [26] "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"     "generateRDS"             
-    ## [31] "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"                "lists"                   
-    ## [36] "locations"                "locationsShape"           "logs"                     "modelsInsert"             "objectives"              
-    ## [41] "occupancySim"             "people"                   "photos"                   "photosCheck"              "plotAnnotations"         
-    ## [46] "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"     "pr"                      
-    ## [51] "priorities"               "prioritization"           "priorityInit"             "prioritySet"              "qry"                     
-    ## [56] "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"             "recordings"              
-    ## [61] "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                 "scheduleAddVars"         
-    ## [66] "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"             "scheduleSun"             
-    ## [71] "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"      "scriptArgs"              
-    ## [76] "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"               "spatials"                
-    ## [81] "species"                  "templates"                "templatesInsert"          "templatesUnserialize"     "temporals"               
-    ## [86] "temporalsDarksky"         "temporalsGet"
+    ##  [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "assessments"              "classifications"         
+    ## [11] "classifier_practice"      "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"   
+    ## [16] "classifierPredict"        "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"           
+    ## [21] "dbCreate"                 "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"              
+    ## [26] "dropboxGetOneFile"        "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"    
+    ## [31] "generateRDS"              "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"               
+    ## [36] "lists"                    "locations"                "locationsShape"           "logs"                     "modelsInsert"            
+    ## [41] "objectives"               "occupancySim"             "people"                   "photos"                   "photosCheck"             
+    ## [46] "plotAnnotations"          "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"    
+    ## [51] "pr"                       "priorities"               "prioritization"           "priorityInit"             "prioritySet"             
+    ## [56] "qry"                      "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"            
+    ## [61] "recordings"               "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                
+    ## [66] "scheduleAddVars"          "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"            
+    ## [71] "scheduleSun"              "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"     
+    ## [76] "scriptArgs"               "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"              
+    ## [81] "spatials"                 "species"                  "templates"                "templatesInsert"          "templatesUnserialize"    
+    ## [86] "temporals"                "temporalsDarksky"         "temporalsGet"
 
 **AMMonitor** has a handful of package dependencies. These include:
 
@@ -368,8 +368,8 @@ AMMonitor, and (2) created four **AMModels** libraries in the **ammls**
 directory. You are now ready to create the SQLite database, which stores
 information about the entire monitoring effort.
 
-References
-==========
+Chapter References
+==================
 
 1. Müller K, Wickham H, James DA, Falcon S. RSQLite: ’SQLite’ interface
 for r (version 2.1,1) \[Internet\]. Comprehensive R Archive Network;
