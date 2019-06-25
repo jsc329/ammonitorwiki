@@ -17,19 +17,19 @@ posteriori* \[8\].
 
 However, automated methods have several limitations. First, individual
 AMUs can be expensive, running over $800 USD for commercial devices
-\[9\], although cost-effective models are becoming more common \[10\].
-Second, data is typically stored on AMUs until researchers can retrieve
-it, causing time lapses between data collection, analysis, and results.
-Such delays hamper the ability to efficiently address pressing
-ecological challenges and track progress toward management objectives.
-Third, the data management requirements of an AMU research effort are
-often immense. A monitoring program is a collection of people,
-equipment, monitoring locations, location characteristics, research
-objectives, and data files, with multiple moving parts to manage.
-Without a comprehensive framework for efficiently moving from raw data
-collection to results and analysis, monitoring programs are limited in
-their capacity to characterize ecological processes and inform
-management decisions \[12–18\].
+\[9\], although cost-effective models are becoming more common
+\[10,11\]. Second, data is typically stored on AMUs until researchers
+can retrieve it, causing time lapses between data collection, analysis,
+and results. Such delays hamper the ability to efficiently address
+pressing ecological challenges and track progress toward management
+objectives. Third, the data management requirements of an AMU research
+effort are often immense. A monitoring program is a collection of
+people, equipment, monitoring locations, location characteristics,
+research objectives, and data files, with multiple moving parts to
+manage. Without a comprehensive framework for efficiently moving from
+raw data collection to results and analysis, monitoring programs are
+limited in their capacity to characterize ecological processes and
+inform management decisions \[12–18\].
 
 **AMMonitor** is an open source R package dedicated to collecting,
 storing, and analyzing AMU information in a way that 1) is

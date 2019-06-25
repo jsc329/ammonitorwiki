@@ -286,7 +286,7 @@ Here, we use the `dbGetQuery()` function to send a SQLite query to the
 database (i.e., we are asking for something from the database). We
 provide the database connection, and then pass the SQLite query in the
 ‘statement’ argument. In this case, the SQLite query is “PRAGMA
-foreign\_key\_list(deployment);”. The query returns a dataframe with 3
+foreign\_key\_list(deployment);”. The query returns a data.frame with 3
 rows, indicating that the **deployment** table has 3 foreign keys. For
 instance, the column *personID* in the table **people** maps to the
 column *personID* in the **deployment** table.
