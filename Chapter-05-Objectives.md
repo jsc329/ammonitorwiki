@@ -3,11 +3,11 @@ Setting natural resource objectives can be very difficult, but they are
 usually the primary reason a monitoring program exists. Generally
 speaking, an objective identifies a vision that a person, organization,
 or agency may have. Monitoring can be used to assess whether or not that
-vision has been met. When an objective is not being met, it may prompt
+vision has been met. When an objective is not being met, it may trigger
 the individual, organization, or agency to act in a way that will push
 the objective towards its intended target.
 
-Objectives can be broadly placed into four categories:
+Objectives can be broadly placed into two categories:
 
 1.  **Fundamental objectives** are objectives that a decision maker
     truly values and wants to achieve \[1\]. E.g., “Increase loon
@@ -55,81 +55,78 @@ such, example objectives may include:
 
 Setting objectives can be difficult, and a discussion of how to set
 objectives is well beyond our scope. For additional information, see
-\[2\], \[3\], \[1\], \[4\], \[5\], \[6\], \[7\], and \[8\]. Here, we
-wish to simply highlight how objectives (of any type) can be logged in
-the **AMMonitor** database. In Chapter 19, we will illustrate how to use
-monitoring results to assess an example objective.
+\[1–8\]. Here, we simply wish to highlight how objectives (of any type)
+can be logged in the **AMMonitor** database. In Chapter 19, we will
+illustrate how to use monitoring results to assess an example objective.
 
 Create the chapter database
 ===========================
 
 Here, we use `dbCreateSample()` to create a database called
 “Chap5.sqlite”, which will be stored in a folder (directory) called
-“database” within the **AMMonitor** main directory, which should be your
-working directory in R. Recall that `dbCreateSample()` generates all
-tables of an **AMMonitor** database, and then pre-populates sample data
-into tables specified by the user. For the demonstration purposes of
-this chapter, we will only pre-populate a few necessary tables.
+**database** within the **AMMonitor** main directory, which should be
+your working directory in R. Recall that `dbCreateSample()` generates
+all tables of an **AMMonitor** database, and then pre-populates sample
+data into tables specified by the user. For the demonstration purposes
+of this chapter, we will only pre-populate a few necessary tables.
 
-    > # Create a sample database for this chapter
-    > dbCreateSample(db.name = "Chap5.sqlite", 
-    +                file.path = paste0(getwd(),"/database"), 
-    +                tables =  c("objectives", "species", 
-    +                            "lists", "listItems"))
+    # Create a sample database for this chapter
+    dbCreateSample(db.name = "Chap5.sqlite", 
+                   file.path = paste0(getwd(),"/database"), 
+                   tables =  c("objectives", "species", 
+                               "lists", "listItems"))
 
-    An AMMonitor database has been created with the name Chap5.sqlite which consists of the following tables: 
+    ## An AMMonitor database has been created with the name Chap5.sqlite which consists of the following tables:
 
-    accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
+    ## accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
 
-
-    Sample data have been generated for the following tables: 
-    lists, species, listItems, objectives
+    ## 
+    ## Sample data have been generated for the following tables: 
+    ## lists, species, listItems, objectives
 
 Next, we initialize a character object, **db.path**, that holds the
 database’s full file path. We connect to the database with RSQLite’s
 `dbConnect()` function, where we must identify the SQLite driver in the
 ‘drv’ argument:
 
-    > # Establish the database file path as db.path
-    > db.path <- paste0(getwd(), '/database/Chap5.sqlite')
-    > 
-    > # Connect to the database
-    > conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+    # Establish the database file path as db.path
+    db.path <- paste0(getwd(), '/database/Chap5.sqlite')
+
+    # Connect to the database
+    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 
 Finally, we send a SQL statement that will enforce foreign key
 constraints within the database.
 
-    > # Turn the SQLite foreign constraints on
-    > RSQLite::dbSendQuery(conn = conx, statement = 
-    +               "PRAGMA foreign_keys = ON;"
-    +           )
+    # Turn the SQLite foreign constraints on
+    RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
-    <SQLiteResult>
-      SQL  PRAGMA foreign_keys = ON;
-      ROWS Fetched: 0 [complete]
-           Changed: 0
+    ## <SQLiteResult>
+    ##   SQL  PRAGMA foreign_keys = ON;
+    ##   ROWS Fetched: 0 [complete]
+    ##        Changed: 0
 
 The Objectives Table in SQLite
 ==============================
 
 We begin by viewing the structure of the **objectives** table:
 
-    > # Look at information about the objectives table
-    > dbTables(db.path = db.path, table = "objectives")
+    # Look at information about the objectives table
+    dbTables(db.path = db.path, table = "objectives")
 
-    $objectives
-       cid        name         type notnull dflt_value pk comment
-    1    0 objectiveID VARCHAR(255)       1         NA  1        
-    2    1      listID VARCHAR(255)       0         NA  0        
-    3    2   speciesID VARCHAR(255)       0         NA  0        
-    4    3   objective VARCHAR(255)       1         NA  0        
-    5    4   indicator VARCHAR(255)       0         NA  0        
-    6    5       units VARCHAR(255)       0         NA  0        
-    7    6   direction VARCHAR(255)       0         NA  0        
-    8    7         min         REAL       0         NA  0        
-    9    8         max         REAL       0         NA  0        
-    10   9    standard         REAL       0         NA  0        
-    11  10   narrative         TEXT       0         NA  0        
+    ## $objectives
+    ##    cid        name         type notnull dflt_value pk comment
+    ## 1    0 objectiveID VARCHAR(255)       1         NA  1        
+    ## 2    1      listID VARCHAR(255)       0         NA  0        
+    ## 3    2   speciesID VARCHAR(255)       0         NA  0        
+    ## 4    3   objective VARCHAR(255)       1         NA  0        
+    ## 5    4   indicator VARCHAR(255)       0         NA  0        
+    ## 6    5       units VARCHAR(255)       0         NA  0        
+    ## 7    6   direction VARCHAR(255)       0         NA  0        
+    ## 8    7         min         REAL       0         NA  0        
+    ## 9    8         max         REAL       0         NA  0        
+    ## 10   9    standard         REAL       0         NA  0        
+    ## 11  10   narrative         TEXT       0         NA  0
 
 `dbTables()` identifies the name of each column, the primary key, the
 type of data stored in each column, and required column entries.
@@ -155,12 +152,8 @@ type of data stored in each column, and required column entries.
 This table also contains foreign keys that are linked to other database
 tables, identified using the PRAGMA statement below:
 
-    > # Return foreign key information for the speciesList table
-    > RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(objectives);")
-
-      id seq   table      from        to on_update on_delete match
-    1  0   0 species speciesID speciesID   CASCADE NO ACTION  NONE
-    2  1   0   lists    listID    listID   CASCADE NO ACTION  NONE
+    # Return foreign key information for the speciesList table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(objectives);")
 
 Resulting output shows that the field *speciesID* from the table
 **objectives** maps to the field *speciesID* in the table **species**.
@@ -180,20 +173,14 @@ reason is that these characterizations may change depending on context,
 requiring a different approach for handling such cases (perhaps in
 future versions of **AMMonitor**).
 
-We now will look at the sample objectives.
+Below, we view the sample objectives.
 
-    > # Retrieve the first objective, returned as a data.frame
-    > objectives <- RSQLite::dbGetQuery(conn = conx, 
-    +                          statement = "SELECT * FROM objectives")
-    > 
-    > # Show the  sample objective (columns 1:6)
-    > objectives[1:6]
+    # Retrieve the first objective, returned as a data.frame
+    objectives <- RSQLite::dbGetQuery(conn = conx, 
+                                      statement = "SELECT * FROM objectives")
 
-         objectiveID       listID speciesID                                   objective indicator       units
-    1       midEarth Middle Earth      <NA>                Conserve native biodiversity      <NA>        <NA>
-    2 btgn_occupancy         <NA>      btgn Maximize Black-tailed Gnatcatcher occupancy       Psi Probability
-    3 ecdo_occupancy         <NA>      ecdo   Minimize Eurasian Collared-dove occupancy       Psi Probability
-    4 verd_occupancy         <NA>      verd                   Maintain Verdin Occupancy       Psi Probability
+    # Show the  sample objective (columns 1:6)
+    objectives[1:6]
 
 Here, our sample data consists of four records, and we are displaying
 the first six columns only. The first objective’s ID is simply
@@ -206,22 +193,19 @@ abbreviation, followed by the word “occupancy” for the primary keys. In
 each case, the *listID* is set to <NA>, the *speciesID* is linked to the
 primary key in the **species** table, the indicator to be measured is
 “Psi” (which is the Greek symbol *ψ*, and is commonly used to denote
-“occupancy rate”), with “Probability” as the unit of measure.
+“occupancy rate”), and “Probability” is the unit of measure.
 
 Objectives are not required to be associated with a **speciesID** or
 **listID**, however. For example, in some U.S. National Parks,
 monitoring objectives center around maximizing characteristics of
 soundscapes.
 
-We now will look at a specific sample objective, centered in the
-songbird species, the
-[Verdin](https://www.allaboutbirds.org/guide/Verdin/id).
+Below, we focus on a specific sample objective centered on the
+[Verdin](https://www.allaboutbirds.org/guide/Verdin/id), a songbird
+species of the southwestern U.S. and northern Mexico.
 
-    > # Show the  sample objective (row 4; columns 1, 7:10)
-    > objectives[4,c(1,7:10)]
-
-         objectiveID direction  min  max standard
-    4 verd_occupancy  Maintain 0.35 0.45      0.4
+    # Show the sample objective (row 4; columns 1, 7:10)
+    objectives[4, c(1, 7:10)]
 
 Here, we see an objective with the *objectiveID* of “verd\_occupancy”.
 Note that *direction* is set to “Maintain.” Directions are typically
@@ -233,24 +217,23 @@ occupancy.
 
 The final column of the **objectives** table (not shown) stores the
 objective narrative. The *narrative* field can be used to provide
-additional narrative, and we encourage its liberal use. The narrative,
-for example, might include a description of the type of analysis or
-analyses that may be used to assess the objective, and may highlight the
-name of the **AMModels** library used to store results.
+additional narrative, which might, for example, include a description of
+the type of analysis that may be used to assess the objective, and may
+highlight the name of the **AMModels** library used to store results.
 
 The purpose of a monitoring effort is to compare the state of the system
 (e.g., Verdin occupancy rate) with a stated objective. Much later in the
 book (Chapter 18: Occupancy), the Middle Earth team will be using
 multi-season (dynamic) occupancy modeling approaches to make this
 comparison, where the team will analyze the **AMMonitor** acoustic
-monitoring data with the package, RPresence \[9\], and will store the
-results in a dedicted AMModels library. In Chapter 19 (Assessment), we
-will pit the results of the occupancy analysis against Objective 3.
+monitoring data with the package RPresence \[9,10\], and will store the
+results in a dedicated AMModels library. In Chapter 19 (Assessment), we
+will compare the results of the occupancy analysis against Objective 3.
 
 The Objectives Table in Access
 ==============================
 
-In the **AMMonitor** Access front-end, Objectives are a primary tab,
+In the **AMMonitor** Access front end, Objectives are a primary tab,
 located at the top of the Navigation Form. Once selected, the tab
 reveals a form linked to the **objectives** table, where each objective
 is displayed singly.
