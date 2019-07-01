@@ -11,7 +11,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "08-temporals.Rmd", output_format = "md_document", output_file = "Chapter 8 - The Temporals Table.md")
+# rmarkdown::render(input = "08-temporals.Rmd", output_format = "md_document", output_file = "Chapter-08-temporals.md")
 
 ```
 
@@ -31,9 +31,9 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 file.remove(db.path) 
 ```
 
-The **temporals** table tracks temporal information -- such as weather conditions and sunrise times -- at monitoring locations. Temporal information can be used as covariates in an analysis. For example, species distribution patterns may be limited by a range of temperatures, species behavioral patterns may be affected by moon phase, and species detection (e.g., vocalization) may be a function of weather conditions. Additionally, temporal information can be leveraged to automatically set the recording or photo **schedule** (Chapter 9: Schedule) and to automatically update the **prioritization** table (Chapter 10). Thus, this chapter and the two that follow differ from previous chapters in that the **temporals**, **schedule**, and **prioritization** tables are all updated automatically. Instead of using SQLite syntax or an MS Access interface, you will use **AMMonitor** functions to directly populate these tables in R. 
+The **temporals** table tracks temporal information -- such as weather conditions and sunrise times -- at monitoring locations. Temporal information can be used as covariates in an analysis. For example, species distribution patterns may be limited by a range of temperatures, species behavioral patterns may be affected by moon phase, and species detectability may be a function of weather conditions. Additionally, temporal information can be leveraged to automatically set the recording or photo **schedule** (Chapter 9: Schedule) and to automatically update the **prioritization** table (Chapter 10). Thus, this chapter and the two that follow differ from previous chapters in that the **temporals**, **schedule**, and **prioritization** tables are all updated automatically. Instead of using SQLite syntax or an MS Access interface, you will use **AMMonitor** functions to directly populate these tables in R. 
 
-In this chapter, we will use the `dbCreateSample()` function to create a database called "Chap8.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes, we will only pre-populate a few necessary tables below, though the **temporals** table will start out empty. 
+In this chapter, we will use the `dbCreateSample()` function to create a database called "Chap8.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. For demonstration purposes, we will only pre-populate a few necessary tables below, though the **temporals** table will start out empty. 
 
 ```{r}
 # Create a sample database for this chapter
@@ -57,24 +57,23 @@ conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 As always, we send a SQL statement that will enforce foreign key constraints. 
 ```{r}
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 
 Finally, to keep the demonstrations in this chapter concise, we will assume that only three of our 50 example monitoring locations are actively being monitored. That is, we will assume that the equipment deployed at 47 locations has been retrieved. We will deactivate deployments at monitoring locations 'location\@4' through 'location\@50' by sending an UPDATE query to `dbExecute()`, wherein we assign an arbitrary date to the *dateRetrieved* column of the deployment table to indicate that these locations are not actively monitored:
 
 ```{r}
-RSQLite::dbExecute(conn = conx, statement =  "UPDATE deployment 
-                        SET dateRetrieved = '2016-01-20'
-                        WHERE locationID NOT IN 
-                        ('location@1', 'location@2', 'location@3')")
+RSQLite::dbExecute(conn = conx, 
+                   statement =  "UPDATE deployment 
+                                 SET dateRetrieved = '2016-01-20'
+                                 WHERE locationID NOT IN 
+                                 ('location@1', 'location@2', 'location@3')")
 ```
 This action returns a '47' to indicate that 47 records have applied the action of setting *dateRetrieved* equal to '2016-01-20'. Next, we will gather temporal data for the three active stations that remain.
 
 # The Temporals Table
 
-The **temporals** table tracks temporal data at monitoring locations. **AMMonitor** collects weather data via the [Dark Sky API](https://darksky.net/forecast/40.7127,-74.0059/us12/en); thus the data tracked in the **temporals** table roughly matches data returned from Dark Sky. We will cover the Dark Sky API later in this chapter.
+The **temporals** table tracks temporal data at monitoring locations. **AMMonitor** collects weather data via the [Dark Sky API](https://darksky.net/forecast/40.7127,-74.0059/us12/en). We will cover the Dark Sky API later in this chapter.
 
 We begin with a look at the **temporals** table summary information using `dbTables()`:
 ```{r}
@@ -188,7 +187,7 @@ str(test_temporals$data.sources)
 The **test_temporals$data.sources** object is a list of three because there is data source information about all three locations. Each set of location-specific source data contains four elements. The **sources** element provides codes for each of the data sources Dark Sky used to generate the aggregated forecast. For example, the code 'gfs' stands for NOAA's [Global Forecast System](https://www.ncdc.noaa.gov/data-access/model-data/model-datasets/global-forcast-system-gfs), and 'hrrr' stands for NOAA's [High Resolution Rapid Refresh](https://rapidrefresh.noaa.gov/hrrr/) model. [All Dark Sky data source codes are available here](https://darksky.net/dev/docs/sources). The **date** element tells us the date for which certain sources were used. The **nearest.station** object gives the distance, in **units**, to the nearest weather station used. Because the units returned here are "us", the distance to the nearest station is given in miles. 
 
 Secondly, we can view the temporal data itself, also by using list indexing notation ($):
-```{r}
+```{r, eval = TRUE}
 # View the data, rows 1:10 and columns 1:5 
 test_temporals$temporal.data[1:10, 1:5]
 ```
@@ -202,7 +201,7 @@ dim(test_temporals$temporal.data)
 The first 10 records of the **test_temporals$temporal.data** object show hourly data for location\@1 starting at 12AM (or 00:00:00). The *type* column indicates forecast data, while the *date* and *time* columns track date and time. The *hour* column logs the hour of the day. 
 
 Many columns of temporal data are returned by this function. Below, we view columns 7:12:
-```{r}
+```{r, eval = TRUE}
 # View the data, rows 1:10 and columns 7:12
 test_temporals$temporal.data[1:10, 7:12]
 ```
@@ -230,9 +229,10 @@ We can verify that our data have been added to the database by using `dbGetQuery
 ```{r, eval = TRUE}
 # Confirm that the data has been added to the database,
 # Viewing a few selected columns and the first 10 records:
-RSQLite::dbGetQuery(conx, "SELECT locationID, type, date, 
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT locationID, type, date, 
                                   time, dewpoint, pressure, moonPhase 
-                          FROM temporals LIMIT 10") 
+                                 FROM temporals LIMIT 10") 
 ```
 
 
@@ -314,9 +314,9 @@ knitr::include_graphics('Chap8_Figs/temporals.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 8.3. The temporals table is displayed in form view here.  It is located under the primary tab, Locations.*
+>*Figure 8.3. The temporals table is displayed in form view here. It is located under the primary tab, Locations.*
 
 
 # Chapter Summary
 
-In this chapter, we reviewed how to use the **AMMonitor** `temporalsGet()` function to gather temporal and weather data for active study locations in a monitoring program. `temporalsGet()` operates via the Dark Sky API, and offers options for acquiring either forecast or historical data. This function also offers a 'db.insert' argument that allows users to test the function before adding data directly to the database's **temporals** table.  Temporal data will be used in future chapters, starting with Chapter 9.  
+In this chapter, we reviewed how to use the **AMMonitor** `temporalsGet()` function to gather temporal and weather data for active study locations in a monitoring program. `temporalsGet()` operates via the Dark Sky API, and offers options for acquiring either forecast or historical data. This function also offers a 'db.insert' argument that allows users to test the function before adding data directly to the database's **temporals** table. Temporal data will be used in future chapters, starting with Chapter 9. 

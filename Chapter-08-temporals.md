@@ -1,17 +1,3 @@
-Chapter 8: The Temporals Table
-================
-
-  - [The Temporals Table](#the-temporals-table)
-  - [The Dark Sky API](#the-dark-sky-api)
-  - [Gathering forecast data for
-    tomorrow](#gathering-forecast-data-for-tomorrow)
-  - [Gathering historical data](#gathering-historical-data)
-  - [Querying the temporals table](#querying-the-temporals-table)
-  - [Running temporalsGet() in a
-    script](#running-temporalsget-in-a-script)
-  - [The Temporals Table in Access](#the-temporals-table-in-access)
-  - [Chapter Summary](#chapter-summary)
-
 The **temporals** table tracks temporal information – such as weather
 conditions and sunrise times – at monitoring locations. Temporal
 information can be used as covariates in an analysis. For example,
@@ -36,14 +22,12 @@ and then pre-populates sample data into tables specified by the user.
 For demonstration purposes, we will only pre-populate a few necessary
 tables below, though the **temporals** table will start out empty.
 
-``` r
-# Create a sample database for this chapter
-dbCreateSample(db.name = "Chap8.sqlite", 
-               file.path = paste0(getwd(),"/database"), 
-               tables =  c('people', 'locations',
-                           'deployment', 'equipment',
-                           'accounts'))
-```
+    # Create a sample database for this chapter
+    dbCreateSample(db.name = "Chap8.sqlite", 
+                   file.path = paste0(getwd(),"/database"), 
+                   tables =  c('people', 'locations',
+                               'deployment', 'equipment',
+                               'accounts'))
 
     ## An AMMonitor database has been created with the name Chap8.sqlite which consists of the following tables:
 
@@ -59,21 +43,17 @@ create a database connection object, **conx**, using RSQLite’s
 `dbConnect()` function, where we identify the SQLite driver in the ‘drv’
 argument, and our **db.path** object in the ‘dbname’ argument:
 
-``` r
-# Establish the database file path as db.path
-db.path <- paste0(getwd(), '/database/Chap8.sqlite')
+    # Establish the database file path as db.path
+    db.path <- paste0(getwd(), '/database/Chap8.sqlite')
 
-# Connect to the database
-conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
-```
+    # Connect to the database
+    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 
 As always, we send a SQL statement that will enforce foreign key
 constraints.
 
-``` r
-# Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
-```
+    # Turn the SQLite foreign constraints on
+    RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
     ## <SQLiteResult>
     ##   SQL  PRAGMA foreign_keys = ON;
@@ -89,13 +69,11 @@ by sending an UPDATE query to `dbExecute()`, wherein we assign an
 arbitrary date to the *dateRetrieved* column of the deployment table to
 indicate that these locations are not actively monitored:
 
-``` r
-RSQLite::dbExecute(conn = conx, 
-                   statement =  "UPDATE deployment 
-                                 SET dateRetrieved = '2016-01-20'
-                                 WHERE locationID NOT IN 
-                                 ('location@1', 'location@2', 'location@3')")
-```
+    RSQLite::dbExecute(conn = conx, 
+                       statement =  "UPDATE deployment 
+                                     SET dateRetrieved = '2016-01-20'
+                                     WHERE locationID NOT IN 
+                                     ('location@1', 'location@2', 'location@3')")
 
     ## [1] 47
 
@@ -103,7 +81,8 @@ This action returns a ‘47’ to indicate that 47 records have applied the
 action of setting *dateRetrieved* equal to ‘2016-01-20’. Next, we will
 gather temporal data for the three active stations that remain.
 
-# The Temporals Table
+The Temporals Table
+===================
 
 The **temporals** table tracks temporal data at monitoring locations.
 **AMMonitor** collects weather data via the [Dark Sky
@@ -113,10 +92,8 @@ cover the Dark Sky API later in this chapter.
 We begin with a look at the **temporals** table summary information
 using `dbTables()`:
 
-``` r
-# Look at information about the temporals table
-dbTables(db.path = db.path, table = "temporals")
-```
+    # Look at information about the temporals table
+    dbTables(db.path = db.path, table = "temporals")
 
     ## $temporals
     ##    cid              name         type notnull        dflt_value pk comment
@@ -156,15 +133,8 @@ composite primary key), and all four are required values (*notnull* =
 **locations** table, which serves as a foreign key, as confirmed with
 the following code:
 
-``` r
-# Return foreign key information for the deployment table
-RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(temporals);")
-```
-
-    ## # A tibble: 1 x 8
-    ##      id   seq table     from       to         on_update on_delete match
-    ##   <int> <int> <chr>     <chr>      <chr>      <chr>     <chr>     <chr>
-    ## 1     0     0 locations locationID locationID CASCADE   NO ACTION NONE
+    # Return foreign key information for the deployment table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(temporals);")
 
 Here, one can see that the *locationID* field in table **locations**
 maps to the *locationID* field in table **temporals**.
@@ -186,21 +156,15 @@ We can use `dbGetQuery()` to send a query that will return the number of
 records present in our **temporals** table in the sample **AMMonitor**
 database:
 
-``` r
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT COUNT(*) FROM temporals;")
-```
-
-    ## # A tibble: 1 x 1
-    ##   `COUNT(*)`
-    ##        <int>
-    ## 1          0
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT COUNT(*) FROM temporals;")
 
 As shown, there are no records in this table. We do not interact with
 the **temporals** table the way we have with previously introduced
 tables. Instead, we use the **AMMonitor** function `temporalsGet()` to
 acquire data and auto-populate this table.
 
-# The Dark Sky API
+The Dark Sky API
+================
 
 The function `temporalsGet()` uses the [Dark Sky
 API](https://darksky.net/) to collect weather data. Read more about Dark
@@ -212,9 +176,9 @@ sources, aggregating them to provide forecasts for selected locations.
 Their data sources include the USA NCEP’s Canadian Meteorological Center
 ensemble model (‘cmc’), the Environment and Climate Change Canada’s
 Public Alert System (‘ecpa’), U.S. NOAA’s Global Forecast System
-(‘gfs’), U.S. NOAA’s High-Resolution Rapid Refresh Model (‘hrrr’),
-the German Meteorological Office’s icosahedral nonhydrostatic (‘icon’),
-U.S. NOAA’s Integrated Surface Database (‘isd’), U.S. NOAA/ESRL’s
+(‘gfs’), U.S. NOAA’s High-Resolution Rapid Refresh Model (‘hrrr’), the
+German Meteorological Office’s icosahedral nonhydrostatic (‘icon’), U.S.
+NOAA’s Integrated Surface Database (‘isd’), U.S. NOAA/ESRL’s
 Meteorological Assimilation Data Ingest System (‘madis’), U.S. NOAA’s
 North American Mesoscale Model (‘nam’), U.S. NOAA’s Public Alert System
 (‘nwspa’), and U.S. NOAA/NCEP’s Short-Range Ensemble Forecast (‘sref’),
@@ -227,10 +191,8 @@ Dark Sky account as a developer by visiting their [API Development Page
 (https://darksky.net/dev/docs)](https://darksky.net/dev/docs) and
 clicking the Sign Up button in the upper righthand corner:
 
-``` r
-# Browse to the Dark Sky Development Page
-browseURL("https://darksky.net/dev/docs")
-```
+    # Browse to the Dark Sky Development Page
+    browseURL("https://darksky.net/dev/docs")
 
 <kbd>
 
@@ -243,10 +205,9 @@ browseURL("https://darksky.net/dev/docs")
 
 After providing an email address and a password, you will receive a Dark
 Sky key, which is a character string along the lines of
-‘d8db31f709f973f61x4d29afe0b67e93’ (merely an example; it is not a
-real key). You should store this string in the **settings folder** as an
-RDS file with a name of your
-choice.
+‘d8db31f709f973f61x4d29afe0b67e93’ (merely an example; it is not a real
+key). You should store this string in the **settings folder** as an RDS
+file with a name of your choice.
 
 <kbd>
 
@@ -261,17 +222,16 @@ The code below provides an example of how to save this key as an RDS
 file, assuming that your working directory is the main **AMMonitor**
 directory, with a folder called **settings** as a sub-directory:
 
-``` r
-saveRDS(object = 'd8db31f709f973f61x4d29afe0b67e93', 
-        file = 'settings/dark-sky-key.RDS')
-```
+    saveRDS(object = 'd8db31f709f973f61x4d29afe0b67e93', 
+            file = 'settings/dark-sky-key.RDS')
 
 The first 1000 API calls you make per day are free. In effect, if you
 are gathering forecasts for fewer than 1000 monitoring sites per day,
 you will pay nothing. If you wish to gather large amounts of historical
 data in one day, you will pay a fee.
 
-# Gathering forecast data for tomorrow
+Gathering forecast data for tomorrow
+====================================
 
 The first way to use `temporalsGet()` is to acquire 24-hour forecast
 data for tomorrow, which we demonstrate below. The function will output
@@ -299,16 +259,14 @@ to FALSE. This action returns a list object for us to inspect, but
 ensures that no new data are automatically added to the **temporals**
 table:
 
-``` r
-# Gather forecast data, set db.insert to FALSE
-# Leave dates = NULL to get 24-hr forecast for tomorrow
-test_temporals <- temporalsGet(db.path = db.path,
-                               temporals.key = 'settings/dark-sky-key.RDS',
-                               type = 'forecast', 
-                               dates = NULL,
-                               locationID = NULL,
-                               db.insert = FALSE)
-```
+    # Gather forecast data, set db.insert to FALSE
+    # Leave dates = NULL to get 24-hr forecast for tomorrow
+    test_temporals <- temporalsGet(db.path = db.path,
+                                   temporals.key = 'settings/dark-sky-key.RDS',
+                                   type = 'forecast', 
+                                   dates = NULL,
+                                   locationID = NULL,
+                                   db.insert = FALSE)
 
     ## Powered by Dark Sky: visit https://darksky.net/poweredby/ for details
 
@@ -325,10 +283,8 @@ When finished, `temporalsGet()` returns a list object containing two
 items: 1) a data.table of temporal data, and 2) a list of data sources
 used for each call to the API.
 
-``` r
-# View the top level structure of the returned results
-str(test_temporals, max.level = 1)
-```
+    # View the top level structure of the returned results
+    str(test_temporals, max.level = 1)
 
     ## List of 2
     ##  $ temporal.data:Classes 'data.table' and 'data.frame':  72 obs. of  25 variables:
@@ -339,10 +295,8 @@ Below, we view the data sources Dark Sky used to generate the forecast,
 using the ‘$’ sign to access this list. Here, we look at the structure
 of the list only.
 
-``` r
-# View the structure of data sources list
-str(test_temporals$data.sources)
-```
+    # View the structure of data sources list
+    str(test_temporals$data.sources)
 
     ## List of 3
     ##  $ location@1:List of 4
@@ -379,32 +333,14 @@ to the nearest weather station used. Because the units returned here are
 Secondly, we can view the temporal data itself, also by using list
 indexing notation ($):
 
-``` r
-# View the data, rows 1:10 and columns 1:5 
-test_temporals$temporal.data[1:10, 1:5]
-```
-
-    ## # A tibble: 10 x 5
-    ##    locationID type     date       time                     hour
-    ##    <chr>      <chr>    <chr>      <chr>                   <int>
-    ##  1 location@1 forecast 2019-07-02 2019-07-02 00:00:00 PDT     0
-    ##  2 location@1 forecast 2019-07-02 2019-07-02 01:00:00 PDT     1
-    ##  3 location@1 forecast 2019-07-02 2019-07-02 02:00:00 PDT     2
-    ##  4 location@1 forecast 2019-07-02 2019-07-02 03:00:00 PDT     3
-    ##  5 location@1 forecast 2019-07-02 2019-07-02 04:00:00 PDT     4
-    ##  6 location@1 forecast 2019-07-02 2019-07-02 05:00:00 PDT     5
-    ##  7 location@1 forecast 2019-07-02 2019-07-02 06:00:00 PDT     6
-    ##  8 location@1 forecast 2019-07-02 2019-07-02 07:00:00 PDT     7
-    ##  9 location@1 forecast 2019-07-02 2019-07-02 08:00:00 PDT     8
-    ## 10 location@1 forecast 2019-07-02 2019-07-02 09:00:00 PDT     9
+    # View the data, rows 1:10 and columns 1:5 
+    test_temporals$temporal.data[1:10, 1:5]
 
 With three active monitoring stations, this example returns 3 locations
 \* 24 hours = 72 records and 25 columns, confirmed with `dim()`.
 
-``` r
-# Get the dimensions of the returned data.table
-dim(test_temporals$temporal.data)
-```
+    # Get the dimensions of the returned data.table
+    dim(test_temporals$temporal.data)
 
     ## [1] 72 25
 
@@ -416,24 +352,8 @@ columns track date and time. The *hour* column logs the hour of the day.
 Many columns of temporal data are returned by this function. Below, we
 view columns 7:12:
 
-``` r
-# View the data, rows 1:10 and columns 7:12
-test_temporals$temporal.data[1:10, 7:12]
-```
-
-    ## # A tibble: 10 x 6
-    ##    sunsetTime              precipIntensity precipProbability precipType temperature dewPoint
-    ##    <chr>                             <int>             <int> <lgl>            <dbl>    <dbl>
-    ##  1 2019-07-02 19:56:04 PDT               0                 0 NA                92.9     39.6
-    ##  2 2019-07-02 19:56:04 PDT               0                 0 NA                90.3     38.8
-    ##  3 2019-07-02 19:56:04 PDT               0                 0 NA                86.9     37.8
-    ##  4 2019-07-02 19:56:04 PDT               0                 0 NA                79.8     37.2
-    ##  5 2019-07-02 19:56:04 PDT               0                 0 NA                77.2     36.3
-    ##  6 2019-07-02 19:56:04 PDT               0                 0 NA                75.7     35.6
-    ##  7 2019-07-02 19:56:04 PDT               0                 0 NA                76.9     34.8
-    ##  8 2019-07-02 19:56:04 PDT               0                 0 NA                81.5     34.0
-    ##  9 2019-07-02 19:56:04 PDT               0                 0 NA                86.9     33.7
-    ## 10 2019-07-02 19:56:04 PDT               0                 0 NA                92.1     33.8
+    # View the data, rows 1:10 and columns 7:12
+    test_temporals$temporal.data[1:10, 7:12]
 
 Sun activity is logged in the *sunriseTime* and *sunsetTime* columns. If
 *precipIntensity* and *precipProbability* are 0, then *precipType* will
@@ -464,15 +384,13 @@ how it works, we can add the data to the database by re-running the
 function with ‘db.insert’ set to TRUE. (Note that the content of the
 **$data.sources** object is not added to the database.)
 
-``` r
-# Gather forecast data and add it to the database
-temporals <- temporalsGet(db.path = db.path,
-                          temporals.key = 'settings/dark-sky-key.RDS',
-                          type = 'forecast',
-                          dates = NULL,
-                          locationID = NULL,
-                          db.insert = TRUE)
-```
+    # Gather forecast data and add it to the database
+    temporals <- temporalsGet(db.path = db.path,
+                              temporals.key = 'settings/dark-sky-key.RDS',
+                              type = 'forecast',
+                              dates = NULL,
+                              locationID = NULL,
+                              db.insert = TRUE)
 
 Alternatively, if we were satisfied with the test output and saved it as
 an object, we could simply append the **$temporal.data** list object to
@@ -484,30 +402,15 @@ We can verify that our data have been added to the database by using
 term ‘LIMIT 10’ in our SQL statement to limit the returned table to the
 first ten records:
 
-``` r
-# Confirm that the data has been added to the database,
-# Viewing a few selected columns and the first 10 records:
-RSQLite::dbGetQuery(conn = conx, 
-                    statement = "SELECT locationID, type, date, 
-                                  time, dewpoint, pressure, moonPhase 
-                                 FROM temporals LIMIT 10") 
-```
+    # Confirm that the data has been added to the database,
+    # Viewing a few selected columns and the first 10 records:
+    RSQLite::dbGetQuery(conn = conx, 
+                        statement = "SELECT locationID, type, date, 
+                                      time, dewpoint, pressure, moonPhase 
+                                     FROM temporals LIMIT 10") 
 
-    ## # A tibble: 10 x 7
-    ##    locationID type     date       time                    dewPoint pressure moonPhase
-    ##    <chr>      <chr>    <chr>      <chr>                      <dbl>    <dbl>     <dbl>
-    ##  1 location@1 forecast 2019-07-02 2019-07-02 00:00:00 PDT     39.6    1008.      0.01
-    ##  2 location@1 forecast 2019-07-02 2019-07-02 01:00:00 PDT     38.8    1008.      0.01
-    ##  3 location@1 forecast 2019-07-02 2019-07-02 02:00:00 PDT     37.8    1008.      0.01
-    ##  4 location@1 forecast 2019-07-02 2019-07-02 03:00:00 PDT     37.2    1008.      0.01
-    ##  5 location@1 forecast 2019-07-02 2019-07-02 04:00:00 PDT     36.3    1008.      0.01
-    ##  6 location@1 forecast 2019-07-02 2019-07-02 05:00:00 PDT     35.6    1008.      0.01
-    ##  7 location@1 forecast 2019-07-02 2019-07-02 06:00:00 PDT     34.8    1009.      0.01
-    ##  8 location@1 forecast 2019-07-02 2019-07-02 07:00:00 PDT     34.0    1009.      0.01
-    ##  9 location@1 forecast 2019-07-02 2019-07-02 08:00:00 PDT     33.7    1009.      0.01
-    ## 10 location@1 forecast 2019-07-02 2019-07-02 09:00:00 PDT     33.8    1009.      0.01
-
-# Gathering historical data
+Gathering historical data
+=========================
 
 The second way to use `temporalsGet()` is to gather historical data.
 This time, instead of setting the ‘dates’ argument to NULL, we input a
@@ -520,34 +423,18 @@ table** will give us the number of API calls `temporalsGet()` makes to
 the Dark Sky API. In this case, two dates times three active monitoring
 locations equals a total of six calls to the API.
 
-``` r
-# Gather historical data, but don't add it to the database
+    # Gather historical data, but don't add it to the database
 
-# Set db.insert to FALSE to return the data without adding it to the database
-test_temporals <- temporalsGet(db.path = db.path,
-                               temporals.key = './settings/dark-sky-key.RDS',
-                               type = 'historical',
-                               dates = c('2016-04-01', '2016-04-02'),
-                               locationID = NULL,
-                               db.insert = FALSE)
+    # Set db.insert to FALSE to return the data without adding it to the database
+    test_temporals <- temporalsGet(db.path = db.path,
+                                   temporals.key = './settings/dark-sky-key.RDS',
+                                   type = 'historical',
+                                   dates = c('2016-04-01', '2016-04-02'),
+                                   locationID = NULL,
+                                   db.insert = FALSE)
 
-# View a subset of the temporal data (rows 1:10, columns 1:6): 
-test_temporals$temporal.data[1:10, 1:6]
-```
-
-    ## # A tibble: 10 x 6
-    ##    locationID type       date       time                     hour sunriseTime            
-    ##    <chr>      <chr>      <chr>      <chr>                   <int> <chr>                  
-    ##  1 location@1 historical 2016-04-01 2016-04-01 00:00:00 PDT     0 2016-04-01 06:28:10 PDT
-    ##  2 location@1 historical 2016-04-01 2016-04-01 01:00:00 PDT     1 2016-04-01 06:28:10 PDT
-    ##  3 location@1 historical 2016-04-01 2016-04-01 02:00:00 PDT     2 2016-04-01 06:28:10 PDT
-    ##  4 location@1 historical 2016-04-01 2016-04-01 03:00:00 PDT     3 2016-04-01 06:28:10 PDT
-    ##  5 location@1 historical 2016-04-01 2016-04-01 04:00:00 PDT     4 2016-04-01 06:28:10 PDT
-    ##  6 location@1 historical 2016-04-01 2016-04-01 05:00:00 PDT     5 2016-04-01 06:28:10 PDT
-    ##  7 location@1 historical 2016-04-01 2016-04-01 06:00:00 PDT     6 2016-04-01 06:28:10 PDT
-    ##  8 location@1 historical 2016-04-01 2016-04-01 07:00:00 PDT     7 2016-04-01 06:28:10 PDT
-    ##  9 location@1 historical 2016-04-01 2016-04-01 08:00:00 PDT     8 2016-04-01 06:28:10 PDT
-    ## 10 location@1 historical 2016-04-01 2016-04-01 09:00:00 PDT     9 2016-04-01 06:28:10 PDT
+    # View a subset of the temporal data (rows 1:10, columns 1:6): 
+    test_temporals$temporal.data[1:10, 1:6]
 
 The function again generates progress messages (not displayed here)
 informing us it is gathering forecast data for all six location-dates.
@@ -561,18 +448,17 @@ results, we can add the data to the database either by binding it in
 manually with `dbWriteTable()`, or by re-running the function with the
 ‘db.insert’ argument set to TRUE.
 
-``` r
-# If satisfied with testing, can set test = FALSE to run the function
-# and add historical (observed) data directly to the database
-temporals <- temporalsGet(db.path = db.path,
-                          temporals.key = './settings/dark-sky-key.RDS',
-                          type = 'historical',
-                          dates = c('2016-04-01', '2016-04-02'),
-                          locationID = NULL,
-                          db.insert = TRUE)
-```
+    # If satisfied with testing, can set test = FALSE to run the function
+    # and add historical (observed) data directly to the database
+    temporals <- temporalsGet(db.path = db.path,
+                              temporals.key = './settings/dark-sky-key.RDS',
+                              type = 'historical',
+                              dates = c('2016-04-01', '2016-04-02'),
+                              locationID = NULL,
+                              db.insert = TRUE)
 
-# Querying the temporals table
+Querying the temporals table
+============================
 
 Briefly, the **AMMonitor** function `qryTemporals()` is a simple
 convenience function that returns all data from the most recent date
@@ -582,27 +468,11 @@ for users who have already initialized a **conx** object connected to
 the database, and who wish to avoid constructing a SQLite query to view
 the most recent available **temporals** data.
 
-``` r
-# Query the temporals table
-latest_temporals <- qryTemporals(conn = conx)
+    # Query the temporals table
+    latest_temporals <- qryTemporals(conn = conx)
 
-# Look at the first ten records of the latest_temporals object
-latest_temporals[1:10,1:6]
-```
-
-    ## # A tibble: 10 x 6
-    ##    locationID type     date       time                     hour sunriseTime            
-    ##    <chr>      <chr>    <chr>      <chr>                   <dbl> <chr>                  
-    ##  1 location@1 forecast 2019-07-02 2019-07-02 00:00:00 PDT     0 2019-07-02 05:35:42 PDT
-    ##  2 location@1 forecast 2019-07-02 2019-07-02 01:00:00 PDT     1 2019-07-02 05:35:42 PDT
-    ##  3 location@1 forecast 2019-07-02 2019-07-02 02:00:00 PDT     2 2019-07-02 05:35:42 PDT
-    ##  4 location@1 forecast 2019-07-02 2019-07-02 03:00:00 PDT     3 2019-07-02 05:35:42 PDT
-    ##  5 location@1 forecast 2019-07-02 2019-07-02 04:00:00 PDT     4 2019-07-02 05:35:42 PDT
-    ##  6 location@1 forecast 2019-07-02 2019-07-02 05:00:00 PDT     5 2019-07-02 05:35:42 PDT
-    ##  7 location@1 forecast 2019-07-02 2019-07-02 06:00:00 PDT     6 2019-07-02 05:35:42 PDT
-    ##  8 location@1 forecast 2019-07-02 2019-07-02 07:00:00 PDT     7 2019-07-02 05:35:42 PDT
-    ##  9 location@1 forecast 2019-07-02 2019-07-02 08:00:00 PDT     8 2019-07-02 05:35:42 PDT
-    ## 10 location@1 forecast 2019-07-02 2019-07-02 09:00:00 PDT     9 2019-07-02 05:35:42 PDT
+    # Look at the first ten records of the latest_temporals object
+    latest_temporals[1:10,1:6]
 
 In future chapters, the **temporals** data plays a role in optimizing
 the recordings and photo schedules, and can also be used in downstream
@@ -611,12 +481,11 @@ analyses.
 When finished, we disconnect from the database with the `dbDisconnect()`
 function.
 
-``` r
-# Disconnect from the database
-RSQLite::dbDisconnect(conx)
-```
+    # Disconnect from the database
+    RSQLite::dbDisconnect(conx)
 
-# Running temporalsGet() in a script
+Running temporalsGet() in a script
+==================================
 
 While the `temporalsGet()` function can be used to gather historical
 temporal data associated with monitoring sites, it may be employed on a
@@ -626,14 +495,14 @@ this function each day, a monitoring team may automatically retrieve
 temporal data via a “script” sourced each morning. Scripts are described
 in detail in Chapter 19: Scripts.
 
-# The Temporals Table in Access
+The Temporals Table in Access
+=============================
 
 The temporals form in the Microsoft Access front end can be accessed as
 a secondary tab under the Locations tab. This is the first look at a
-“Hands Off\!” form in Access. The **temporals** table is entirely
+“Hands Off!” form in Access. The **temporals** table is entirely
 populated by the `temporalsGet()` function, so it should not be edited
-by
-hand.
+by hand.
 
 <kbd>
 
@@ -644,7 +513,8 @@ hand.
 > *Figure 8.3. The temporals table is displayed in form view here. It is
 > located under the primary tab, Locations.*
 
-# Chapter Summary
+Chapter Summary
+===============
 
 In this chapter, we reviewed how to use the **AMMonitor**
 `temporalsGet()` function to gather temporal and weather data for active
