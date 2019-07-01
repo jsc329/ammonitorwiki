@@ -6,7 +6,7 @@
 * [Chapter 4: The Species, Library, and Lists Tables](Chapter-04-Species-and-Library)
 * [Chapter 5: Objectives](Chapter-05-Objectives)
 * [Chapter 6: The Locations and Spatials Tables](Chapter-06-Spatials)
-* [Chapter 7: The Accounts, Equipment, Deployment, and Log Tables](Chapter 7 - Deployment)
+* [Chapter 7: The Accounts, Equipment, Deployment, and Log Tables](Chapter-07-Deployment)
 * [Chapter 8: The Temporals Table](Chapter 8 - The Temporals Table)
 * [Chapter 9: The Schedules Table](Chapter 9 - The Schedule Table)
 * [Chapter 10: The Priorities and Prioritization Tables](Chapter 10 - The Priorities and Prioritization Tables)

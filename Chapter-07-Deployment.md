@@ -1,16 +1,3 @@
-Chapter 7: The Accounts, Equipment, Deployment, and Log Tables
-================
-
-  - [The Accounts Table](#the-accounts-table)
-  - [The Equipment Table](#the-equipment-table)
-  - [The Deployment Table](#the-deployment-table)
-  - [CRUD operations](#crud-operations)
-  - [The Logs Table](#the-logs-table)
-  - [The Accounts Table in Access](#the-accounts-table-in-access)
-  - [The Equipment, Deployment, and Log Tables in
-    Access](#the-equipment-deployment-and-log-tables-in-access)
-  - [Chapter Summary](#chapter-summary)
-
 This chapter covers the **accounts**, **equipment**, **deployment** and
 **logs** tables of an **AMMonitor** database, and explains their utility
 for a monitoring program. Briefly, the **accounts** table is used to
@@ -30,14 +17,12 @@ all tables of an **AMMonitor** database, and then pre-populates sample
 data into tables specified by the user. For the demonstration purposes
 of this chapter, we will only pre-populate a few necessary tables:
 
-``` r
-# Create a sample database for this chapter
-dbCreateSample(db.name = "Chap7.sqlite", 
-               file.path = paste0(getwd(),"/database"), 
-               tables =  c("people", "accounts", 
-                           "equipment", "deployment",
-                           "locations", "logs"))
-```
+    # Create a sample database for this chapter
+    dbCreateSample(db.name = "Chap7.sqlite", 
+                   file.path = paste0(getwd(),"/database"), 
+                   tables =  c("people", "accounts", 
+                               "equipment", "deployment",
+                               "locations", "logs"))
 
     ## An AMMonitor database has been created with the name Chap7.sqlite which consists of the following tables:
 
@@ -53,21 +38,17 @@ create a database connection object, **db**, using RSQLite’s
 `dbConnect()` function, where we identify the SQLite driver in the ‘drv’
 argument, and our **db.path** object in the ‘dbname’ argument:
 
-``` r
-# Establish the database file path as db.path
-db.path <- paste0(getwd(), '/database/Chap7.sqlite')
+    # Establish the database file path as db.path
+    db.path <- paste0(getwd(), '/database/Chap7.sqlite')
 
-# Connect to the database
-conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
-```
+    # Connect to the database
+    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 
 Finally, we send a SQL statement that will enforce foreign key
 constraints.
 
-``` r
-# Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
-```
+    # Turn the SQLite foreign constraints on
+    RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
     ## <SQLiteResult>
     ##   SQL  PRAGMA foreign_keys = ON;
@@ -76,7 +57,8 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
 Now we are ready to begin.
 
-# The Accounts Table
+The Accounts Table
+==================
 
 The **accounts** table stores information about various accounts that
 you may use in your monitoring program. For example, if you use Dropbox,
@@ -87,10 +69,8 @@ details).
 
 To begin, we view the **accounts** table metadata:
 
-``` r
-# Look at information about the accounts table
-dbTables(db.path = db.path, table = "accounts")
-```
+    # Look at information about the accounts table
+    dbTables(db.path = db.path, table = "accounts")
 
     ## $accounts
     ##   cid           name         type notnull dflt_value pk comment
@@ -123,20 +103,8 @@ Below, we view records in the sample **accounts** table using
 `dbGetQuery()`. Although the sample data actually contains 55 accounts,
 we limit the returned table to the first six records:
 
-``` r
-# Retrieve the first 6 records from the accounts table
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM accounts LIMIT 6")
-```
-
-    ## # A tibble: 6 x 9
-    ##   accountID   type    primaryAccount login pw    url   phoneNumber email                 notes
-    ##   <chr>       <chr>            <int> <chr> <chr> <chr> <chr>       <chr>                 <chr>
-    ## 1 midEarthMgt Google               1 <NA>  <NA>  <NA>  <NA>        midEarthMgt@gmail.com <NA> 
-    ## 2 dropbox     Dropbox              0 <NA>  <NA>  <NA>  <NA>        <NA>                  <NA> 
-    ## 3 darksky     Darksky              0 <NA>  <NA>  <NA>  <NA>        <NA>                  <NA> 
-    ## 4 midEarth1   Google               0 <NA>  <NA>  <NA>  <NA>        midEarth1@gmail.com   <NA> 
-    ## 5 midEarth2   Google               0 <NA>  <NA>  <NA>  <NA>        midEarth2@gmail.com   <NA> 
-    ## 6 midEarth3   Google               0 <NA>  <NA>  <NA>  <NA>        midEarth3@gmail.com   <NA>
+    # Retrieve the first 6 records from the accounts table
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM accounts LIMIT 6")
 
 The sample data stores account information for various Google accounts,
 a Dropbox account, and a Dark Sky account (see Chapter 8: Temporals).
@@ -151,7 +119,8 @@ examples for working with records in a table via R. All of the examples
 apply to the **accounts** table as well. We will review some of these
 operations in the **deployment** section of this chapter.
 
-# The Equipment Table
+The Equipment Table
+===================
 
 The **equipment** table tracks all equipment used in a monitoring
 program. In a program that uses smartphones for monitoring, each
@@ -166,10 +135,8 @@ INTEGER data. The *equipmentID* (primary key) is the only required
 field. Optional fields may be used to record information about
 smartphone-based monitoring (see Donovan et al., in prep).
 
-``` r
-# Look at information about the equipment table
-dbTables(db.path = db.path, table = "equipment")
-```
+    # Look at information about the equipment table
+    dbTables(db.path = db.path, table = "equipment")
 
     ## $equipment
     ##    cid          name         type notnull dflt_value pk comment
@@ -193,15 +160,8 @@ Importantly, the *accountID* links a particular piece of equipment with
 an account listed in the table **accounts**. We confirm this
 relationship with a PRAGMA statement in `dbGetQuery()`:
 
-``` r
-# Return foreign key information for the equipment table
-RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(equipment);")
-```
-
-    ## # A tibble: 1 x 8
-    ##      id   seq table    from      to        on_update on_delete match
-    ##   <int> <int> <chr>    <chr>     <chr>     <chr>     <chr>     <chr>
-    ## 1     0     0 accounts accountID accountID CASCADE   NO ACTION NONE
+    # Return foreign key information for the equipment table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(equipment);")
 
 This output shows that the field *accountID* from the table **accounts**
 maps to the field *accountID* in the table **equipment**. Note that the
@@ -217,22 +177,11 @@ Below, we specify only a few columns of interest, and although the
 sample data contains 52 pieces of equipment, we limit the returned table
 to the first five records:
 
-``` r
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT 
-                                     equipmentID, accountID, model, manufacturer, 
-                                     OS, status 
-                                     FROM equipment
-                                     LIMIT 5")
-```
-
-    ## # A tibble: 5 x 6
-    ##   equipmentID accountID model     manufacturer OS    status    
-    ##   <chr>       <chr>     <chr>     <chr>        <chr> <chr>     
-    ## 1 equip@1     midEarth1 00709NACC Motorola     5.0.2 broken    
-    ## 2 equip@2     midEarth2 00709NACC Motorola     5.0.2 stolen    
-    ## 3 equip@3     midEarth3 00709NACC Motorola     5.1   in service
-    ## 4 equip@4     midEarth4 00709NACC Motorola     5.1   in service
-    ## 5 equip@5     midEarth5 00709NACC Motorola     5.0.2 in service
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT 
+                                         equipmentID, accountID, model, manufacturer, 
+                                         OS, status 
+                                         FROM equipment
+                                         LIMIT 5")
 
 The *equipmentID* can be any identifier we want. Here, we chose basic
 equipment names like equip@1, equip@2, but the *equipmentID* names are
@@ -251,7 +200,8 @@ entries for the *status* field that meet their programmatic needs, and
 may do so using the **lists** and **listItems** tables introduced in
 Chapter 4.
 
-# The Deployment Table
+The Deployment Table
+====================
 
 The **deployment** table links both the **locations** and **equipment**
 tables to track which equipment is deployed (physically located) at
@@ -268,10 +218,8 @@ fields to infer which sites are actively being monitored: if
 *dateRetrieved* is NULL, **AMMonitor** assumes that the site is actively
 being monitored.
 
-``` r
-# Look at information about the deployment table
-dbTables(db.path = db.path, table = "deployment")
-```
+    # Look at information about the deployment table
+    dbTables(db.path = db.path, table = "deployment")
 
     ## $deployment
     ##   cid          name         type notnull dflt_value pk comment
@@ -285,22 +233,9 @@ dbTables(db.path = db.path, table = "deployment")
 We view records in the sample **deployment** table using either
 `dbReadTable()` or `dbGetQuery()`. There are a total of 53 records in
 this sample table, but we limit the query below to show only the first
-six records, printed as a
-tibble:
+six records, printed as a tibble:
 
-``` r
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM deployment LIMIT 6")
-```
-
-    ## # A tibble: 6 x 6
-    ##   equipmentID locationID dateDeployed dateRetrieved personID notes
-    ##   <chr>       <chr>      <chr>        <chr>         <chr>    <chr>
-    ## 1 equip@1     location@1 2015-11-14   2016-01-12    fbaggins <NA> 
-    ## 2 equip@1     location@3 2016-01-13   2016-01-18    fbaggins <NA> 
-    ## 3 equip@2     location@2 2015-11-14   2016-01-17    fbaggins <NA> 
-    ## 4 equip@3     location@1 2016-01-12   <NA>          fbaggins <NA> 
-    ## 5 equip@4     location@2 2016-02-02   <NA>          fbaggins <NA> 
-    ## 6 equip@5     location@3 2016-01-19   <NA>          fbaggins <NA>
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM deployment LIMIT 6")
 
 The *equipmentID* and *locationID* show us which piece of equipment is
 currently deployed at which location. The *dateDeployed* column
@@ -337,17 +272,8 @@ table. Thus, the fields *locationID*, *equipmentID*, and *personID* in
 the **deployment** table are foreign keys that reference primary keys in
 other tables. This can be confirmed with the following SQL statement:
 
-``` r
-# Return foreign key information for the deployment table
-RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
-```
-
-    ## # A tibble: 3 x 8
-    ##      id   seq table     from        to          on_update on_delete match
-    ##   <int> <int> <chr>     <chr>       <chr>       <chr>     <chr>     <chr>
-    ## 1     0     0 people    personID    personID    CASCADE   NO ACTION NONE 
-    ## 2     1     0 locations locationID  locationID  CASCADE   NO ACTION NONE 
-    ## 3     2     0 equipment equipmentID equipmentID CASCADE   NO ACTION NONE
+    # Return foreign key information for the deployment table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
 
 This output shows that the field *personID* (if provided) from the table
 **people** maps to the field *personID* in the **deployment** table.
@@ -371,44 +297,21 @@ information about deployment status at active monitoring sites. In the
 ‘locationID’ argument, we can query for a specific site or sites of
 interest to see which monitoring equipment is currently deployed there.
 
-``` r
-# Query deployment status at specific actively monitored locations: 
-qryDeployment(conn = conx, locationID = 'location@3')
-```
-
-    ## # A tibble: 1 x 9
-    ##   equipmentID locationID accountID dateDeployed dateRetrieved email                 lat  long tz                 
-    ##   <chr>       <chr>      <chr>     <chr>        <chr>         <chr>               <dbl> <dbl> <chr>              
-    ## 1 equip@5     location@3 midEarth5 2016-01-19   <NA>          midEarth5@gmail.com  33.6 -115. America/Los_Angeles
+    # Query deployment status at specific actively monitored locations: 
+    qryDeployment(conn = conx, locationID = 'location@3')
 
 We can check the status of *all* actively monitored locations by
 indicating ‘all’ in the ‘locationID’ argument:
 
-``` r
-# Query deployment status at all actively monitored locations: 
-qryDeployment(conn = conx, locationID = 'all')
-```
-
-    ## # A tibble: 50 x 9
-    ##    equipmentID locationID  accountID  dateDeployed dateRetrieved email                  lat  long tz                 
-    ##    <chr>       <chr>       <chr>      <chr>        <chr>         <chr>                <dbl> <dbl> <chr>              
-    ##  1 equip@3     location@1  midEarth3  2016-01-12   <NA>          midEarth3@gmail.com   33.6 -115. America/Los_Angeles
-    ##  2 equip@4     location@2  midEarth4  2016-02-02   <NA>          midEarth4@gmail.com   33.6 -115. America/Los_Angeles
-    ##  3 equip@5     location@3  midEarth5  2016-01-19   <NA>          midEarth5@gmail.com   33.6 -115. America/Los_Angeles
-    ##  4 equip@6     location@4  midEarth6  2016-01-19   <NA>          midEarth6@gmail.com   33.7 -115. America/Los_Angeles
-    ##  5 equip@7     location@5  midEarth7  2016-01-19   <NA>          midEarth7@gmail.com   33.5 -115. America/Los_Angeles
-    ##  6 equip@8     location@6  midEarth8  2016-01-19   <NA>          midEarth8@gmail.com   33.6 -115. America/Los_Angeles
-    ##  7 equip@9     location@7  midEarth9  2016-01-19   <NA>          midEarth9@gmail.com   33.6 -115. America/Los_Angeles
-    ##  8 equip@10    location@8  midEarth10 2016-01-19   <NA>          midEarth10@gmail.com  33.6 -115. America/Los_Angeles
-    ##  9 equip@11    location@9  midEarth11 2016-01-19   <NA>          midEarth11@gmail.com  33.7 -115. America/Los_Angeles
-    ## 10 equip@12    location@10 midEarth12 2016-01-19   <NA>          midEarth12@gmail.com  33.6 -115. America/Los_Angeles
-    ## # ... with 40 more rows
+    # Query deployment status at all actively monitored locations: 
+    qryDeployment(conn = conx, locationID = 'all')
 
 As shown, 50 locations are actively monitored. Alternatively, users can
 invoke `dbGetQuery()` or `qry()` to work with the **deployment** table
 using customized queries.
 
-# CRUD operations
+CRUD operations
+===============
 
 As demonstrated in Chapter 3, the easiest way to add records to the
 database using R is to generate a data.frame of records, and then use
@@ -425,14 +328,12 @@ replace it with equip@1 (which has undergone a repair – previously, it
 was broken). First, we indicate that equip@52 has been retrieved with an
 *update* query:
 
-``` r
-# Indicate the retrieval of equip@52
-RSQLite::dbExecute(conn = conx, 
-                   statement = "UPDATE deployment 
-                                SET dateRetrieved = '2016-02-05', 
-                                    notes = 'Apparently broken'
-                                WHERE equipmentID = 'equip@52' ")
-```
+    # Indicate the retrieval of equip@52
+    RSQLite::dbExecute(conn = conx, 
+                       statement = "UPDATE deployment 
+                                    SET dateRetrieved = '2016-02-05', 
+                                        notes = 'Apparently broken'
+                                    WHERE equipmentID = 'equip@52' ")
 
     ## [1] 1
 
@@ -443,23 +344,19 @@ In service of sound recordkeeping, we update the **equipment** table to
 reflect a change in status for equip@1 and equip@52 according to the
 status standards we have chosen in our monitoring program:
 
-``` r
-# Update equip@1's status to 'in service'
-RSQLite::dbExecute(conn = conx, 
-                   statement = "UPDATE equipment 
-                                SET status = 'in service' 
-                                WHERE equipmentID = 'equip@1'")
-```
+    # Update equip@1's status to 'in service'
+    RSQLite::dbExecute(conn = conx, 
+                       statement = "UPDATE equipment 
+                                    SET status = 'in service' 
+                                    WHERE equipmentID = 'equip@1'")
 
     ## [1] 1
 
-``` r
-# Update equip@52's status to 'broken'
-RSQLite::dbExecute(conn = conx, 
-                   statement = "UPDATE equipment 
-                                SET status = 'broken' 
-                                WHERE equipmentID = 'equip@52'")
-```
+    # Update equip@52's status to 'broken'
+    RSQLite::dbExecute(conn = conx, 
+                       statement = "UPDATE equipment 
+                                    SET status = 'broken' 
+                                    WHERE equipmentID = 'equip@52'")
 
     ## [1] 1
 
@@ -475,35 +372,28 @@ contents of this data.frame directly to the **deployment** table in the
 database using the `dbWriteTable()` function, ensuring that ‘overwrite’
 = FALSE and ‘append’ = TRUE.
 
-``` r
-# Generate a new record
-new.deployment <- data.frame(equipmentID = 'equip@1',
-                             locationID = 'location@50',
-                             dateDeployed = '2016-02-05',
-                             dateRetrieved = NA,
-                             personID = 'bbaggins',
-                             notes = 'Swapped phones for servicing.',
-                             stringsAsFactors = FALSE)
+    # Generate a new record
+    new.deployment <- data.frame(equipmentID = 'equip@1',
+                                 locationID = 'location@50',
+                                 dateDeployed = '2016-02-05',
+                                 dateRetrieved = NA,
+                                 personID = 'bbaggins',
+                                 notes = 'Swapped phones for servicing.',
+                                 stringsAsFactors = FALSE)
 
-# Add the record to the database
-RSQLite::dbWriteTable(conn = conx, name = 'deployment', 
-                      value = new.deployment,
-                      row.names = FALSE, overwrite = FALSE,
-                      append = TRUE, header = FALSE)
+    # Add the record to the database
+    RSQLite::dbWriteTable(conn = conx, name = 'deployment', 
+                          value = new.deployment,
+                          row.names = FALSE, overwrite = FALSE,
+                          append = TRUE, header = FALSE)
 
-# Verify this record has been added by looking at deployments at location@50
-RSQLite::dbGetQuery(conn = conx, 
-                    statement =  "SELECT * FROM deployment 
-                                  WHERE locationID = 'location@50' ")
-```
+    # Verify this record has been added by looking at deployments at location@50
+    RSQLite::dbGetQuery(conn = conx, 
+                        statement =  "SELECT * FROM deployment 
+                                      WHERE locationID = 'location@50' ")
 
-    ## # A tibble: 2 x 6
-    ##   equipmentID locationID  dateDeployed dateRetrieved personID notes                        
-    ##   <chr>       <chr>       <chr>        <chr>         <chr>    <chr>                        
-    ## 1 equip@52    location@50 2016-01-19   2016-02-05    fbaggins Apparently broken            
-    ## 2 equip@1     location@50 2016-02-05   <NA>          bbaggins Swapped phones for servicing.
-
-# The Logs Table
+The Logs Table
+==============
 
 The **logs** table is used with smartphone monitoring, where each phone
 sends a performance log on a scheduled basis to the monitoring team (see
@@ -513,8 +403,7 @@ log\_drop directory as shown below on a schedule, with a file name such
 as ‘midEarth3\_log.txt’. Each phone’s log file is then parsed on a daily
 basis, and the information is inserted to the **logs** table via the
 **AMMonitor** function `xxx()`. Once the data are logged into the
-database table, the log\_drop file is
-deleted.
+database table, the log\_drop file is deleted.
 
 <kbd>
 
@@ -537,10 +426,8 @@ types in the **logs** table, which has 10 fields. The primary key for
 this table is a composite key consisting of the fields *accountID*,
 *logDate*, and *logTime*.
 
-``` r
-# Look at information about the logs table
-dbTables(db.path = db.path, table = "logs")
-```
+    # Look at information about the logs table
+    dbTables(db.path = db.path, table = "logs")
 
     ## $logs
     ##    cid      name         type notnull dflt_value pk comment
@@ -567,30 +454,21 @@ device since the last reboot.
 An example of parsed data that is inserted to the **logs** table can be
 seen below:
 
-``` r
-# Retrieve the first record from the logs table
-RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM logs LIMIT 1")
-```
-
-    ## # A tibble: 1 x 10
-    ##   accountID logDate    logTime   lat  long battery signal memory reboot  data
-    ##   <chr>     <chr>        <dbl> <dbl> <dbl>   <int>  <int>  <int>  <int> <int>
-    ## 1 midEarth3 2016-01-12    16.0  33.6 -115.      88      5    333    785    14
+    # Retrieve the first record from the logs table
+    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM logs LIMIT 1")
 
 Finally, when we are finished using the database, we disconnect.
 
-``` r
-# Disconnect from the database
-RSQLite::dbDisconnect(conx)
-```
+    # Disconnect from the database
+    RSQLite::dbDisconnect(conx)
 
-# The Accounts Table in Access
+The Accounts Table in Access
+============================
 
 For monitoring programs that use the Microsoft Access front end, the
 **accounts** form provides a convenient ‘spreadsheet’ type method for
 tracking accounts. It is located as a secondary tab under the primary
-tab “Program
-Mgt”.
+tab “Program Mgt”.
 
 <kbd>
 
@@ -604,7 +482,8 @@ Mgt”.
 Note that 55 records are present in the **accounts** table (which
 underlies this form).
 
-# The Equipment, Deployment, and Log Tables in Access
+The Equipment, Deployment, and Log Tables in Access
+===================================================
 
 The Equipment form can be accessed as a secondary tab under the
 Locations tab. The deployment table is linked to this form to
@@ -629,7 +508,7 @@ green box. Above, we show equip@1, which was deployed at location@1,
 later retrieved, re-deployed at location@3 on 2016-01-13, and later
 retrieved on 2016-01-18. If using smartphone monitoring, each equipment
 is linked to an account, and the accounts log is shown in the red box.
-Note the unfriendly “Hands off\!” warning, which alerts users that the
+Note the unfriendly “Hands off!” warning, which alerts users that the
 table is automatically populated by **AMMonitor** functions.
 
 The **deployment** and **logs** tables can also be accessed directly by
@@ -640,7 +519,8 @@ or delete records if the deployment subform highlighted in green is not
 helpful. As always, monitoring teams are free to adjust the Access front
 end in any way to meet their needs.
 
-# Chapter Summary
+Chapter Summary
+===============
 
 This chapter covered the **equipment**, **deployment**, **logs**, and
 **account** tables. The deployment table is necessary to account for the
