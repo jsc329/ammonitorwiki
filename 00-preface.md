@@ -5,10 +5,7 @@ AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework
   - [Gratitude](#gratitude)
   - [Chapter References](#chapter-references)
 
-<kbd>
-
 <img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
-</kbd>
 
 # Background
 

@@ -20,13 +20,12 @@ csl: plos.csl
 source("includes.R")
 ```
 
-<kbd>
 
 ```{r, eval = T, echo = F, out.width = '100%', echo = F, fig.align = 'center'}
 
 knitr::include_graphics('ammonitor-footer.png', dpi = 500)
 ```
-</kbd>
+
 
 # Background
 
