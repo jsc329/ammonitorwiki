@@ -1,7 +1,4 @@
-<kbd>
-
 <img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
-</kbd>
 
 Background
 ==========
