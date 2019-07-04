@@ -3,7 +3,12 @@ AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework
 
   - [Background](#background)
   - [Gratitude](#gratitude)
-  - [References](#references)
+  - [Chapter References](#chapter-references)
+
+<kbd>
+
+<img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
+</kbd>
 
 # Background
 
@@ -23,19 +28,19 @@ posteriori* \[8\].
 
 However, automated methods have several limitations. First, individual
 AMUs can be expensive, running over $800 USD for commercial devices
-\[9\], although cost-effective models are becoming more common \[10\].
-Second, data is typically stored on AMUs until researchers can retrieve
-it, causing time lapses between data collection, analysis, and results.
-Such delays hamper the ability to efficiently address pressing
-ecological challenges and track progress toward management objectives.
-Third, the data management requirements of an AMU research effort are
-often immense. A monitoring program is a collection of people,
-equipment, monitoring locations, location characteristics, research
-objectives, and data files, with multiple moving parts to manage.
-Without a comprehensive framework for efficiently moving from raw data
-collection to results and analysis, monitoring programs are limited in
-their capacity to characterize ecological processes and inform
-management decisions \[12–18\].
+\[9\], although cost-effective models are becoming more common
+\[10,11\]. Second, data is typically stored on AMUs until researchers
+can retrieve it, causing time lapses between data collection, analysis,
+and results. Such delays hamper the ability to efficiently address
+pressing ecological challenges and track progress toward management
+objectives. Third, the data management requirements of an AMU research
+effort are often immense. A monitoring program is a collection of
+people, equipment, monitoring locations, location characteristics,
+research objectives, and data files, with multiple moving parts to
+manage. Without a comprehensive framework for efficiently moving from
+raw data collection to results and analysis, monitoring programs are
+limited in their capacity to characterize ecological processes and
+inform management decisions \[12–18\].
 
 **AMMonitor** is an open source R package dedicated to collecting,
 storing, and analyzing AMU information in a way that 1) is
@@ -68,8 +73,7 @@ can be stored, and resulting outputs can be compared with research and
 monitoring objectives to track progress toward management goals. The
 final results are assessed with respect to hypotheses or objectives.
 Thus, the **AMMonitor** package places the monitoring data into an
-**a**daptive **m**anagement framework
-\[19\].
+**a**daptive **m**anagement framework \[19\].
 
 <kbd>
 
@@ -101,7 +105,7 @@ field support and guidance, Jon Katz and Jim Hines for programming
 assistance, and John Sauer for critical review of the software and
 documentation.
 
-# References
+# Chapter References
 
 <div id="refs" class="references">
 
@@ -164,7 +168,7 @@ surveys to ecological processes. Journal of Applied Ecology. 2015;52:
 
 <div id="ref-Hobson2002">
 
-8\. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
+8\. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg SL.
 Acoustic surveys of birds using electronic recordings: New potential
 from an omnidirectional microphone system. Wildlife Society Bulletin.
 2002;30: 709–720. 
@@ -266,7 +270,7 @@ doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.160530
 
 <div id="ref-BalanticOccupancy">
 
-21\. Balantic C, Donovan T. Dynamic wildlife occupancy models using
+21\. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
@@ -274,7 +278,7 @@ e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
 <div id="ref-BalanticTemporal">
 
-22\. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+22\. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution. 
 

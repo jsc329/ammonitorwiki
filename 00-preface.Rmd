@@ -20,6 +20,13 @@ csl: plos.csl
 source("includes.R")
 ```
 
+<kbd>
+
+```{r, eval = T, echo = F, out.width = '100%', echo = F, fig.align = 'center'}
+
+knitr::include_graphics('ammonitor-footer.png', dpi = 500)
+```
+</kbd>
 
 # Background
 
@@ -53,4 +60,8 @@ This guide provides step-by-step instructions for using **AMMonitor** in its cur
 We thank Mark Massar and the Bureau of Land Management for essential field support and guidance, Jon Katz and Jim Hines for programming assistance, and John Sauer for critical review of the software and documentation. 
 
 
+
 # Chapter References
+
+
+
