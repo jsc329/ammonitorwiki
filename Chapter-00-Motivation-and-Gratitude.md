@@ -1,4 +1,8 @@
-<img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
+<div><img src="ammonitor-footer.png" width="800px" align="center"></div>
+
+-   [Background](#background)
+-   [Gratitude](#gratitude)
+-   [Chapter References](#chapter-references)
 
 Background
 ==========
@@ -129,7 +133,7 @@ al. Wildlife camera trapping: A review and recommendations for linking
 surveys to ecological processes. Journal of Applied Ecology. 2015;52:
 675–685.
 
-8. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg SL.
+8. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
 Acoustic surveys of birds using electronic recordings: New potential
 from an omnidirectional microphone system. Wildlife Society Bulletin.
 2002;30: 709–720.
@@ -179,10 +183,10 @@ positives from template-detected data in automated acoustic wildlife
 monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
-21. Balantic CM, Donovan TM. Dynamic wildlife occupancy models using
+21. Balantic C, Donovan T. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
-22. Balantic CM, Donovan TM. Temporally-adaptive acoustic sampling to
+22. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution.

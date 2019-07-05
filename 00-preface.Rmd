@@ -2,6 +2,7 @@
 title: "AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework"
 output:
   md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
     includes:
