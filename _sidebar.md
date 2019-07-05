@@ -1,4 +1,4 @@
-* [Home]
+* [Home](home)
 * [Chapter 0: Motivation and Gratitude](Chapter-00-Motivation-and-Gratitude)
 * [Chapter 1: Getting Started with AMMonitor](Chapter-01-Getting-Started-with-AMMonitor)
 * [Chapter 2: The AMMonitor SQLite Database](Chapter-02-AMMonitor-Database)
