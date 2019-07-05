@@ -1,17 +1,19 @@
 ---
 title: "Chapter 20: Assessment"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "20-assessment.Rmd", output_format = "md_document", output_file = "Chapter 20 - Assessment.md")
+# rmarkdown::render(input = "20-assessment.Rmd", output_format = "md_document", output_file = "Chapter-20-The- Assessments-Table.md")
 
 
 # cool emoji's at https://gist.github.com/rxaviers/7360908
@@ -36,7 +38,7 @@ if (file.exists('db.path'))
 unlink(db.path) 
 ```
 
-
+# Chapter Introduction
 
 In previous chapters, we explained how the **scores** and **classifications** tables in an **AMMonitor** database store a wealth of information about captured signals (see Chapter 17). We further illustrated just one (of many) potential analyses that use the **scores** and **classifications** data to address ecological questions (see Chapter 18). Many of the questions that a research team seeks to answer are linked to **objectives**, as introduced in Chapter 5, and we will now return to this important topic. 
 

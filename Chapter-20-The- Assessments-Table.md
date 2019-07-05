@@ -659,7 +659,7 @@ RSQLite::dbGetQuery(conn = conx, 'SELECT * FROM assessments')
 ```
 
     ##   assessmentID    objectiveID scriptID  amml         modelName                                      notes           timestamp
-    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of verdin occupancy rate. 2019-07-05 16:27:27
+    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of verdin occupancy rate. 2019-07-05 16:27:56
 
 By registering our assessment, we now formally link a natural resource
 objective (verdin occupancy rate) with an analysis (the dynamic
