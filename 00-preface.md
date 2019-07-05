@@ -1,13 +1,11 @@
-AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework
-================
-
 <div><img src="ammonitor-footer.png" width="800px" align="center"></div>
 
-  - [Background](#background)
-  - [Gratitude](#gratitude)
-  - [Chapter References](#chapter-references)
+-   [Background](#background)
+-   [Gratitude](#gratitude)
+-   [Chapter References](#chapter-references)
 
-# Background
+Background
+==========
 
 Amid climate change and rapidly shifting land uses, effective methods
 for monitoring natural resources are critical to support
@@ -70,8 +68,7 @@ can be stored, and resulting outputs can be compared with research and
 monitoring objectives to track progress toward management goals. The
 final results are assessed with respect to hypotheses or objectives.
 Thus, the **AMMonitor** package places the monitoring data into an
-**a**daptive **m**anagement framework
-\[19\].
+**a**daptive **m**anagement framework \[19\].
 
 <kbd>
 
@@ -96,190 +93,100 @@ its current form for monitoring programs that rely on remotely-captured
 data for use in adaptive management. We welcome collaborators who may be
 interested in improving or building on our approach.
 
-# Gratitude
+Gratitude
+=========
 
 We thank Mark Massar and the Bureau of Land Management for essential
 field support and guidance, Jon Katz and Jim Hines for programming
 assistance, and John Sauer for critical review of the software and
 documentation.
 
-# Chapter References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-Holling1978">
-
-1\. Holling CS, United Nations Environment Programme. Adaptive
+1. Holling CS, United Nations Environment Programme. Adaptive
 environmental assessment and management. Laxenburg, Austria; Chichester,
 New York: International Institute for Applied Systems Analysis; Wiley;
-1978. pp. xviii, 377p. 
+1978. pp. xviii, 377p.
 
-</div>
+2. Walters C. Adaptive management of renewable resources. New York:
+Macmillan; 1986. p. 374 p.
 
-<div id="ref-Walters1986">
+3. Lee K. Compass and gyroscope: Integrating science and politics for
+the environment. Washington DC: Island Press; 1993. p. 255 p.
 
-2\. Walters C. Adaptive management of renewable resources. New York:
-Macmillan; 1986. p. 374 p. 
-
-</div>
-
-<div id="ref-Lee1993">
-
-3\. Lee K. Compass and gyroscope: Integrating science and politics for
-the environment. Washington DC: Island Press; 1993. p. 255 p. 
-
-</div>
-
-<div id="ref-Pollock2002">
-
-4\. Pollock KH, Nichols JD, Simons TR, Farnsworth GL, Bailey LL, Sauer
+4. Pollock KH, Nichols JD, Simons TR, Farnsworth GL, Bailey LL, Sauer
 JR. Large scale wildlife monitoring studies: Statistical methods for
-design and analysis. Environmetrics. 2002;13: 105–119. 
+design and analysis. Environmetrics. 2002;13: 105–119.
 
-</div>
-
-<div id="ref-Allen2015">
-
-5\. Allen CR, Garmestani AS, editors. Adaptive management of
+5. Allen CR, Garmestani AS, editors. Adaptive management of
 social-ecological systems \[Internet\]. Springer Science Mathplus
 Business Media; 2015.
 doi:[10.1007/978-94-017-9682-8](https://doi.org/10.1007/978-94-017-9682-8)
 
-</div>
-
-<div id="ref-August2015">
-
-6\. August T, Harvey M, Lightfoot P, Kilbey D, Papadopoulos T, Jepson P.
+6. August T, Harvey M, Lightfoot P, Kilbey D, Papadopoulos T, Jepson P.
 Emerging technologies for biological recording. Biological Journal of
-the Linnean Society. 2015;115: 731–749. 
+the Linnean Society. 2015;115: 731–749.
 
-</div>
-
-<div id="ref-Burton2015">
-
-7\. Burton AC, Neilson E, Moreira D, Ladle A, Steenweg R, Fisher JT, et
+7. Burton AC, Neilson E, Moreira D, Ladle A, Steenweg R, Fisher JT, et
 al. Wildlife camera trapping: A review and recommendations for linking
 surveys to ecological processes. Journal of Applied Ecology. 2015;52:
-675–685. 
+675–685.
 
-</div>
-
-<div id="ref-Hobson2002">
-
-8\. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
+8. Hobson KA, Rempel RS, Greenwood H, Turnbull B, Van Wilgenburg S.
 Acoustic surveys of birds using electronic recordings: New potential
 from an omnidirectional microphone system. Wildlife Society Bulletin.
-2002;30: 709–720. 
+2002;30: 709–720.
 
-</div>
-
-<div id="ref-WildlifeAcoustics2019">
-
-9\. Song meter sm4 \[acoustic recording hardware\] \[Internet\].
-Wildlife Acoustics; 2019. Available:
+9. Song meter sm4 \[acoustic recording hardware\] \[Internet\]. Wildlife
+Acoustics; 2019. Available:
 <https://www.wildlifeacoustics.com/products/song-meter-sm4>
 
-</div>
-
-<div id="ref-Whytock2017">
-
-10\. Whytock RC, Christie J. Solo: An open source, customizable and
+10. Whytock RC, Christie J. Solo: An open source, customizable and
 inexpensive audio recorder for bioacoustic research. Methods in Ecology
-and Evolution. 2017;8: 308–312. 
+and Evolution. 2017;8: 308–312.
 
-</div>
-
-<div id="ref-Hill2018">
-
-11\. Hill AP, Prince P, Piña Covarrubias E, Doncaster CP, Snaddon JL,
+11. Hill AP, Prince P, Piña Covarrubias E, Doncaster CP, Snaddon JL,
 Rogers A. AudioMoth: Evaluation of a smart open acoustic device for
 monitoring biodiversity and the environment. Methods in Ecology and
-Evolution. 2018;9: 1199–1211. 
+Evolution. 2018;9: 1199–1211.
 
-</div>
-
-<div id="ref-Gregory2006">
-
-12\. Gregory R, Ohlson D, Arvai J. Deconstructing adaptive management:
+12. Gregory R, Ohlson D, Arvai J. Deconstructing adaptive management:
 Criteria for applications to environmental management. Ecological
-Applications. 2006;16: 2411–2425. 
+Applications. 2006;16: 2411–2425.
 
-</div>
+13. Rehme SE, Powell LA, Allen CR. Multimodel inference and adaptive
+management. Journal of Environmental Management. 2011;92: 1360–1364.
 
-<div id="ref-Rehme2011">
-
-13\. Rehme SE, Powell LA, Allen CR. Multimodel inference and adaptive
-management. Journal of Environmental Management. 2011;92: 1360–1364. 
-
-</div>
-
-<div id="ref-Fontaine2011">
-
-14\. Fontaine JJ. Improving our legacy: Incorporation of adaptive
+14. Fontaine JJ. Improving our legacy: Incorporation of adaptive
 management into state wildlife action plans. Journal of Environmental
-Management. 2011;92: 1403–1408. 
+Management. 2011;92: 1403–1408.
 
-</div>
+15. Greig LA, Marmorek DR, Murray C, Robinson DCE. Insight into enabling
+adaptive management. Ecology and Society. 2013;18.
 
-<div id="ref-Greig2013">
-
-15\. Greig LA, Marmorek DR, Murray C, Robinson DCE. Insight into
-enabling adaptive management. Ecology and Society. 2013;18. 
-
-</div>
-
-<div id="ref-Rist2013">
-
-16\. Rist L, Felton A, Samuelsson L, Sandstrom C, Rosvall O. A new
+16. Rist L, Felton A, Samuelsson L, Sandstrom C, Rosvall O. A new
 paradigm for adaptive management. Ecology and Society. 2013;18: 63.
 Available: <http://dx.doi.org/10.5751/ES-06183-180463>
 
-</div>
+17. Fischman RL, Ruhl JB. Judging adaptive management practices of us
+agencies. Conservation Biology. 2016;30: 268–275.
 
-<div id="ref-Fischman2016">
+18. Williams BK, Brown ED. Technical challenges in the application of
+adaptive management. Biological Conservation. 2016;195: 255–263.
 
-17\. Fischman RL, Ruhl JB. Judging adaptive management practices of us
-agencies. Conservation Biology. 2016;30: 268–275. 
+19. Williams BK. Adaptive management of natural resources-framework and
+issues. Journal of Environmental Management. 2011;92: 1346–1353.
 
-</div>
-
-<div id="ref-Williams2016">
-
-18\. Williams BK, Brown ED. Technical challenges in the application of
-adaptive management. Biological Conservation. 2016;195: 255–263. 
-
-</div>
-
-<div id="ref-Williams2011">
-
-19\. Williams BK. Adaptive management of natural resources-framework and
-issues. Journal of Environmental Management. 2011;92: 1346–1353. 
-
-</div>
-
-<div id="ref-BalanticStatistical">
-
-20\. Balantic CM, Donovan TM. Statistical learning mitigation of false
+20. Balantic CM, Donovan TM. Statistical learning mitigation of false
 positives from template-detected data in automated acoustic wildlife
 monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
-</div>
-
-<div id="ref-BalanticOccupancy">
-
-21\. Balantic C, Donovan T. Dynamic wildlife occupancy models using
+21. Balantic C, Donovan T. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
-</div>
-
-<div id="ref-BalanticTemporal">
-
-22\. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+22. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
-Evolution. 
-
-</div>
-
-</div>
+Evolution.

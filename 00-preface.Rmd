@@ -1,7 +1,7 @@
 ---
 title: "AMMonitor: Remote Monitoring of Biodiversity in an Adaptive Framework"
 output:
-  github_document:
+  md_document:
     toc: true
     toc_depth: 3
     includes:
