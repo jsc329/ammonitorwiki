@@ -3,7 +3,7 @@
 * [Chapter 1: Getting Started with AMMonitor](Chapter-01-Getting-Started-with-AMMonitor)
 * [Chapter 2: The AMMonitor SQLite Database](Chapter-02-AMMonitor-Database)
 * [Chapter 3: The People Table](Chapter-03-The-People-Table)
-* [Chapter 4: The Species, Library, and Lists Tables](Chapter-04-The-Species-,-Library-and-Lists-Tables)
+* [Chapter 4: The Species, Library, and Lists Tables](Chapter-04-The-Species,-Library-and-Lists-Tables)
 * [Chapter 5: Objectives](Chapter-05-The-Objectives-Table)
 * [Chapter 6: The Locations and Spatials Tables](Chapter-06-Spatials)
 * [Chapter 7: The Accounts, Equipment, Deployment, and Log Tables](Chapter-07-Deployment)

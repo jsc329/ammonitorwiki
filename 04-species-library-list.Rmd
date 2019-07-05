@@ -13,7 +13,7 @@ csl: plos.csl
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter-04-The-Species-,-Library-and-Lists-Tables.md")
+# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter-04-The-Species,-Library-and-Lists-Tables.md")
 
 ```
 
