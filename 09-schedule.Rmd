@@ -1,17 +1,19 @@
 ---
 title: "Chapter 9: The Schedule Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "09-schedule.Rmd", output_format = "md_document", output_file = "Chapter 9 - The Schedule Table.md")
+# rmarkdown::render(input = "09-schedule.Rmd", output_format = "md_document", output_file = "Chapter-09-The Schedule-Table.md")
 
 ```
 
@@ -30,6 +32,8 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) 
 ```
+
+# Chapter Introduction
 
 The **schedule** table may be used by smartphone monitoring programs. This table links each piece of equipment (e.g., a smartphone with an **account**) to its associated Google Calendar, and contains entries specifying when audio recordings or photos should be collected. The **schedule** table stores both past and future calendar entries. **AMMonitor** functions create future calendar entries that can be pushed to the Google cloud on a daily basis via a Google API key. When the phone connects to a cellular or Wi-Fi network, its calendar is synced with Google Calendar. Calendar entries are then dispatched to the smartphone's camera or audio apps, providing instructions on when to collect data (see xxx in prep for full details). 
 

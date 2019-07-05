@@ -1,25 +1,3 @@
-<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
-
--   [Chapter Introduction](#chapter-introduction)
--   [Introduction to the Schedule
-    Table](#introduction-to-the-schedule-table)
--   [Setting a sun-based sampling schedule with
-    scheduleSun()](#setting-a-sun-based-sampling-schedule-with-schedulesun)
--   [Setting a fixed sampling schedule with
-    scheduleFixed()](#setting-a-fixed-sampling-schedule-with-schedulefixed)
--   [Working with the Google Calendar
-    API](#working-with-the-google-calendar-api)
-    -   [Step 1: Setting up a Google API Service
-        Account](#step-1-setting-up-a-google-api-service-account)
-    -   [Step 2: Sharing the Service Token with Monitoring
-        Equipment](#step-2-sharing-the-service-token-with-monitoring-equipment)
--   [The Schedule Table in Access](#the-schedule-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
-
-Chapter Introduction
-====================
-
 The **schedule** table may be used by smartphone monitoring programs.
 This table links each piece of equipment (e.g., a smartphone with an
 **account**) to its associated Google Calendar, and contains entries
@@ -55,14 +33,12 @@ all tables of an **AMMonitor** database, and then pre-populates sample
 data into tables specified by the user. For demonstration purposes, we
 will only pre-populate a few necessary tables below:
 
-``` r
-# Create a sample database for this chapter
-dbCreateSample(db.name = "Chap9.sqlite", 
-               file.path = paste0(getwd(),"/database"), 
-               tables =  c('locations', 'deployment',
-                           'equipment', 'schedule',
-                           'accounts', 'people'))
-```
+    # Create a sample database for this chapter
+    dbCreateSample(db.name = "Chap9.sqlite", 
+                   file.path = paste0(getwd(),"/database"), 
+                   tables =  c('locations', 'deployment',
+                               'equipment', 'schedule',
+                               'accounts', 'people'))
 
     ## An AMMonitor database has been created with the name Chap9.sqlite which consists of the following tables:
 
@@ -78,23 +54,19 @@ create a database connection object, **conx**, using RSQLite’s
 `dbConnect()` function, where we identify the SQLite driver in the ‘drv’
 argument, and our **db.path** object in the ‘dbname’ argument:
 
-``` r
-# Establish the database file path as db.path
-db.path <- paste0(getwd(), '/database/Chap9.sqlite')
+    # Establish the database file path as db.path
+    db.path <- paste0(getwd(), '/database/Chap9.sqlite')
 
-# Connect to the database
-conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
-```
+    # Connect to the database
+    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 
 Finally, we send a SQL statement that will enforce foreign key
 constraints.
 
-``` r
-# Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
-```
+    # Turn the SQLite foreign constraints on
+    RSQLite::dbSendQuery(conn = conx, statement = 
+                  "PRAGMA foreign_keys = ON;"
+              )
 
     ## <SQLiteResult>
     ##   SQL  PRAGMA foreign_keys = ON;
@@ -125,10 +97,8 @@ Each phone’s Google Calendar will be populated with information stored
 in the **schedule** table. Below, we use `dbTables()` to view the
 metadata for this table.
 
-``` r
-# Look at information about the schedule table
-dbTables(db.path = db.path, table = "schedule")
-```
+    # Look at information about the schedule table
+    dbTables(db.path = db.path, table = "schedule")
 
     ## $schedule
     ##    cid        name         type notnull dflt_value pk comment
@@ -164,16 +134,14 @@ scheduled event, based on the location of deployed equipment.
 We use `dbGetQuery()` to retrieve the records present in our sample
 **schedule** table:
 
-``` r
-# Retrieve the first 5 sample records stored in the schedule table
-schedule <- RSQLite::dbGetQuery(conn = conx, 
-                       statement = "SELECT * 
-                                    FROM schedule
-                                    LIMIT 5;")
+    # Retrieve the first 5 sample records stored in the schedule table
+    schedule <- RSQLite::dbGetQuery(conn = conx, 
+                           statement = "SELECT * 
+                                        FROM schedule
+                                        LIMIT 5;")
 
-# Display a few selected columns
-schedule[, c(1:7, 10)]
-```
+    # Display a few selected columns
+    schedule[, c(1:7, 10)]
 
     ##   equipmentID locationID   subject  startDate startTime    endDate  endTime private
     ## 1     equip@3 location@1 recording 2016-03-12  07:00:00 2016-03-12 07:01:00   False
@@ -192,10 +160,8 @@ the **equipment** table, and the *locationID* field maps to the
 *locationID* field in the **locations** table. Thus, both fields serve
 as foreign keys, which we confirm with the following code:
 
-``` r
-# Return foreign key information for the deployment table
-RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(schedule);")
-```
+    # Return foreign key information for the deployment table
+    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(schedule);")
 
     ##   id seq     table        from          to on_update on_delete match
     ## 1  0   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
@@ -219,10 +185,8 @@ on how to create a sunset-based calendar formatted for Google.
 The `scheduleSun()` function has multiple arguments, many of which
 contain default values; some are not required:
 
-``` r
-# View scheduleSun's arguments and defaults
-args(scheduleSun)
-```
+    # View scheduleSun's arguments and defaults
+    args(scheduleSun)
 
     ## function (db.path = NULL, locationID, calendar.key = NULL, start.date, 
     ##     end.date, subject = "recording", duration = 1, n.rise = 5, 
@@ -258,28 +222,26 @@ We set the ‘db.insert’ and ‘google.push’ options to FALSE to test the
 function without adding the resulting schedule to the database, and
 without pushing any events to Google Calendar:
 
-``` r
-# ------------------------------------------------------------
-# Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
-# schedules are created and returned to the user as a data.table 
-# for inspection. The schedule is not added to the database, and 
-# is not pushed to Google Calendar. 
-# A calendar.key to connect to Google is not needed.
-# ------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
+    # schedules are created and returned to the user as a data.table 
+    # for inspection. The schedule is not added to the database, and 
+    # is not pushed to Google Calendar. 
+    # A calendar.key to connect to Google is not needed.
+    # ------------------------------------------------------------
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = NULL,
-            subject = 'recording', 
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3,
-            n.set = 2,
-            spacing = 1,
-            db.insert = FALSE,
-            google.push = FALSE)
-```
+    scheduleSun(db.path = db.path,
+                locationID = c('location@1', 'location@2'),
+                calendar.key = NULL,
+                subject = 'recording', 
+                start.date = '2018-06-01',
+                end.date = '2018-06-02',
+                duration = 2,
+                n.rise = 3,
+                n.set = 2,
+                spacing = 1,
+                db.insert = FALSE,
+                google.push = FALSE)
 
     ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent  description private                  tz
     ##  1:     equip@3 location@1 recording 2018-06-01  05:27:00 2018-06-01 05:29:00       False Sun Calendar   False America/Los_Angeles
@@ -317,27 +279,25 @@ them to the database, and finally push them to Google Calendar.
 In order to successfully push to Google Calendar, we need to provide a
 file.path to the ‘calendar.key’, which we will discuss below.
 
-``` r
-# ------------------------------------------------------------
-# Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
-# schedules are created and returned to the user as a
-# data.table, added to the database, and are pushed to
-# Google Calendar. A calendar.key is required.
-# ------------------------------------------------------------  
+    # ------------------------------------------------------------
+    # Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
+    # schedules are created and returned to the user as a
+    # data.table, added to the database, and are pushed to
+    # Google Calendar. A calendar.key is required.
+    # ------------------------------------------------------------  
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = 'settings/calendar-10b0fdaac306.json',
-            subject = 'recording',
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3, 
-            n.set = 2, 
-            spacing = 1,
-            db.insert = TRUE,
-            google.push = TRUE)
-```
+    scheduleSun(db.path = db.path,
+                locationID = c('location@1', 'location@2'),
+                calendar.key = 'settings/calendar-10b0fdaac306.json',
+                subject = 'recording',
+                start.date = '2018-06-01',
+                end.date = '2018-06-02',
+                duration = 2,
+                n.rise = 3, 
+                n.set = 2, 
+                spacing = 1,
+                db.insert = TRUE,
+                google.push = TRUE)
 
 `scheduleSun()` returns status messages (not shown) informing us as to
 whether events were successfully uploaded to the Google Calendar and
@@ -350,14 +310,12 @@ addition to the ‘db.path’ object and the service token ‘calendar.key’,
 `scheduleDelete()` requires us to identify the locations and date ranges
 (inclusive) for which events should be eliminated from the calendar:
 
-``` r
-# Delete events from the Google Calendar itself:
-scheduleDelete(db.path = db.path,
-               locationID = c('location@1', 'location@2'),
-               calendar.key = 'settings/calendar-10b0fdaac306.json',
-               start.date = '2018-06-01',
-               end.date = '2018-06-02')
-```
+    # Delete events from the Google Calendar itself:
+    scheduleDelete(db.path = db.path,
+                   locationID = c('location@1', 'location@2'),
+                   calendar.key = 'settings/calendar-10b0fdaac306.json',
+                   start.date = '2018-06-01',
+                   end.date = '2018-06-02')
 
 `scheduleDelete()` will yield status messages to inform us that events
 were successfully deleted.
@@ -376,26 +334,24 @@ zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
 We set ‘db.insert’ and ‘google.push’ to FALSE since we aren’t working
 with a database.
 
-``` r
-# ------------------------------------------------------------
-# Example 3: Users can create a sun-based calendar independent
-# of the database by ignoring the db.path argument and instead
-# using the optional lat, long, and timezone arguments.
-# ------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Example 3: Users can create a sun-based calendar independent
+    # of the database by ignoring the db.path argument and instead
+    # using the optional lat, long, and timezone arguments.
+    # ------------------------------------------------------------
 
-scheduleSun(locationID = c('one_place', 'another_place'),
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 1,
-            n.rise = 2,
-            n.set = 1,
-            spacing = 4,
-            lat = c(44.475856, 43.234555),
-            long = c(-73.195142, -72.103589), 
-            timezone = 'America/New_york',
-            db.insert = FALSE,
-            google.push = FALSE)
-```
+    scheduleSun(locationID = c('one_place', 'another_place'),
+                start.date = '2018-06-01',
+                end.date = '2018-06-02',
+                duration = 1,
+                n.rise = 2,
+                n.set = 1,
+                spacing = 4,
+                lat = c(44.475856, 43.234555),
+                long = c(-73.195142, -72.103589), 
+                timezone = 'America/New_york',
+                db.insert = FALSE,
+                google.push = FALSE)
 
     ##       Subject Start Date Start Time   End Date End Time All Day Event  Description      Location Private
     ##  1: recording 2018-06-01   05:08:00 2018-06-01 05:09:00         False Sun Calendar     one_place   False
@@ -454,26 +410,24 @@ Lastly, we set ‘db.insert’ and ‘google.push’ to FALSE to test out the
 function without adding the resulting schedule to the database, or
 pushing events to Google Calendar:
 
-``` r
-# ------------------------------------------------------------
-# Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
-# schedules are created and returned to the user as a data.table 
-# for inspection. The schedule is not added to the database, and 
-# is not pushed to Google Calendar. 
-# A calendar.key to connect to Google is not needed.
-# ------------------------------------------------------------
+    # ------------------------------------------------------------
+    # Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
+    # schedules are created and returned to the user as a data.table 
+    # for inspection. The schedule is not added to the database, and 
+    # is not pushed to Google Calendar. 
+    # A calendar.key to connect to Google is not needed.
+    # ------------------------------------------------------------
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = NULL,
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = FALSE,
-              google.push = FALSE)
-```
+    scheduleFixed(db.path = db.path,
+                  locationID = c('location@1', 'location@2'),
+                  calendar.key = NULL,
+                  subject = 'recording', 
+                  start.date = '2018-06-01',
+                  end.date = '2018-06-02',
+                  sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                  duration = 1, 
+                  db.insert = FALSE,
+                  google.push = FALSE)
 
     ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent    description private                  tz
     ##  1:     equip@3 location@1 recording 2018-06-01  06:00:00 2018-06-01 06:01:00       False Fixed Calendar   False America/Los_Angeles
@@ -493,25 +447,23 @@ As before, once we are satisfied with our tests of `scheduleFixed()`, we
 can set the arguments ‘db.insert’ and ‘google.push’ to TRUE to create
 schedules, add them to the database, and push them to Google Calendar.
 
-``` r
-# ------------------------------------------------------------
-# Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
-# schedules are created and returned to the user as a
-# data.table, added to the database, and pushed to
-# Google Calendar. A calendar.key is required.
-# ------------------------------------------------------------           
+    # ------------------------------------------------------------
+    # Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
+    # schedules are created and returned to the user as a
+    # data.table, added to the database, and pushed to
+    # Google Calendar. A calendar.key is required.
+    # ------------------------------------------------------------           
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = './settings/calendar-10b0fdaac306.json',
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = TRUE,
-              google.push = TRUE)
-```
+    scheduleFixed(db.path = db.path,
+                  locationID = c('location@1', 'location@2'),
+                  calendar.key = './settings/calendar-10b0fdaac306.json',
+                  subject = 'recording', 
+                  start.date = '2018-06-01',
+                  end.date = '2018-06-02',
+                  sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                  duration = 1, 
+                  db.insert = TRUE,
+                  google.push = TRUE)
 
 `scheduleFixed()` will provide status messages informing us whether
 events were successfully uploaded to the Google Calendar and added to
@@ -524,14 +476,12 @@ addition to the db.path object and the service token calendar.key,
 `scheduleDelete()` requires us to identify the locations and date ranges
 (inclusive) for which events should be eliminated from the calendar:
 
-``` r
-# Delete events from the Google Calendar itself:
-scheduleDelete(db.path = db.path,
-               locationID = c('location@1', 'location@2'),
-               calendar.key = './settings/calendar-10b0fdaac306.json',
-               start.date = '2018-06-01',
-               end.date = '2018-06-02') 
-```
+    # Delete events from the Google Calendar itself:
+    scheduleDelete(db.path = db.path,
+                   locationID = c('location@1', 'location@2'),
+                   calendar.key = './settings/calendar-10b0fdaac306.json',
+                   start.date = '2018-06-01',
+                   end.date = '2018-06-02') 
 
 `scheduleDelete()` yields status messages (not shown) confirming that
 events were successfully deleted.
@@ -549,24 +499,22 @@ zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
 We set ‘db.insert’ and ‘google.push’ to FALSE since we aren’t working
 with a database.
 
-``` r
-# ------------------------------------------------------------
-# Example 3: Users can create a sun-based calendar independent 
-# of the database by ignoring the db.path argument and instead 
-# using the optional lat, long, and timezone arguments. 
-# ------------------------------------------------------------   
+    # ------------------------------------------------------------
+    # Example 3: Users can create a sun-based calendar independent 
+    # of the database by ignoring the db.path argument and instead 
+    # using the optional lat, long, and timezone arguments. 
+    # ------------------------------------------------------------   
 
-scheduleFixed(locationID = 'mylocation', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02', 
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              lat = 33.6178, 
-              long = -114.5883, 
-              timezone = 'America/Los_angeles',
-              db.insert = FALSE, 
-              google.push = FALSE)
-```
+    scheduleFixed(locationID = 'mylocation', 
+                  start.date = '2018-06-01',
+                  end.date = '2018-06-02', 
+                  sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                  duration = 1, 
+                  lat = 33.6178, 
+                  long = -114.5883, 
+                  timezone = 'America/Los_angeles',
+                  db.insert = FALSE, 
+                  google.push = FALSE)
 
     ##      Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
     ## 1: recording 2018-06-01   06:00:00 2018-06-01 06:01:00         False Fixed Calendar mylocation   False
@@ -600,15 +548,13 @@ independent of the primary account.
 To illustrate, we begin by viewing the first few records of the
 **accounts** table:
 
-``` r
-# Retrieve sample data stored in the accounts table
-accounts <- RSQLite::dbGetQuery(conn = conx,
-                       statement = "SELECT * 
-                                    FROM accounts;")
+    # Retrieve sample data stored in the accounts table
+    accounts <- RSQLite::dbGetQuery(conn = conx,
+                           statement = "SELECT * 
+                                        FROM accounts;")
 
-# Display the first 10 records and a few selected columns
-accounts[1:10, c(1:4,8)]
-```
+    # Display the first 10 records and a few selected columns
+    accounts[1:10, c(1:4,8)]
 
     ##      accountID    type primaryAccount login                 email
     ## 1  midEarthMgt  Google              1  <NA> midEarthMgt@gmail.com
@@ -835,10 +781,8 @@ correctly.
 
 When finished with the day’s work, we disconnect from the database.
 
-``` r
-# Disconnect from the database
-RSQLite::dbDisconnect(conx)
-```
+    # Disconnect from the database
+    RSQLite::dbDisconnect(conx)
 
 The Schedule Table in Access
 ============================
