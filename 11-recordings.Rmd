@@ -1,17 +1,19 @@
 ---
 title: "Chapter 11: The Recordings Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "11-recordings.Rmd", output_format = "md_document", output_file = "Chapter 11 - The Recordings Table.md")
+# rmarkdown::render(input = "11-recordings.Rmd", output_format = "md_document", output_file = "Chapter-11-The-Recordings-Table.md")
 
 ```
 
@@ -59,6 +61,8 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) 
 ```
+
+# Chapter Introduction
 
 This chapter covers the **recordings** table of an **AMMonitor** database, which stores metadata about recordings. Physical recordings themselves are stored in the **recordings** folder within the main **AMMonitor** directory. 
 

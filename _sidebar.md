@@ -10,7 +10,7 @@
 * [Chapter 8: The Temporals Table](Chapter-08-The-Temporals-Table)
 * [Chapter 9: The Schedules Table](Chapter-09-The-Schedule-Table)
 * [Chapter 10: The Priorities and Prioritization Tables](Chapter-10-The-Priorities-and-Prioritization-Tables)
-* [Chapter 11: The Recordings Table](Chapter 11 - The Recordings Table)
+* [Chapter 11: The Recordings Table](Chapter-11-The-Recordings-Table)
 * [Chapter 12: The Photos Table](Chapter 12 - The Photos Table)
 * [Chapter 13: The Soundscape Table](Chapter 13 - The Soundscape Table)
 * [Chapter 14: The Annotations Table](Chapter 14 - The Annotations Table)
