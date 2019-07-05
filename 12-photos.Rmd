@@ -1,17 +1,19 @@
 ---
 title: "Chapter 12: The Photos Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "12-photos.Rmd", output_format = "md_document", output_file = "Chapter 12 - The Photos Table.md")
+# rmarkdown::render(input = "12-photos.Rmd", output_format = "md_document", output_file = "Chapter-12-The-Photos-Table.md")
 
 ```
 
@@ -67,7 +69,7 @@ if (file.exists('db.path'))
 unlink(db.path) 
 ```
 
-
+# Chapter Introduction
 
 This chapter covers the **photos** table of an **AMMonitor** database, which stores metadata about photos. Physical photos or motion captures themselves are stored in the **photos** or **motion** folders within the main **AMMonitor** directory. The only difference between these two folders is that the **photos** folder stores photos captured as a scheduled photograph, while the **motion** folders stores photos that were triggered by a motion-detection smartphone app. If you have recently read Chapter 11 (Recordings), note that several of the concepts and functions will be identical for photos. 
 

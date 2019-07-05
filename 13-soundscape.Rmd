@@ -1,17 +1,19 @@
 ---
 title: "Chapter 13: The Soundscape Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "13-soundscape.Rmd", output_format = "md_document", output_file = "Chapter 13 - The Soundscape Table.md")
+# rmarkdown::render(input = "13-soundscape.Rmd", output_format = "md_document", output_file = "Chapter-13-The-Soundscape-Table.md")
 
 ```
 
@@ -64,6 +66,8 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
+
+# Introduction
 
 An acoustic monitoring program can be used to monitor focal species of interest. However, it also can be used to monitor the ecosystem as a whole. This chapter discusses the analysis of "soundscapes" [@Pijanowski2011], which allows us to document the dominant frequencies of an ecosystem during certain times of the day or season. Monitoring programs can monitor soundscapes through time and space, allowing an investigation of how logging, agricultural expansion, energy development, and other land uses may affect the natural system. Agencies or organizations may have a natural resource management objective that can be measured with soundscape analysis. For example, "Minimize the level of anthropogenic disturbance" can be measured through time and space by quantifying a recording's anthrophony, a measure of human-generated acoustic components within sound samples.
 
