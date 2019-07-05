@@ -1,17 +1,19 @@
 ---
 title: "Chapter 15: The Templates Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "13-soundscape.Rmd", output_format = "md_document", output_file = "Chapter 15 - The Templates Table.md")
+# rmarkdown::render(input = "13-soundscape.Rmd", output_format = "md_document", output_file = "Chapter-15-The-Templates-Table.md")
 
 ```
 
@@ -32,6 +34,8 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
+
+# Chapter Introduction
 
 In an acoustic monitoring context, a **template** is an example of a type of sound a researcher hopes to automatically identify using the computer. It might be a single identifying note, a phrase of multiple notes, and/or a breeding song. If a focal species produces multiple sound types, the user might create multiple templates. 
 

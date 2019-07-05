@@ -1,13 +1,16 @@
-Chapter 15: The Templates Table
-================
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
-  - [The Templates Table](#the-templates-table)
-  - [Creating a template](#creating-a-template)
-  - [Testing Templates](#testing-templates)
-  - [Saving Templates](#saving-templates)
-  - [The Templates Table in Access](#the-templates-table-in-access)
-  - [Chapter summary](#chapter-summary)
-  - [Chapter References](#chapter-references)
+-   [Chapter Introduction](#chapter-introduction)
+-   [The Templates Table](#the-templates-table)
+-   [Creating a template](#creating-a-template)
+-   [Testing Templates](#testing-templates)
+-   [Saving Templates](#saving-templates)
+-   [The Templates Table in Access](#the-templates-table-in-access)
+-   [Chapter summary](#chapter-summary)
+-   [Chapter References](#chapter-references)
+
+Chapter Introduction
+====================
 
 In an acoustic monitoring context, a **template** is an example of a
 type of sound a researcher hopes to automatically identify using the
@@ -37,21 +40,19 @@ auto-populate the **templates** table with **AMMonitor** functions later
 on in the chapter:
 
 ``` r
-> # Create a sample database for this chapter
-> dbCreateSample(db.name = "Chap15.sqlite", 
-+                file.path = paste0(getwd(),"/database"), 
-+                tables = c('species', 'library', 'people', 'templates'))
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap15.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables = c('species', 'library', 'people', 'templates'))
 ```
 
-    An AMMonitor database has been created with the name Chap15.sqlite which consists of the following tables: 
+    ## An AMMonitor database has been created with the name Chap15.sqlite which consists of the following tables:
 
-    accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
+    ## accounts, annotations, assessments, classifications, deployment, equipment, library, listItems, lists, locations, logs, objectives, people, photos, priorities, prioritization, recordings, schedule, scores, scriptArgs, scripts, soundscape, spatials, species, sqlite_sequence, templates, temporals
 
-``` 
-
-Sample data have been generated for the following tables: 
-people, species, library, templates
-```
+    ## 
+    ## Sample data have been generated for the following tables: 
+    ## people, species, library, templates
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we
@@ -60,53 +61,52 @@ create a database connection object, **conx**, using RSQLite’s
 argument, and our **db.path** object in the ‘dbname’ argument:
 
 ``` r
-> # Establish the database file path as db.path
-> db.path <- paste0(getwd(), '/database/Chap15.sqlite')
-> 
-> # Connect to the database
-> conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap15.sqlite')
+
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
 ```
 
 After that, we send a SQL statement that will enforce foreign key
 constraints.
 
 ``` r
-> # Turn the SQLite foreign constraints on
-> RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
+# Turn the SQLite foreign constraints on
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
-    <SQLiteResult>
-      SQL  PRAGMA foreign_keys = ON;
-      ROWS Fetched: 0 [complete]
-           Changed: 0
+    ## <SQLiteResult>
+    ##   SQL  PRAGMA foreign_keys = ON;
+    ##   ROWS Fetched: 0 [complete]
+    ##        Changed: 0
 
-# The Templates Table
+The Templates Table
+===================
 
 We begin by looking at the **templates** table. We can use `dbTables()`
 to view the table’s field summary:
 
 ``` r
-> # Look at information about the templates table
-> dbTables(db.path = db.path, table = "templates")
+# Look at information about the templates table
+dbTables(db.path = db.path, table = "templates")
 ```
 
-``` 
-$templates
-   cid       name         type notnull dflt_value pk comment
-1    0 templateID VARCHAR(255)       1         NA  1        
-2    1  libraryID VARCHAR(255)       1         NA  0        
-3    2      class VARCHAR(255)       0         NA  0        
-4    3   software VARCHAR(255)       0         NA  0        
-5    4    package VARCHAR(255)       0         NA  0        
-6    5    comment         TEXT       0         NA  0        
-7    6     minFrq         REAL       0         NA  0        
-8    7     maxFrq         REAL       0         NA  0        
-9    8         wl         REAL       0         NA  0        
-10   9       ovlp         REAL       0         NA  0        
-11  10         wn VARCHAR(255)       0         NA  0        
-12  11   template         BLOB       0         NA  0        
-13  12   personID VARCHAR(255)       0         NA  0        
-```
+    ## $templates
+    ##    cid       name         type notnull dflt_value pk comment
+    ## 1    0 templateID VARCHAR(255)       1         NA  1        
+    ## 2    1  libraryID VARCHAR(255)       1         NA  0        
+    ## 3    2      class VARCHAR(255)       0         NA  0        
+    ## 4    3   software VARCHAR(255)       0         NA  0        
+    ## 5    4    package VARCHAR(255)       0         NA  0        
+    ## 6    5    comment         TEXT       0         NA  0        
+    ## 7    6     minFrq         REAL       0         NA  0        
+    ## 8    7     maxFrq         REAL       0         NA  0        
+    ## 9    8         wl         REAL       0         NA  0        
+    ## 10   9       ovlp         REAL       0         NA  0        
+    ## 11  10         wn VARCHAR(255)       0         NA  0        
+    ## 12  11   template         BLOB       0         NA  0        
+    ## 13  12   personID VARCHAR(255)       0         NA  0
 
 The primary key for this table is *templateID*, which is the template’s
 unique name (a character of up to 255 characters in length). Each
@@ -127,15 +127,13 @@ data. The maximum size of BLOBs is unlimited.” The final column,
 Foreign key assigments can be confirmed as follows:
 
 ``` r
-> # Return foreign key information for the templates table
-> RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(templates);")
+# Return foreign key information for the templates table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(templates);")
 ```
 
-    # A tibble: 2 x 8
-         id   seq table   from      to        on_update on_delete match
-      <int> <int> <chr>   <chr>     <chr>     <chr>     <chr>     <chr>
-    1     0     0 people  personID  personID  CASCADE   NO ACTION NONE 
-    2     1     0 library libraryID libraryID CASCADE   NO ACTION NONE 
+    ##   id seq   table      from        to on_update on_delete match
+    ## 1  0   0  people  personID  personID   CASCADE NO ACTION  NONE
+    ## 2  1   0 library libraryID libraryID   CASCADE NO ACTION  NONE
 
 Notice that the field *personID* from table **people** maps to the
 *personID* field in the **templates** table, and the field *libraryID*
@@ -145,35 +143,31 @@ from table **library** maps to the *libraryID* field in the
 Below, we view the library that comes with the sample database:
 
 ``` r
-> # Retrieve the lists in the sample database
-> RSQLite::dbGetQuery(conn = conx, 
-+                     statement = "SELECT * 
-+                                  FROM library")
+# Retrieve the lists in the sample database
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM library")
 ```
 
-``` 
-# A tibble: 18 x 4
-   libraryID      speciesID type  description                                    
-   <chr>          <chr>     <chr> <chr>                                          
- 1 btgn_other     btgn      other other                                          
- 2 btgn_zhee      btgn      song  Typical zhee-zhee-zhee territorial sound       
- 3 copo_other     copo      other other                                          
- 4 copo_song      copo      song  "a loud \"poorwill\""                          
- 5 coyote_general coyote    call  Any coyote sound                               
- 6 ecdo_1phrase   ecdo      song  Coo-coo-cup song                               
- 7 ecdo_2phrase   ecdo      song  Two phrase coo-coo-cup song                    
- 8 ecdo_other     ecdo      other other                                          
- 9 ecdo_song      ecdo      song  Coo coo cup song, number of phrases unspecified
-10 fox_general    fox       call  Any kit fox sound                              
-11 gaqu_call      gaqu      call  Typical call                                   
-12 gaqu_other     gaqu      other other                                          
-13 leni_other     leni      other other                                          
-14 leni_trill     leni      call  toadlike breeding trill                        
-15 toad_general   toad      call  Any Couch's Spadefoot sound                    
-16 verd_2notes    verd      song  Two-note song                                  
-17 verd_3notes    verd      song  Three-note song                                
-18 verd_other     verd      other other                                          
-```
+    ##         libraryID speciesID  type                                     description
+    ## 1      btgn_other      btgn other                                           other
+    ## 2       btgn_zhee      btgn  song        Typical zhee-zhee-zhee territorial sound
+    ## 3      copo_other      copo other                                           other
+    ## 4       copo_song      copo  song                               a loud "poorwill"
+    ## 5  coyote_general    coyote  call                                Any coyote sound
+    ## 6    ecdo_1phrase      ecdo  song                                Coo-coo-cup song
+    ## 7    ecdo_2phrase      ecdo  song                     Two phrase coo-coo-cup song
+    ## 8      ecdo_other      ecdo other                                           other
+    ## 9       ecdo_song      ecdo  song Coo coo cup song, number of phrases unspecified
+    ## 10    fox_general       fox  call                               Any kit fox sound
+    ## 11      gaqu_call      gaqu  call                                    Typical call
+    ## 12     gaqu_other      gaqu other                                           other
+    ## 13     leni_other      leni other                                           other
+    ## 14     leni_trill      leni  call                         toadlike breeding trill
+    ## 15   toad_general      toad  call                     Any Couch's Spadefoot sound
+    ## 16    verd_2notes      verd  song                                   Two-note song
+    ## 17    verd_3notes      verd  song                                 Three-note song
+    ## 18     verd_other      verd other                                           other
 
 Recall that the **library** table in an **AMMonitor** database
 identifies target signals issued by a particular species. For example,
@@ -187,34 +181,34 @@ database, we view example templates that come with the **AMMonitor**
 sample database:
 
 ``` r
-> # Retrieve the templates in the templates table
-> sample.templates <- RSQLite::dbGetQuery(
-+   conn = conx, 
-+   statement = "SELECT templateID, libraryID, class, 
-+                       software, package, template, personID 
-+               FROM templates")
-> 
-> # View the structure of the sample.templates
-> str(sample.templates)
+# Retrieve the templates in the templates table
+sample.templates <- RSQLite::dbGetQuery(
+  conn = conx, 
+  statement = "SELECT templateID, libraryID, class, 
+                      software, package, template, personID 
+              FROM templates")
+
+# View the structure of the sample.templates
+str(sample.templates)
 ```
 
-    'data.frame':   3 obs. of  7 variables:
-     $ templateID: chr  "verd1" "verd2" "verd3"
-     $ libraryID : chr  "verd_2notes" "verd_other" "verd_2notes"
-     $ class     : chr  "corTemplateList" "corTemplateList" "binTemplateList"
-     $ software  : chr  "R" "R" "R"
-     $ package   : chr  "monitoR" "monitoR" "monitoR"
-     $ template  :List of 3
-      ..$ : raw  58 0a 00 00 ...
-      ..$ : raw  58 0a 00 00 ...
-      ..$ : raw  58 0a 00 00 ...
-      ..- attr(*, "class")= chr "blob"
-     $ personID  : chr  "fbaggins" "fbaggins" "bbaggins"
+    ## 'data.frame':    3 obs. of  7 variables:
+    ##  $ templateID: chr  "verd1" "verd2" "verd3"
+    ##  $ libraryID : chr  "verd_2notes" "verd_other" "verd_2notes"
+    ##  $ class     : chr  "corTemplateList" "corTemplateList" "binTemplateList"
+    ##  $ software  : chr  "R" "R" "R"
+    ##  $ package   : chr  "monitoR" "monitoR" "monitoR"
+    ##  $ template  :List of 3
+    ##   ..$ : raw  58 0a 00 00 ...
+    ##   ..$ : raw  58 0a 00 00 ...
+    ##   ..$ : raw  58 0a 00 00 ...
+    ##   ..- attr(*, "class")= chr "blob"
+    ##  $ personID  : chr  "fbaggins" "fbaggins" "bbaggins"
 
 As shown, the sample database comes with three templates created by
 Frodo Baggins: two for the ‘verd\_2notes’ signal and one for the
-‘verd\_other’ signal. The *templateID* contains a unique character
-name chosen by the user. The *libraryID* indicates which sound/call the
+‘verd\_other’ signal. The *templateID* contains a unique character name
+chosen by the user. The *libraryID* indicates which sound/call the
 template intends to capture. In *class*, *software*, and *package*, we
 state the type of template, the software, and the R package used to
 create it. In our example, the classes are either **corTemplateList** or
@@ -229,17 +223,18 @@ the template named ‘verd1’, which is a template designed to find the
 ‘verd\_2notes’ signal:
 
 ``` r
-> # Retrieve the template from the database
-> t1 <- templatesUnserialize(db.path = db.path, templateID = 'verd1')
-> 
-> # Look at the structure of this object
-> str(t1, max.level = 3)
-> 
-> # Plot it
-> plot(t1)
+# Retrieve the template from the database
+t1 <- templatesUnserialize(db.path = db.path, templateID = 'verd1')
+
+# Look at the structure of this object
+str(t1, max.level = 3)
+
+# Plot it
+plot(t1)
 ```
 
-# Creating a template
+Creating a template
+===================
 
 For template creation, **AMMonitor** uses functions from the package
 [**monitoR**](https://cran.r-project.org/web/packages/monitoR/index.html)
@@ -262,12 +257,12 @@ will load sample recordings that come with the **AMMonitor** package,
 and write one of them to a wave file in our working directory:
 
 ``` r
-> # Read in data
-> data(sampleRecordings)
-> 
-> # Write the fourth recording to the working directory
-> tuneR::writeWave(object = sampleRecordings[[4]],
-+                  filename = "midEarth5_2016-03-21_07-30-00.wav ")
+# Read in data
+data(sampleRecordings)
+
+# Write the fourth recording to the working directory
+tuneR::writeWave(object = sampleRecordings[[4]],
+                 filename = "midEarth5_2016-03-21_07-30-00.wav ")
 ```
 
 We view the recording using the **monitoR** function `viewSpec()`,
@@ -275,9 +270,9 @@ specifying the ‘clip’ name, ‘units’ of “seconds”, and a ‘page.leng
 10 seconds.
 
 ``` r
-> monitoR::viewSpec(clip = "midEarth5_2016-03-21_07-30-00.wav", 
-+                   units = "seconds", 
-+                   page.length = 10)
+monitoR::viewSpec(clip = "midEarth5_2016-03-21_07-30-00.wav", 
+                  units = "seconds", 
+                  page.length = 10)
 ```
 
 <img src="Chap15_Figs/unnamed-chunk-13-1.png" style="display: block; margin: auto auto auto 0;" />
@@ -286,31 +281,25 @@ monitoring species, the Verdin, which has a species code of ‘verd’ in
 the **species** table as shown below:
 
 ``` r
-> # Confirm that Verdin is in the species table
-> RSQLite::dbGetQuery(conx, 'SELECT * FROM species WHERE speciesID = "verd" ')
+# Confirm that Verdin is in the species table
+RSQLite::dbGetQuery(conx, 'SELECT * FROM species WHERE speciesID = "verd" ')
 ```
 
-    # A tibble: 1 x 6
-      speciesID commonName ITIS     genus     species   notes
-      <chr>     <chr>      <chr>    <chr>     <chr>     <chr>
-    1 verd      Verdin     178759.0 Auriparus flaviceps <NA> 
+    ##   speciesID commonName     ITIS     genus   species notes
+    ## 1      verd     Verdin 178759.0 Auriparus flaviceps  <NA>
 
 As previously described, the verdin has 3 distinct vocalizations that
 are identified in the **library** table.
 
 ``` r
-> # Check on Verdin library selections
-> RSQLite::dbGetQuery(conx, 'SELECT * FROM library WHERE speciesID = "verd" ')
+# Check on Verdin library selections
+RSQLite::dbGetQuery(conx, 'SELECT * FROM library WHERE speciesID = "verd" ')
 ```
 
-``` 
-# A tibble: 3 x 4
-  libraryID   speciesID type  description    
-  <chr>       <chr>     <chr> <chr>          
-1 verd_2notes verd      song  Two-note song  
-2 verd_3notes verd      song  Three-note song
-3 verd_other  verd      other other          
-```
+    ##     libraryID speciesID  type     description
+    ## 1 verd_2notes      verd  song   Two-note song
+    ## 2 verd_3notes      verd  song Three-note song
+    ## 3  verd_other      verd other           other
 
 We decide this is a good example of a Verdin two-note song, and that we
 want to construct a template with it. **monitoR** contains two template
@@ -340,49 +329,46 @@ Quickstart Guide and helpfiles for `makeCorTemplate()` and
 `makeBinTemplate()`.
 
 ``` r
-> # Create a template based on the first signal in the audio recording
-> verd4 <- monitoR::makeCorTemplate(
-+   clip = "midEarth5_2016-03-21_07-30-00.wav", 
-+   t.lim = c(4.45, 4.95), 
-+   frq.lim = c(3.8,6), 
-+   select = "auto", 
-+   score.cutoff = 0,
-+   name = "verd4")
+# Create a template based on the first signal in the audio recording
+verd4 <- monitoR::makeCorTemplate(
+  clip = "midEarth5_2016-03-21_07-30-00.wav", 
+  t.lim = c(4.45, 4.95), 
+  frq.lim = c(3.8,6), 
+  select = "auto", 
+  score.cutoff = 0,
+  name = "verd4")
 ```
 
 <img src="Chap15_Figs/unnamed-chunk-16-1.png" style="display: block; margin: auto auto auto 0;" />
 
-``` 
-
-Automatic point selection.
-
-Done.
-```
+    ## 
+    ## Automatic point selection.
+    ## 
+    ## Done.
 
 We make a second template with the other vocalization present on our
 recording.
 
 ``` r
-> # Create a template based on the second signal in the audio recording
-> verd5 <- monitoR::makeCorTemplate(
-+   clip = "midEarth5_2016-03-21_07-30-00.wav", 
-+   t.lim = c(8.8, 9.32), 
-+   frq.lim = c(3.8,6), 
-+   select = "auto", 
-+   score.cutoff = 0,
-+   name = 'verd5')
+# Create a template based on the second signal in the audio recording
+verd5 <- monitoR::makeCorTemplate(
+  clip = "midEarth5_2016-03-21_07-30-00.wav", 
+  t.lim = c(8.8, 9.32), 
+  frq.lim = c(3.8,6), 
+  select = "auto", 
+  score.cutoff = 0,
+  name = 'verd5')
 ```
 
 <img src="Chap15_Figs/unnamed-chunk-17-1.png" style="display: block; margin: auto auto auto 0;" />
 
-``` 
+    ## 
+    ## Automatic point selection.
+    ## 
+    ## Done.
 
-Automatic point selection.
-
-Done.
-```
-
-# Testing Templates
+Testing Templates
+=================
 
 > TD: Template Sensitivity/Specificity Score Threshold function.
 > Narrative here. This function would take a template as input. It would
@@ -392,9 +378,8 @@ Done.
 > teh model library if provided; may need a model name though or it
 > could be auto-created).
 
-> 
-
-# Saving Templates
+Saving Templates
+================
 
 When we are satisifed with our template(s), we can insert them into the
 database’s **templates** table using `templatesInsert()`, which first
@@ -414,37 +399,33 @@ templates in ‘template.list’. Below, both templates have the libraryID
 ‘verd\_2notes’.
 
 ``` r
-> # Insert the following templates
-> templatesInsert(db.path = db.path, 
-+                 template.list = combineCorTemplates(verd4, verd5), 
-+                 libraryID = c('verd_2notes', 'verd_2notes'),
-+                 personID = 'fbaggins')
+# Insert the following templates
+templatesInsert(db.path = db.path, 
+                template.list = combineCorTemplates(verd4, verd5), 
+                libraryID = c('verd_2notes', 'verd_2notes'),
+                personID = 'fbaggins')
 ```
 
-    # A tibble: 2 x 13
-      templateID libraryID   class           software package comment minFrq maxFrq    wl  ovlp wn      template       personID
-      <chr>      <chr>       <chr>           <chr>    <chr>   <chr>    <dbl>  <dbl> <dbl> <dbl> <chr>   <list>         <chr>   
-    1 verd4      verd_2notes corTemplateList R        monitoR <NA>      3.88   5.94   512     0 hanning <raw [26,650]> fbaggins
-    2 verd5      verd_2notes corTemplateList R        monitoR <NA>      3.88   5.94   512     0 hanning <raw [27,250]> fbaggins
+    ##    templateID   libraryID           class software package comment   minFrq   maxFrq  wl ovlp      wn              template personID
+    ## 1:      verd4 verd_2notes corTemplateList        R monitoR    <NA> 3.875977 5.943164 512    0 hanning 58,0a,00,00,00,03,... fbaggins
+    ## 2:      verd5 verd_2notes corTemplateList        R monitoR    <NA> 3.875977 5.943164 512    0 hanning 58,0a,00,00,00,03,... fbaggins
 
 Next, we view the templates table, noting that there are now five
 templates, four of which focus on the two-note song type.
 
 ``` r
-> RSQLite::dbGetQuery(conn = conx, 
-+                     statement = 'SELECT templateID, libraryID, class, software, 
-+                                         package, template, personID 
-+                                  FROM templates')
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = 'SELECT templateID, libraryID, class, software, 
+                                        package, template, personID 
+                                 FROM templates')
 ```
 
-    # A tibble: 5 x 7
-      templateID libraryID   class           software package       template personID
-      <chr>      <chr>       <chr>           <chr>    <chr>           <blob> <chr>   
-    1 verd1      verd_2notes corTemplateList R        monitoR <raw 26.64 kB> fbaggins
-    2 verd2      verd_other  corTemplateList R        monitoR <raw 27.24 kB> fbaggins
-    3 verd3      verd_2notes binTemplateList R        monitoR <raw 18.54 kB> bbaggins
-    4 verd4      verd_2notes corTemplateList R        monitoR <raw 26.65 kB> fbaggins
-    5 verd5      verd_2notes corTemplateList R        monitoR <raw 27.25 kB> fbaggins
+    ##   templateID   libraryID           class software package       template personID
+    ## 1      verd1 verd_2notes corTemplateList        R monitoR blob[26.64 kB] fbaggins
+    ## 2      verd2  verd_other corTemplateList        R monitoR blob[27.24 kB] fbaggins
+    ## 3      verd3 verd_2notes binTemplateList        R monitoR blob[18.54 kB] bbaggins
+    ## 4      verd4 verd_2notes corTemplateList        R monitoR blob[26.65 kB] fbaggins
+    ## 5      verd5 verd_2notes corTemplateList        R monitoR blob[27.25 kB] fbaggins
 
 Notice that the `templatesInsert()` function has converted our templates
 into a SQLite data type called a “blob”, which itself contains a data
@@ -458,29 +439,28 @@ in as the original objects using `templatesUnserialize()`. We input our
 provide a character vector of the templateIDs to be returned:
 
 ``` r
-> # Grab templates from the templates table and convert them back into templateList objects
-> unserialized.templates <- templatesUnserialize(db.path = db.path, 
-+                                                templateID = c('verd4', 'verd5'))
-> 
-> # View the object  -- it is a corTemplateList
-> unserialized.templates
+# Grab templates from the templates table and convert them back into templateList objects
+unserialized.templates <- templatesUnserialize(db.path = db.path, 
+                                               templateID = c('verd4', 'verd5'))
+
+# View the object  -- it is a corTemplateList
+unserialized.templates
 ```
 
-``` 
-
-Object of class "corTemplateList"
-    containing  2  templates
-                     original.recording sample.rate lower.frequency upper.frequency lower.amp upper.amp duration n.points score.cutoff
-verd4 midEarth5_2016-03-21_07-30-00.wav       44100           3.876           5.943    -72.34         0    0.488     1075            0
-verd5 midEarth5_2016-03-21_07-30-00.wav       44100           3.876           5.943    -67.98         0    0.499     1100            0
-```
+    ## 
+    ## Object of class "corTemplateList"
+    ##  containing  2  templates
+    ##                      original.recording sample.rate lower.frequency upper.frequency lower.amp upper.amp duration n.points score.cutoff
+    ## verd4 midEarth5_2016-03-21_07-30-00.wav       44100           3.876           5.943    -72.34         0    0.488     1075            0
+    ## verd5 midEarth5_2016-03-21_07-30-00.wav       44100           3.876           5.943    -67.98         0    0.499     1100            0
 
 Creating good templates requires testing and evaluation, but they are
 critical for searching through recordings collected by the monitoring
 team in pursuit of species presence. This process is illustrated in
 Chapter 16.
 
-# The Templates Table in Access
+The Templates Table in Access
+=============================
 
 The templates table is a secondary tab nestled under the primary Species
 tab in the Access Navigation Form. First, we view the Species tab:
@@ -498,8 +478,8 @@ tab in the Access Navigation Form. First, we view the Species tab:
 
 Here, each species is featured (verd is record 9 of 9, as shown at the
 bottom of the form). This species has three signals of interest
-(‘verd\_2notes’, ‘verd\_3notes’, and ‘verd\_other’) logged in the
-signal library.
+(‘verd\_2notes’, ‘verd\_3notes’, and ‘verd\_other’) logged in the signal
+library.
 
 Clicking on the Templates secondary tab, we see that two templates exist
 for the ‘verd\_2notes’ signal (both are objects of “corTemplateList”),
@@ -515,7 +495,8 @@ and one was created for the ‘verd\_other’ signal (an object of
 > *Figure 15.2. The template table tracks a template to a given library
 > signal. The template itself is stored in the database as a ‘blob’.*
 
-# Chapter summary
+Chapter summary
+===============
 
 We use templates to search for target signals issued by a species of
 monitoring interest. Currently, **AMMonitor** supports templates of
@@ -527,23 +508,12 @@ BLOBs in the **templates** table of an **AMMonitor** database, while
 `templatesUnserialize()` extracts templates from the database and
 returns them in their proper forms for subsequent analysis in R.
 
-# Chapter References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-monitoR">
-
-1\. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
+1. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
 1.0.7) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <http://www.uvm.edu/rsenr/vtcfwru/R/?Page=monitoR/monitoR.htm>
 
-</div>
-
-<div id="ref-Katz2016">
-
-2\. Katz J, Hafner S, Donovan T. Tools for automated acoustic monitoring
-within the r package monitoR. Bioacoustics. 2016;12: 50–67. 
-
-</div>
-
-</div>
+2. Katz J, Hafner S, Donovan T. Tools for automated acoustic monitoring
+within the r package monitoR. Bioacoustics. 2016;12: 50–67.
