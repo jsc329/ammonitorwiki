@@ -1,13 +1,18 @@
-Chapter 1: Getting Started with AMMonitor
-================
+<div><img src="ammonitor-footer.png" width="800px" align="center"></div>
 
-  - [Installing AMMonitor](#installing-ammonitor)
-  - [Cloud-Based Account](#cloud-based-account)
-  - [AMMonitor Directory Structure](#ammonitor-directory-structure)
-  - [AMModels: A Vehicle for Storing Models in a Model
+-   [Getting Started with AMMonitor](#getting-started-with-ammonitor)
+-   [Installing AMMonitor](#installing-ammonitor)
+-   [Cloud-Based Account](#cloud-based-account)
+-   [AMMonitor Directory Structure](#ammonitor-directory-structure)
+-   [AMModels: A Vehicle for Storing Models in a Model
     Library](#ammodels-a-vehicle-for-storing-models-in-a-model-library)
-  - [Chapter Summary](#chapter-summary)
-  - [References](#references)
+-   [Chapter Summary](#chapter-summary)
+-   [Chapter References](#chapter-references)
+
+<img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
+
+Getting Started with AMMonitor
+==============================
 
 In this chapter, we outline the R package **AMMonitor** and provide
 guidance on getting started. **AMMonitor** is a multi-purpose monitoring
@@ -27,7 +32,7 @@ USA. Our prototype included the following elements (keyed to Figure
 
 > *Figure 1.1. A generalized overview of the AMMonitor approach.*
 
-  - **Smartphone-based Monitoring**: Each smartphone station is fully
+-   **Smartphone-based Monitoring**: Each smartphone station is fully
     plug-and-play, with an Android smartphone and external microphone
     stored in a weather-proof box mounted to a pole (Figure 1.1a).
     Stations are remote and powered by solar panels. Each smartphone is
@@ -40,7 +45,7 @@ USA. Our prototype included the following elements (keyed to Figure
     **AMMonitor** functions based on previously logged detections
     (Figure 1.1e).
 
-  - **Data Storage and Handling**: Raw data, along with some
+-   **Data Storage and Handling**: Raw data, along with some
     automatically processed data, are stored within a SQLite database
     (Figure 1.1c). We will dive deeply into the **AMMonitor** database
     in Chapter 3. In short, SQLite is a self-contained,
@@ -77,7 +82,7 @@ USA. Our prototype included the following elements (keyed to Figure
     state of the ecosystem with respect to research hypotheses or
     management objectives.
 
-  - **Analyses**: Audio and photo data can be analyzed in R using a
+-   **Analyses**: Audio and photo data can be analyzed in R using a
     variety of methods. For example, semi-automated detection of target
     signals can provide the probability that any given signal is a
     target signal sought by the researcher \[2\] (Figure 1.1d). These
@@ -86,7 +91,7 @@ USA. Our prototype included the following elements (keyed to Figure
     analysis \[3\] to ascertain the status and population trend
     (increasing, decreasing, stable) of a target species (Figure 1.1f).
 
-  - **Storage of Analyses**: While the SQLite database stores much of
+-   **Storage of Analyses**: While the SQLite database stores much of
     the processed data, most analytical outputs are stored in an
     AMModels library \[4,5\]. The concept of an AMModels library is
     extremely simple: a library stores the outputs of an R analysis
@@ -109,7 +114,8 @@ USA. Our prototype included the following elements (keyed to Figure
 This guide will explain each step of the **AMMonitor** approach in
 detail.
 
-# Installing AMMonitor
+Installing AMMonitor
+====================
 
 To begin, use the `install.packages()` function to install
 **AMMonitor**.
@@ -140,41 +146,42 @@ ls("package:AMMonitor")
 ```
 
     ##  [1] "accounts"                 "activity_amml"            "ammCreateDirectories"     "analysis"                 "annotatePhoto"           
-    ##  [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "classifications"          "classifier_practice"     
-    ## [11] "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"    "classifierPredict"       
-    ## [16] "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"            "dbCreate"                
-    ## [21] "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"               "dropboxGetOneFile"       
-    ## [26] "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"     "generateRDS"             
-    ## [31] "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"                "lists"                   
-    ## [36] "locations"                "locationsShape"           "logs"                     "modelsInsert"             "objectives"              
-    ## [41] "occupancySim"             "people"                   "photos"                   "photosCheck"              "plotAnnotations"         
-    ## [46] "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"     "pr"                      
-    ## [51] "priorities"               "prioritization"           "priorityInit"             "prioritySet"              "qry"                     
-    ## [56] "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"             "recordings"              
-    ## [61] "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                 "scheduleAddVars"         
-    ## [66] "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"             "scheduleSun"             
-    ## [71] "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"      "scriptArgs"              
-    ## [76] "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"               "spatials"                
-    ## [81] "species"                  "templates"                "templatesInsert"          "templatesUnserialize"     "temporals"               
-    ## [86] "temporalsDarksky"         "temporalsGet"
+    ##  [6] "annotateRecording"        "annotateRecordingModular" "annotations"              "assessments"              "classifications"         
+    ## [11] "classifier_practice"      "classifierAssess"         "classifierEnsemble"       "classifierModels"         "classifierPerformance"   
+    ## [16] "classifierPredict"        "classifiers_amml"         "classifierTest"           "classifierTrain"          "dbClearTables"           
+    ## [21] "dbCreate"                 "dbCreateSample"           "dbTables"                 "dbVacuum"                 "deployment"              
+    ## [26] "dropboxGetOneFile"        "dropboxMetadata"          "dropboxMoveBatch"         "equipment"                "equipmentPerformance"    
+    ## [31] "generateRDS"              "googleDropboxCloud"       "googleDropboxLocal"       "library"                  "listItems"               
+    ## [36] "lists"                    "locations"                "locationsShape"           "logs"                     "modelsInsert"            
+    ## [41] "objectives"               "occupancySim"             "people"                   "photos"                   "photosCheck"             
+    ## [46] "plotAnnotations"          "plotDetections"           "plotROC"                  "plotVerifications"        "plotVerificationsAvg"    
+    ## [51] "pr"                       "priorities"               "prioritization"           "priorityInit"             "prioritySet"             
+    ## [56] "qry"                      "qryDeployment"            "qryPkCheck"               "qryPrioritization"        "qryTemporals"            
+    ## [61] "recordings"               "recordingsCheck"          "samplePhotos"             "sampleRecordings"         "schedule"                
+    ## [66] "scheduleAddVars"          "scheduleDelete"           "scheduleFixed"            "scheduleOptim"            "schedulePush"            
+    ## [71] "scheduleSun"              "scores"                   "scoresDetect"             "scoresVerify"             "scoresVerifyModular"     
+    ## [76] "scriptArgs"               "scripts"                  "shapeOccupancy"           "simGlm"                   "soundscape"              
+    ## [81] "spatials"                 "species"                  "templates"                "templatesInsert"          "templatesUnserialize"    
+    ## [86] "temporals"                "temporalsDarksky"         "temporalsGet"
 
 **AMMonitor** has a handful of package dependencies. These include:
 
-  - RSQLite \[1\] - connects R to a SQLite database.
-  - AMModels \[4\] - a vehicle for storing models (analytical output)
+-   RSQLite \[1\] - connects R to a SQLite database.
+-   AMModels \[4\] - a vehicle for storing models (analytical output)
     for future use.
-  - data.table \[6\]- enables rapid sorting and manipulation of large
+-   data.table \[6\]- enables rapid sorting and manipulation of large
     tables.
-  - monitoR \[7\]- pits templates against collected recordings to search
+-   monitoR \[7\]- pits templates against collected recordings to search
     for target signals.
-  - caret \[8\] - provides machine learning functions for refining the
+-   caret \[8\] - provides machine learning functions for refining the
     performance of automated detection via **monitoR** templates.
 
 These packages should be automatically installed when you install
 **AMMonitor**. If not, use the `install.packages()` function to install
 them manually.
 
-# Cloud-Based Account
+Cloud-Based Account
+===================
 
 The **AMMonitor** framework assumes that files are stored on a
 cloud-based system to promote collaboration. Such a system will also
@@ -183,23 +190,26 @@ monitoring data. Currently, **AMMonitor** functions assume Dropbox is
 the primary cloud-based solution. Future upgrades to the package may
 include other solutions, such as Google Drive or Amazon.
 
-Set up your Dropbox account at <http://www.dropbox.com>. Because
-AMU-based monitoring can generate a massive amount of data in a short
-amount of time, your program may require a subscription account that
-accommodates many terabytes of data. The email account you link to
+Set up your Dropbox account at
+<a href="http://www.dropbox.com" class="uri">http://www.dropbox.com</a>.
+Because AMU-based monitoring can generate a massive amount of data in a
+short amount of time, your program may require a subscription account
+that accommodates many terabytes of data. The email account you link to
 Dropbox should be an email that represents the main monitoring project
 (e.g., a gmail account that represents the project rather than any one
 individual). In this vignette, our Dropbox account is associated with
 ‘midEarthMgt@gmail.com’.
 
 After creating a Dropbox account, users can download the
-DropboxInstaller from <https://www.dropbox.com/install>, which allows
-your personal computer to connect to and sync with the Dropbox account
-in the cloud. You do not need to sync the entire Dropbox account to your
-computer (and likely would not want to unless the computer has ample
-storage space).
+DropboxInstaller from
+<a href="https://www.dropbox.com/install" class="uri">https://www.dropbox.com/install</a>,
+which allows your personal computer to connect to and sync with the
+Dropbox account in the cloud. You do not need to sync the entire Dropbox
+account to your computer (and likely would not want to unless the
+computer has ample storage space).
 
-# AMMonitor Directory Structure
+AMMonitor Directory Structure
+=============================
 
 **AMMonitor** is a multi-purpose monitoring platform, and the
 **functions within it rely on a specific directory structure that we
@@ -237,31 +247,31 @@ set this main directory as your working directory whenever you use
 Each (currently empty) directory will store specific types of
 information as introduced below:
 
-  - **ammls**: Stores AMModel libraries (discussed below).
-  - **database**: Stores the SQLite database (Chapter 2).
-  - **log\_drop**: Stores incoming logs tracking smartphone-based AMU
+-   **ammls**: Stores AMModel libraries (discussed below).
+-   **database**: Stores the SQLite database (Chapter 2).
+-   **log\_drop**: Stores incoming logs tracking smartphone-based AMU
     performance, collected by the Tasker Android application (Appendix
     2).
-  - **logs**: Stores archived logs tracking smartphone-based AMU
+-   **logs**: Stores archived logs tracking smartphone-based AMU
     performance, collected by the Tasker Android application (Appendix
     2).
-  - **motion\_drop**: Stores incoming photos triggered by a
+-   **motion\_drop**: Stores incoming photos triggered by a
     motion-detection smartphone application (Chapter 12) .
-  - **motion**: Stores archived photos collected by the smartphone as
+-   **motion**: Stores archived photos collected by the smartphone as
     motion-triggered events (Chapter 12).
-  - **photo\_drop**: Stores incoming photos collected by the smartphone
+-   **photo\_drop**: Stores incoming photos collected by the smartphone
     as timed events (Chapter 12).
-  - **photos**: Stores archived photos collected by the smartphone as
+-   **photos**: Stores archived photos collected by the smartphone as
     timed events (Chapter 12).
-  - **recording\_drop**: Stores incoming audio recording files (e.g.,
+-   **recording\_drop**: Stores incoming audio recording files (e.g.,
     .wav) captured in acoustic monitoring programs (Chapter 11).
-  - **recordings**: Stores archived audio recording files (e.g., .wav)
+-   **recordings**: Stores archived audio recording files (e.g., .wav)
     captured in acoustic monitoring programs (Chapter 11).
-  - **scripts**. Stores R scripts that can be sourced each day to
+-   **scripts**. Stores R scripts that can be sourced each day to
     automatically process new data (Chapter 19).
-  - **settings**: Stores files needed to access accounts (e.g., Google
+-   **settings**: Stores files needed to access accounts (e.g., Google
     or Dropbox) via R (multiple chapters).
-  - **spatials**: Stores spatial layers associated with locations in a
+-   **spatials**: Stores spatial layers associated with locations in a
     monitoring program (rasters and/or shapefiles) as RDS files (Chapter
     6).
 
@@ -272,7 +282,8 @@ in the **ammls** directory. In the next chapter, we introduce users to
 the **AMMonitor** database, where we will create a SQLite database and
 store it in the **database** directory.
 
-# AMModels: A Vehicle for Storing Models in a Model Library
+AMModels: A Vehicle for Storing Models in a Model Library
+=========================================================
 
 The **AMMonitor** SQLite database does much of the heavy lifting for
 managing AMMonitor data by tracking people, equipment, metadata about
@@ -377,83 +388,49 @@ Thoughout this book, we will add models to these libraries.
 **AMMonitor** functions will then acquire the models when they are
 called into action by the user.
 
-# Chapter Summary
+Chapter Summary
+===============
 
 At this point, you have (1) created a file directory required by
 AMMonitor, and (2) created four **AMModels** libraries in the **ammls**
 directory. You are now ready to create the SQLite database, which stores
 information about the entire monitoring effort.
 
-# References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-RSQLite">
-
-1\. Müller K, Wickham H, James DA, Falcon S. RSQLite: ’SQLite’ interface
+1. Müller K, Wickham H, James DA, Falcon S. RSQLite: ’SQLite’ interface
 for r (version 2.1,1) \[Internet\]. Comprehensive R Archive Network;
 2018. Available:
 <https://cran.r-project.org/web/packages/RSQLite/index.html>
 
-</div>
-
-<div id="ref-BalanticStatistical">
-
-2\. Balantic CM, Donovan TM. Statistical learning mitigation of false
+2. Balantic CM, Donovan TM. Statistical learning mitigation of false
 positives from template-detected data in automated acoustic wildlife
 monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
-</div>
-
-<div id="ref-BalanticOccupancy">
-
-3\. Balantic C, Donovan T. Dynamic wildlife occupancy models using
+3. Balantic C, Donovan T. Dynamic wildlife occupancy models using
 automated acoustic monitoring data. Ecological Applications. 2019;29:
 e01854. doi:[10.1002/eap.1854](https://doi.org/10.1002/eap.1854)
 
-</div>
-
-<div id="ref-AMModels">
-
-4\. Katz J, Donovan T. AMModels: Adaptive management model manager
+4. Katz J, Donovan T. AMModels: Adaptive management model manager
 (version 0.1.4) \[Internet\]. Comprehensive R Archive Network; 2018.
 Available: <https://cran.r-project.org/web/packages/AMModels/>
 
-</div>
-
-<div id="ref-Donovan2018">
-
-5\. Donovan T, Katz J. AMModels: An r package for storing models, data,
+5. Donovan T, Katz J. AMModels: An r package for storing models, data,
 and metadata to facilitate adaptive management. PLoS ONE. 2018;13:
 1339–1345.
 doi:[10.1371/journal.pone.0188966](https://doi.org/10.1371/journal.pone.0188966)
 
-</div>
-
-<div id="ref-datatable">
-
-6\. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T,
-et al. Data.table: Extension of ’data.frame’ (version 1.12.0)
-\[Internet\]. Comprehensive R Archive Network; 2019. Available:
+6. Dowle M, Srinivasan A, Gorecki J, Chirico M, Stetsenko P, Short T, et
+al. Data.table: Extension of ’data.frame’ (version 1.12.0) \[Internet\].
+Comprehensive R Archive Network; 2019. Available:
 <https://cran.r-project.org/web/packages/data.table/index.html>
 
-</div>
-
-<div id="ref-monitoR">
-
-7\. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
+7. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
 1.0.7) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <http://www.uvm.edu/rsenr/vtcfwru/R/?Page=monitoR/monitoR.htm>
 
-</div>
-
-<div id="ref-caret">
-
-8\. Kuhn M. Caret: Classification and regression training (version 6.0)
+8. Kuhn M. Caret: Classification and regression training (version 6.0)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/caret/index.html>
-
-</div>
-
-</div>
