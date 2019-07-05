@@ -1013,10 +1013,10 @@ new.classifs[which(new.classifs$scoreID == 1),]
 ```
 
     ##    scoreID        amml classifier                     modelName modelProbability           timestamp
-    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-05 12:13:00
-    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-05 12:13:00
-    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-05 12:13:00
-    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-05 12:13:01
+    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-05 12:13:27
+    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-05 12:13:28
+    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-05 12:13:28
+    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-05 12:13:28
 
 Note that these data are identical to those we examined at the start of
 this chapter. We store the *scoreID* and the *amml* name associated with

@@ -1,17 +1,19 @@
 ---
 title: "Chapter 17: The Classifications Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "17-classifications.Rmd", output_format = "md_document", output_file = "Chapter 17 - The Classifications Table.md")
+# rmarkdown::render(input = "17-classifications.Rmd", output_format = "md_document", output_file = "Chapter-17-The-Classifications-Table.md")
 
 ```
 
@@ -47,6 +49,7 @@ saveRDS(amml, 'ammls/classifiers.RDS')
 
 ```
 
+# Chapter Introduction
 
 The previous chapter (Scores) illustrated how to use templates to search recordings for target signals, which produces detected events that exceed a user-chosen score threshold. Detected events are tracked in the database's **scores** table. For each detected event, the **AMMonitor** system will also extract associated acoustic features. Some of the detected events may be target signals issued from a focal species, and others may be false alarms that were acoustically similar enough to the template to produce a detection. 
 
