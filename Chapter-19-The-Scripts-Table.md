@@ -388,6 +388,9 @@ dropboxMoveBatch(db.path = db.path,
 
     ## Move in progress, waiting 10 seconds for server to catch up...
 
+    ## ...Move still in progress, waiting 10 more seconds...
+    ## ...Move still in progress, waiting 10 more seconds...
+
     ## Move status: complete
 
     ## Added 4 new records to recordings table.
@@ -398,10 +401,10 @@ dropboxMoveBatch(db.path = db.path,
     ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##    format           timestamp
-    ## 1:    wav 2019-07-05 12:22:22
-    ## 2:    wav 2019-07-05 12:22:22
-    ## 3:    wav 2019-07-05 12:22:22
-    ## 4:    wav 2019-07-05 12:22:22
+    ## 1:    wav 2019-07-05 12:23:45
+    ## 2:    wav 2019-07-05 12:23:45
+    ## 3:    wav 2019-07-05 12:23:45
+    ## 4:    wav 2019-07-05 12:23:45
 
 ``` r
 # Error checking here
@@ -440,10 +443,10 @@ dbGetQuery(conn = conx, statement = "SELECT * FROM recordings;")
     ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##   format           timestamp
-    ## 1    wav 2019-07-05 12:22:22
-    ## 2    wav 2019-07-05 12:22:22
-    ## 3    wav 2019-07-05 12:22:22
-    ## 4    wav 2019-07-05 12:22:22
+    ## 1    wav 2019-07-05 12:23:45
+    ## 2    wav 2019-07-05 12:23:45
+    ## 3    wav 2019-07-05 12:23:45
+    ## 4    wav 2019-07-05 12:23:45
 
 Thus, we’ve demonstrated that the “fetchRecordings.R” script moves
 recordings from the ‘recording\_drop’ folder to the ‘recordings’ folder,

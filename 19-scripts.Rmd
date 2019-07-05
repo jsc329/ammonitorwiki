@@ -1,17 +1,19 @@
 ---
 title: "Chapter 19: Scripts and scriptArgs"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "19-scripts.Rmd", output_format = "md_document", output_file = "Chapter 19 - Scripts.md")
+# rmarkdown::render(input = "19-scripts.Rmd", output_format = "md_document", output_file = "Chapter-19-The-Scripts-Table.md")
 
 
 # cool emoji's at https://gist.github.com/rxaviers/7360908
@@ -61,6 +63,7 @@ if (length(rec.files) > 0) {
 }
 ```
 
+# Chapter Introduction
 
 As you've worked through the various chapters describing the **AMMonitor** approach, you've noticed that many tables, such as **people**, **objectives**, **equipment**, **deployment**, **acounts**, and **locations**, are filled in manually by the monitoring team. Entries in these tables can be manipulated in R or via the Access front-end. However, several tables are filled in exclusively by **AMMonitor** functions. For example, the **temporals** table is populated by the function, `temporalsGet()`, which uses the Dark Sky API to retrieve either forecast or historical weather conditions for monitoring locations. 
 
