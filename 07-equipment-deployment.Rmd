@@ -1,17 +1,19 @@
 ---
 title: "Chapter 7: The Accounts, Equipment, Deployment, and Log Tables"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "07-equipment-deployment.Rmd", output_format = "md_document", output_file = "Chapter-07-Deployment.md")
+# rmarkdown::render(input = "07-equipment-deployment.Rmd", output_format = "md_document", output_file = "Chapter-07-The-Accounts,-Equipment,-Deployment,-and-Log-Tables.md")
 
 ```
 
@@ -31,6 +33,7 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 file.remove(db.path) 
 ```
 
+# Chapter Introduction
 
 This chapter covers the **accounts**, **equipment**,  **deployment** and **logs** tables of an **AMMonitor** database, and explains their utility for a monitoring program. Briefly, the **accounts** table is used to store information about accounts, such as Google accounts or a Dropbox account. The **equipment** table stores information about each piece of monitoring equipment, such as a smartphone. The **deployment** table is used to track which piece of equipment is deployed at a given monitoring location. The **logs** table stores smartphone device logs that can be used for troubleshooting (see Donovan et al., in prep, for details on our smartphone approach and setup).
 
