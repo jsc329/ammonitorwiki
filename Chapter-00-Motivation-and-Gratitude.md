@@ -1,4 +1,4 @@
-<div><img src="ammonitor-footer.png" width="800px" align="center"></div>
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
 -   [Background](#background)
 -   [Gratitude](#gratitude)
