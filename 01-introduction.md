@@ -9,8 +9,6 @@
 -   [Chapter Summary](#chapter-summary)
 -   [Chapter References](#chapter-references)
 
-<img src="ammonitor-footer.png" width="100%" style="display: block; margin: auto;" />
-
 Getting Started with AMMonitor
 ==============================
 

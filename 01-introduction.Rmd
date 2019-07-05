@@ -25,10 +25,6 @@ options(fig_caption_no_sprintf = "<b>Figure 1.%s</b>")
 knitr::opts_chunk$set(fig.path = 'Chap1_Figs/')
 ```
 
-```{r, eval = T, echo = F, out.width = '100%', echo = F, fig.align = 'center'}
-
-knitr::include_graphics('ammonitor-footer.png', dpi = 500)
-```
 
 # Getting Started with AMMonitor
 
