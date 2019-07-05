@@ -1,17 +1,19 @@
 ---
 title: "Chapter 6: The Locations and Spatials Tables"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "06-locations-spatials.Rmd", output_format = "md_document", output_file = "Chapter-06-Spatials.md")
+# rmarkdown::render(input = "06-locations-spatials.Rmd", output_format = "md_document", output_file = "Chapter-06-The-Locations-and-Spatials-Tables.md")
 
 ```
 
@@ -31,6 +33,7 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 file.remove(db.path) 
 ```
 
+# Chapter Introduction
 
 This chapter covers the **locations** and **spatials** tables and how they are used in a monitoring program. Connections to these tables can be used to track monitoring locations and associated GIS spatial data.
 

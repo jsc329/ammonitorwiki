@@ -1,17 +1,20 @@
-Chapter 6: The Locations and Spatials Tables
-================
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
-  - [The Locations Table](#the-locations-table)
-  - [The Spatials Table](#the-spatials-table)
-      - [Create a “SpatialPointsDataFrame” of monitoring
+-   [Chapter Introduction](#chapter-introduction)
+-   [The Locations Table](#the-locations-table)
+-   [The Spatials Table](#the-spatials-table)
+    -   [Create a “SpatialPointsDataFrame” of monitoring
         locations](#create-a-spatialpointsdataframe-of-monitoring-locations)
-      - [Create a “SpatialPolygons” study area
+    -   [Create a “SpatialPolygons” study area
         shapefile](#create-a-spatialpolygons-study-area-shapefile)
-      - [Create a “RasterLayer” raster](#create-a-rasterlayer-raster)
-  - [The Locations Table in Access](#the-locations-table-in-access)
-  - [The Spatials Table in Access](#the-spatials-table-in-access)
-  - [Chapter Summary](#chapter-summary)
-  - [Chapter References](#chapter-references)
+    -   [Create a “RasterLayer” raster](#create-a-rasterlayer-raster)
+-   [The Locations Table in Access](#the-locations-table-in-access)
+-   [The Spatials Table in Access](#the-spatials-table-in-access)
+-   [Chapter Summary](#chapter-summary)
+-   [Chapter References](#chapter-references)
+
+Chapter Introduction
+====================
 
 This chapter covers the **locations** and **spatials** tables and how
 they are used in a monitoring program. Connections to these tables can
@@ -70,7 +73,8 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 
 Now we are ready to begin.
 
-# The Locations Table
+The Locations Table
+===================
 
 The **locations** table tracks all locations of monitoring interest. The
 function `dbTables()` provides a summary of the field names and data
@@ -111,22 +115,19 @@ As always, we can view records in the sample **locations** table using
 either `qry()`, `dbReadTable()`, or `dbGetQuery()`, depending on our
 needs with respect to the size of the table, how many records we want to
 read in, and whether we want to interact via a **conx** object or a
-**db.path**
-object:
+**db.path** object:
 
 ``` r
 # Return the first 5 records from the locations table (printed as a tibble)
 RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM locations LIMIT 5")
 ```
 
-    ## # A tibble: 5 x 12
-    ##   locationID type                 lat  long datum description address city  state     country      tz                  personID
-    ##   <chr>      <chr>              <dbl> <dbl> <chr> <chr>       <chr>   <chr> <chr>     <chr>        <chr>               <chr>   
-    ## 1 location@1 Monitoring station  33.6 -115. WGS84 <NA>        <NA>    <NA>  Rohan     Middle Earth America/Los_Angeles bbaggins
-    ## 2 location@2 Monitoring station  33.6 -115. WGS84 <NA>        <NA>    <NA>  Rohan     Middle Earth America/Los_Angeles fbaggins
-    ## 3 location@3 Monitoring station  33.6 -115. WGS84 <NA>        <NA>    <NA>  Gondor    Middle Earth America/Los_Angeles fbaggins
-    ## 4 location@4 Monitoring station  33.7 -115. WGS84 <NA>        <NA>    <NA>  The Shire Middle Earth America/Los_Angeles fbaggins
-    ## 5 location@5 Monitoring station  33.5 -115. WGS84 <NA>        <NA>    <NA>  Gondor    Middle Earth America/Los_Angeles fbaggins
+    ##   locationID               type      lat      long datum description address city     state      country                  tz personID
+    ## 1 location@1 Monitoring station 33.62687 -115.1551 WGS84        <NA>    <NA> <NA>    Gondor Middle Earth America/Los_Angeles bbaggins
+    ## 2 location@2 Monitoring station 33.57669 -114.8350 WGS84        <NA>    <NA> <NA> The Shire Middle Earth America/Los_Angeles fbaggins
+    ## 3 location@3 Monitoring station 33.60673 -115.2148 WGS84        <NA>    <NA> <NA>    Gondor Middle Earth America/Los_Angeles fbaggins
+    ## 4 location@4 Monitoring station 33.67328 -115.0898 WGS84        <NA>    <NA> <NA>    Gondor Middle Earth America/Los_Angeles fbaggins
+    ## 5 location@5 Monitoring station 33.52128 -115.2446 WGS84        <NA>    <NA> <NA>    Mordor Middle Earth America/Los_Angeles fbaggins
 
 Our sample data set contains 50 locations, but above we retrieve only
 the first five records. The *locationID* can be any identifier we want.
@@ -140,19 +141,19 @@ stations or radar stations.
 The latitudes and longitudes are tracked in the *lat* and *long*
 columns, respectively. These coordinates are fairly useless unless you
 know the coordinate reference system (crs). As explained at
-<http://rspatial.org/spatial/rst/1-introduction.html>: “A very important
-aspect of spatial data is the coordinate reference system (CRS) that is
-used. For example, a location of (140, 12) is not meaningful if you do
-know where the origin is and if the x-coordinate is 140 meters,
-kilometers, or perhaps degrees away from it (in the x direction). The
-earth has an irregular spheroid-like shape. The natural coordinate
-reference system for geographic data is longitude/latitude. This is an
-angular system. For a given location on earth, obviously we cannot
-actually measure these angles. But we can estimate them. To do so, you
-need a model of the shape of the earth. Such a model is called a
-‘datum’. The most commonly used datum is WGS84 (World Geodesic
-System 1984). So the basic way to record a location is a coordinate pair
-in degrees and a reference datum.” We will revisit coordinate reference
+<a href="http://rspatial.org/spatial/rst/1-introduction.html" class="uri">http://rspatial.org/spatial/rst/1-introduction.html</a>:
+“A very important aspect of spatial data is the coordinate reference
+system (CRS) that is used. For example, a location of (140, 12) is not
+meaningful if you do know where the origin is and if the x-coordinate is
+140 meters, kilometers, or perhaps degrees away from it (in the x
+direction). The earth has an irregular spheroid-like shape. The natural
+coordinate reference system for geographic data is longitude/latitude.
+This is an angular system. For a given location on earth, obviously we
+cannot actually measure these angles. But we can estimate them. To do
+so, you need a model of the shape of the earth. Such a model is called a
+‘datum’. The most commonly used datum is WGS84 (World Geodesic System
+1984). So the basic way to record a location is a coordinate pair in
+degrees and a reference datum.” We will revisit coordinate reference
 systems later in the chapter.
 
 Columns for *description*, *address*, *city*, *state*, and *country* are
@@ -177,16 +178,15 @@ SQLite statement.
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(locations);")
 ```
 
-    ## # A tibble: 1 x 8
-    ##      id   seq table  from     to       on_update on_delete match
-    ##   <int> <int> <chr>  <chr>    <chr>    <chr>     <chr>     <chr>
-    ## 1     0     0 people personID personID CASCADE   NO ACTION NONE
+    ##   id seq  table     from       to on_update on_delete match
+    ## 1  0   0 people personID personID   CASCADE NO ACTION  NONE
 
 The field *personID* in the table **people** references the field
 *personID* in the **locations** table. Again, notice the default action
 of CASCADE on update and NO ACTION on delete.
 
-# The Spatials Table
+The Spatials Table
+==================
 
 The **spatials** table *points* to spatial data associated with a
 monitoring project, such as rasters or shapefiles; it does not store the
@@ -215,9 +215,9 @@ required field. This is often the name of the spatial file, minus the
 file extension. The *type* field can be “raster” or “shapefile”, or any
 other designation. If the file is stored as an R object (as we will
 illustrate), the *class* column can be used to store the spatial
-object’s class. The *filepath* stores either the full file path, or
-the relative file path from the user’s working directory to the file.
-Users can add additional metadata fields at their discretion.
+object’s class. The *filepath* stores either the full file path, or the
+relative file path from the user’s working directory to the file. Users
+can add additional metadata fields at their discretion.
 
 We assume readers have employed the **AMMonitor** file directory
 structure created by the function `ammCreateDirectories()` (Chapter 1:
@@ -225,8 +225,7 @@ Introduction). The working directory is the main **AMMonitor**
 directory, and subdirectories include a folder called **database**
 (which houses the SQLite database), as well as a folder called
 **spatials**. The spatials directory is where we will store the actual
-spatial files used in the examples
-below.
+spatial files used in the examples below.
 
 <kbd>
 
@@ -241,12 +240,11 @@ In this section, we will illustrate how spatial files can be stored in
 the **spatials directory**, and how a spatial file’s metadata can be
 added to the **AMMonitor** database table named **spatials**.
 
-Users new to spatial analysis in R may consult these helpful
-    tutorials:
+Users new to spatial analysis in R may consult these helpful tutorials:
 
-  - <http://www.rspatial.org/>
-  - <https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/>
-  - <http://www.rpubs.com/cengel24>
+-   <a href="http://www.rspatial.org/" class="uri">http://www.rspatial.org/</a>
+-   <a href="https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/" class="uri">https://www.earthdatascience.org/courses/earth-analytics/spatial-data-r/</a>
+-   <a href="http://www.rpubs.com/cengel24" class="uri">http://www.rpubs.com/cengel24</a>
 
 For our spatial analyses, we will load and use the R packages **sp**
 \[1\] and **raster** \[2\].
@@ -258,7 +256,8 @@ library(raster)
 library(XML)
 ```
 
-## Create a “SpatialPointsDataFrame” of monitoring locations
+Create a “SpatialPointsDataFrame” of monitoring locations
+---------------------------------------------------------
 
 For our first example, we collect information stored in the
 **locations** table to generate a shapefile of points. The **sp**
@@ -322,13 +321,13 @@ for additional details.
 The string contains + signs to indicate tags used by PROJ.4, but not
 every spatial object will contain every type of tag:
 
-  - \+proj specifies the projection (e.g. “longlat”, “utm”, or “aea”).
-  - \+datum refers to the 0,0 reference for the coordinate system used
-    in the projection (e.g., WGS84, NAD83)
-  - \+units specifies the units; m indicates meters.
-  - \+ellps conveys the ellipsoid (how the earth’s roundess is
+-   +proj specifies the projection (e.g. “longlat”, “utm”, or “aea”).
+-   +datum refers to the 0,0 reference for the coordinate system used in
+    the projection (e.g., WGS84, NAD83)
+-   +units specifies the units; m indicates meters.
+-   +ellps conveys the ellipsoid (how the earth’s roundess is
     calculated).
-  - \+towgs serves as a conversion factor, necessary if a datum
+-   +towgs serves as a conversion factor, necessary if a datum
     conversion is required.
 
 We created our **study\_locations** object with the WGS84 datum because
@@ -411,7 +410,8 @@ RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.sites,
              append = TRUE, header = FALSE)
 ```
 
-## Create a “SpatialPolygons” study area shapefile
+Create a “SpatialPolygons” study area shapefile
+-----------------------------------------------
 
 As a second example, we will now create a simple polygon and store it as
 a second shapefile for the Middle Earth monitoring program. This simple
@@ -465,7 +465,7 @@ study_area
     ## class       : SpatialPolygons 
     ## features    : 1 
     ## extent      : 429121.6, 483861.6, -492907.7, -460886.8  (xmin, xmax, ymin, ymax)
-    ## crs         : NA
+    ## coord. ref. : NA
 
 As shown, this is an object of class **SpatialPolygons**. Note that the
 coordinate reference system is missing from this S4 object. We first
@@ -511,7 +511,8 @@ RSQLite::dbWriteTable(conn = conx, name = 'spatials', value = add.boundary,
                       append = TRUE, header = FALSE)
 ```
 
-## Create a “RasterLayer” raster
+Create a “RasterLayer” raster
+-----------------------------
 
 As a final example of working with spatial files, we will create a
 spatial object of class **RasterLayer** that will cover the study area.
@@ -535,14 +536,14 @@ study_raster <- raster::raster(data)
 study_raster
 ```
 
-    ## class      : RasterLayer 
-    ## dimensions : 20, 20, 400  (nrow, ncol, ncell)
-    ## resolution : 0.05, 0.05  (x, y)
-    ## extent     : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
-    ## crs        : NA 
-    ## source     : memory
-    ## names      : layer 
-    ## values     : -3.020814, 3.304151  (min, max)
+    ## class       : RasterLayer 
+    ## dimensions  : 20, 20, 400  (nrow, ncol, ncell)
+    ## resolution  : 0.05, 0.05  (x, y)
+    ## extent      : 0, 1, 0, 1  (xmin, xmax, ymin, ymax)
+    ## coord. ref. : NA 
+    ## data source : in memory
+    ## names       : layer 
+    ## values      : -3.020814, 3.304151  (min, max)
 
 This raster is an R object of type **RasterLayer**. It consists of 400
 cells (ncell), with a minimum value of -3.020814 and maximum value of
@@ -566,14 +567,14 @@ study_raster2 <- raster::projectRaster(from = study_raster, crs = sp::CRS("+init
 study_raster2
 ```
 
-    ## class      : RasterLayer 
-    ## dimensions : 26, 24, 624  (nrow, ncol, ncell)
-    ## resolution : 2740, 1600  (x, y)
-    ## extent     : 423641.6, 489401.6, -497686.8, -456086.8  (xmin, xmax, ymin, ymax)
-    ## crs        : +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 
-    ## source     : memory
-    ## names      : layer 
-    ## values     : -2.959704, 3.233738  (min, max)
+    ## class       : RasterLayer 
+    ## dimensions  : 26, 24, 624  (nrow, ncol, ncell)
+    ## resolution  : 2740, 1600  (x, y)
+    ## extent      : 423641.6, 489401.6, -497686.8, -456086.8  (xmin, xmax, ymin, ymax)
+    ## coord. ref. : +init=epsg:3310 +proj=aea +lat_1=34 +lat_2=40.5 +lat_0=0 +lon_0=-120 +x_0=0 +y_0=-4000000 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0 
+    ## data source : in memory
+    ## names       : layer 
+    ## values      : -2.959704, 3.233738  (min, max)
 
 ``` r
 # Plot the raster
@@ -619,13 +620,13 @@ Finally, when we are finished with the database, we disconnect from it:
 RSQLite::dbDisconnect(conx)
 ```
 
-# The Locations Table in Access
+The Locations Table in Access
+=============================
 
 Locations can be found under the Access Navigation Form’s Locations tab,
 and is a primary tab. Notice that the records are displayed in “form”
 view, and that the image is diplaying the first of 50 locations that
-come with the sample
-database.
+come with the sample database.
 
 <kbd>
 
@@ -639,13 +640,13 @@ database.
 Also, notice the 6 secondary tabs associated with the “Locations” tab:
 Spatials, Temporals, Equipment, Logs, Deployment, and Schedule.
 
-# The Spatials Table in Access
+The Spatials Table in Access
+============================
 
 The Spatials table can be accessed as a secondary tab under the
 Locations tab. The default view for this form is “datasheet” view.
 However, monitoring team members may choose to create more personalized
-forms if
-desired.
+forms if desired.
 
 <kbd>
 
@@ -662,7 +663,8 @@ that can be used in the analysis of monitoring data. The **spatials**
 table provides a way document each layer, and futher can be used to
 quickly load the objects to R if the file path is accurate.
 
-# Chapter Summary
+Chapter Summary
+===============
 
 This chapter covered the **locations** table, which stores point
 locations for a monitoring program. This table is critical, as it is
@@ -674,24 +676,13 @@ spatial objects with the packages, **sp** and **raster**, and stored all
 spatial objects as RDS files within a directory called **spatials**. We
 will revisit these files in future chapters.
 
-# Chapter References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-sppackage">
-
-1\. Pebesma E, Bivand R. Sp: Classes and methods for spatial data
+1. Pebesma E, Bivand R. Sp: Classes and methods for spatial data
 (version 1.3-1) \[Internet\]. Comprehensive R Archive Network; 2018.
 Available: <https://cran.r-project.org/web/packages/sp/index.html>
 
-</div>
-
-<div id="ref-rasterpackage">
-
-2\. Hijmans RJ. Raster: Geographic data analysis and modeling (version
+2. Hijmans RJ. Raster: Geographic data analysis and modeling (version
 2.8-4) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/raster/index.html>
-
-</div>
-
-</div>
