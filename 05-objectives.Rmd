@@ -1,17 +1,19 @@
 ---
 title: "Chapter 5: The Objectives Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "05-objectives.Rmd", output_format = "md_document", output_file = "Chapter-05-Objectives.md")
+# rmarkdown::render(input = "05-objectives.Rmd", output_format = "md_document", output_file = "Chapter-05-The-Objectives-Table.md")
 
 ```
 
@@ -30,6 +32,8 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) # may or may not be needed
 ```
+
+# Chapter Introduction
 
 This chapter is about documenting the objectives of a monitoring effort. Setting natural resource objectives can be very difficult, but they are usually the primary reason a monitoring program exists. Generally speaking, an objective identifies a vision that a person, organization, or agency may have. Monitoring can be used to assess whether or not that vision has been met. When an objective is not being met, it may trigger the individual, organization, or agency to act in a way that will push the objective towards its intended target.
 

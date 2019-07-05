@@ -1,20 +1,23 @@
-Chapter 4: The Species, Library, and Lists Tables
-================
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
-  - [The Species Table in R](#the-species-table-in-r)
-      - [Reading records](#reading-records)
-      - [Creating records](#creating-records)
-      - [Updating records](#updating-records)
-      - [Deleting records](#deleting-records)
-  - [The Library Table in R](#the-library-table-in-r)
-  - [The List and listItems Tables in
+-   [Chapter Introduction](#chapter-introduction)
+-   [The Species Table in R](#the-species-table-in-r)
+    -   [Reading records](#reading-records)
+    -   [Creating records](#creating-records)
+    -   [Updating records](#updating-records)
+    -   [Deleting records](#deleting-records)
+-   [The Library Table in R](#the-library-table-in-r)
+-   [The List and listItems Tables in
     R](#the-list-and-listitems-tables-in-r)
-  - [The Species and Library Tables in
+-   [The Species and Library Tables in
     Access](#the-species-and-library-tables-in-access)
-  - [The List and listItems Tables in
+-   [The List and listItems Tables in
     Access](#the-list-and-listitems-tables-in-access)
-  - [Chapter Summary](#chapter-summary)
-  - [Chapter References](#chapter-references)
+-   [Chapter Summary](#chapter-summary)
+-   [Chapter References](#chapter-references)
+
+Chapter Introduction
+====================
 
 This chapter covers the **species**, **library**, **lists**, and
 **listItems** tables in the **AMMonitor** database. The **species** and
@@ -75,7 +78,8 @@ The output of this query indicates that 0 rows of data were returned or
 changed, but that the foreign key constraint has been enabled. We will
 return to this topic below.
 
-# The Species Table in R
+The Species Table in R
+======================
 
 The **species** table stores all species of monitoring interest, with
 the option to link each species’ Integrated Taxonomic Information System
@@ -101,7 +105,8 @@ dbTables(db.path = db.path, table = "species")
     ## 5   4    species VARCHAR(255)       0         NA  0        
     ## 6   5      notes         TEXT       0         NA  0
 
-## Reading records
+Reading records
+---------------
 
 If we are confident that the **species** table is small enough to read
 into memory, we can use `dbReadTable()` to read the entire table into R,
@@ -116,18 +121,16 @@ get.species <- RSQLite::dbReadTable(conn = conx, name = "species")
 get.species
 ```
 
-    ## # A tibble: 9 x 6
-    ##   speciesID commonName               ITIS     genus          species     notes
-    ##   <chr>     <chr>                    <chr>    <chr>          <chr>       <chr>
-    ## 1 btgn      Black-tailed Gnatcatcher 179857.0 Polioptila     melanura    <NA> 
-    ## 2 copo      Common Poorwill          177979.0 Phalaenoptilus nuttallii   <NA> 
-    ## 3 coyote    Coyote                   180599.0 Canis          latrans     <NA> 
-    ## 4 ecdo      Eurasian Collared-dove   177139.0 Streptopelia   decaocto    <NA> 
-    ## 5 fox       Kit Fox                  180606.0 Vulpes         macrotis    <NA> 
-    ## 6 gaqu      Gambel's Quail           175877.0 Callipepla     gambelii    <NA> 
-    ## 7 leni      Lesser Nighthawk         177988.0 Chordeiles     acutipennis <NA> 
-    ## 8 toad      Couch's Spadefoot        173429.0 Scaphiopus     couchii     <NA> 
-    ## 9 verd      Verdin                   178759.0 Auriparus      flaviceps   <NA>
+    ##   speciesID               commonName     ITIS        genus     species notes
+    ## 1      btgn Black-tailed Gnatcatcher 179857.0   Polioptila    melanura  <NA>
+    ## 2      copo          Common Poorwill 177979.0   Chordeiles       minor  <NA>
+    ## 3    coyote                   Coyote 180599.0        Canis     latrans  <NA>
+    ## 4      ecdo   Eurasian Collared-dove 177139.0 Streptopelia    decaocto  <NA>
+    ## 5       fox                  Kit Fox 180606.0       Vulpes    macrotis  <NA>
+    ## 6      gaqu           Gambel's Quail 175877.0   Callipepla    gambelii  <NA>
+    ## 7      leni         Lesser Nighthawk 177988.0   Chordeiles acutipennis  <NA>
+    ## 8      toad   Couch's Spadefoot Toad 173429.0   Scaphiopus     couchii  <NA>
+    ## 9      verd                   Verdin 178759.0    Auriparus   flaviceps  <NA>
 
 Recall that the SQLite query is returned as a data.frame:
 
@@ -197,7 +200,7 @@ get_ids(names = "Black-tailed Gnatcatcher", db = "itis")
     ## attr(,"pattern_match")
     ## [1] FALSE
     ## attr(,"uri")
-    ## [1] "https://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=179857"
+    ## [1] "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=179857"
     ## attr(,"class")
     ## [1] "tsn"
     ## 
@@ -206,8 +209,7 @@ get_ids(names = "Black-tailed Gnatcatcher", db = "itis")
 
 Once the TSN is known, the **taxize** function `itis_getrecord()`
 retrieves information stored in the ITIS database when the species
-taxonomic species number (TSN) is provided in the ‘values’
-argument.
+taxonomic species number (TSN) is provided in the ‘values’ argument.
 
 ``` r
 # Retrieve the Black-tailed Gnatcatcher ITIS TSN (taxonomic species number)
@@ -245,8 +247,8 @@ str(gnatcatcher, max.level = 1)
 Recall from chapter 3 that you may opt to read data in using the
 **AMMonitor** `qry()` function, which only requires a **db.path** object
 input to the ‘db.path’ argument, and either a table name input to the
-‘table’ argument (if you wish to read an entire table into memory), or
-a SQLite statement input to the ‘statement’ argument. `qry()` acts as a
+‘table’ argument (if you wish to read an entire table into memory), or a
+SQLite statement input to the ‘statement’ argument. `qry()` acts as a
 wrapper function for either `dbReadTable()` or `dbGetQuery()`, and takes
 care of connecting and disconnecting from the database for you. It
 returns the results as a data.table in R. The below code shows how you
@@ -259,18 +261,16 @@ qry(db.path = db.path,
     table = 'species')
 ```
 
-    ## # A tibble: 9 x 6
-    ##   speciesID commonName               ITIS     genus          species     notes
-    ##   <chr>     <chr>                    <chr>    <chr>          <chr>       <chr>
-    ## 1 btgn      Black-tailed Gnatcatcher 179857.0 Polioptila     melanura    <NA> 
-    ## 2 copo      Common Poorwill          177979.0 Phalaenoptilus nuttallii   <NA> 
-    ## 3 coyote    Coyote                   180599.0 Canis          latrans     <NA> 
-    ## 4 ecdo      Eurasian Collared-dove   177139.0 Streptopelia   decaocto    <NA> 
-    ## 5 fox       Kit Fox                  180606.0 Vulpes         macrotis    <NA> 
-    ## 6 gaqu      Gambel's Quail           175877.0 Callipepla     gambelii    <NA> 
-    ## 7 leni      Lesser Nighthawk         177988.0 Chordeiles     acutipennis <NA> 
-    ## 8 toad      Couch's Spadefoot        173429.0 Scaphiopus     couchii     <NA> 
-    ## 9 verd      Verdin                   178759.0 Auriparus      flaviceps   <NA>
+    ##    speciesID               commonName     ITIS        genus     species notes
+    ## 1:      btgn Black-tailed Gnatcatcher 179857.0   Polioptila    melanura  <NA>
+    ## 2:      copo          Common Poorwill 177979.0   Chordeiles       minor  <NA>
+    ## 3:    coyote                   Coyote 180599.0        Canis     latrans  <NA>
+    ## 4:      ecdo   Eurasian Collared-dove 177139.0 Streptopelia    decaocto  <NA>
+    ## 5:       fox                  Kit Fox 180606.0       Vulpes    macrotis  <NA>
+    ## 6:      gaqu           Gambel's Quail 175877.0   Callipepla    gambelii  <NA>
+    ## 7:      leni         Lesser Nighthawk 177988.0   Chordeiles acutipennis  <NA>
+    ## 8:      toad   Couch's Spadefoot Toad 173429.0   Scaphiopus     couchii  <NA>
+    ## 9:      verd                   Verdin 178759.0    Auriparus   flaviceps  <NA>
 
 ``` r
 # Only select the Black-tailed Gnatcatcher record
@@ -281,16 +281,15 @@ qry(db.path = db.path,
                  WHERE commonName = 'Black-tailed Gnatcatcher' ") 
 ```
 
-    ## # A tibble: 1 x 6
-    ##   speciesID commonName               ITIS     genus      species  notes
-    ##   <chr>     <chr>                    <chr>    <chr>      <chr>    <chr>
-    ## 1 btgn      Black-tailed Gnatcatcher 179857.0 Polioptila melanura <NA>
+    ##    speciesID               commonName     ITIS      genus  species notes
+    ## 1:      btgn Black-tailed Gnatcatcher 179857.0 Polioptila melanura  <NA>
 
 The `qry()` approach is essentially the same as `dbReadTable()` or
 `dbGetQuery()`, except that it allows you to input a **db.path** object
 rather than a **conx** object.
 
-## Creating records
+Creating records
+----------------
 
 As demonstrated in Chapter 3, the easiest way to add records to the
 database in R is to generate a data.frame of records, and then use
@@ -318,7 +317,8 @@ RSQLite::dbWriteTable(conn = conx, name = 'species', value = new.species,
                       append = TRUE, header = FALSE)
 ```
 
-## Updating records
+Updating records
+----------------
 
 To modify information in an existing record in R, we use an UPDATE
 statement in `dbExecute()`, ensuring that any VARCHAR or TEXT values are
@@ -349,19 +349,17 @@ modification was successful:
 RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM species")
 ```
 
-    ## # A tibble: 10 x 6
-    ##    speciesID commonName               ITIS     genus          species     notes
-    ##    <chr>     <chr>                    <chr>    <chr>          <chr>       <chr>
-    ##  1 btgn      Black-tailed Gnatcatcher 179857.0 Polioptila     melanura    <NA> 
-    ##  2 copo      Common Poorwill          177979.0 Phalaenoptilus nuttallii   <NA> 
-    ##  3 coyote    Coyote                   180599.0 Canis          latrans     <NA> 
-    ##  4 ecdo      Eurasian Collared-dove   177139.0 Streptopelia   decaocto    <NA> 
-    ##  5 fox       Kit Fox                  180606.0 Vulpes         macrotis    <NA> 
-    ##  6 gaqu      Gambel's Quail           175877.0 Callipepla     gambelii    <NA> 
-    ##  7 leni      Lesser Nighthawk         177988.0 Chordeiles     acutipennis <NA> 
-    ##  8 toad      Couch's Spadefoot        173429.0 Scaphiopus     couchii     <NA> 
-    ##  9 verd      Verdin                   178759.0 Auriparus      flaviceps   <NA> 
-    ## 10 phai      Phainopepla              <NA>     Phainopepla    nitens      <NA>
+    ##    speciesID               commonName     ITIS        genus     species notes
+    ## 1       btgn Black-tailed Gnatcatcher 179857.0   Polioptila    melanura  <NA>
+    ## 2       copo          Common Poorwill 177979.0   Chordeiles       minor  <NA>
+    ## 3     coyote                   Coyote 180599.0        Canis     latrans  <NA>
+    ## 4       ecdo   Eurasian Collared-dove 177139.0 Streptopelia    decaocto  <NA>
+    ## 5        fox                  Kit Fox 180606.0       Vulpes    macrotis  <NA>
+    ## 6       gaqu           Gambel's Quail 175877.0   Callipepla    gambelii  <NA>
+    ## 7       leni         Lesser Nighthawk 177988.0   Chordeiles acutipennis  <NA>
+    ## 8       toad   Couch's Spadefoot Toad 173429.0   Scaphiopus     couchii  <NA>
+    ## 9       verd                   Verdin 178759.0    Auriparus   flaviceps  <NA>
+    ## 10      phai              Phainopepla     <NA>  Phainopepla      nitens  <NA>
 
 Note that *speciesID* is the primary key for the species table, and it
 has just been updated. As mentioned in Chapter 2, an **AMMonitor**
@@ -369,7 +367,8 @@ database invokes “cascade updates;” when a primary key is altered,
 entries in other tables that utilize this primary key will automatically
 be updated, ensuring that the integrity of the database is maintained.
 
-## Deleting records
+Deleting records
+----------------
 
 To delete specific records from a table, we again invoke `dbExecute()`,
 this time with a DELETE statement. Below, we combine the DELETE
@@ -394,10 +393,8 @@ count the number of records in the species table.
 RSQLite::dbGetQuery(conn = conx, statement = "SELECT COUNT(*) FROM species")
 ```
 
-    ## # A tibble: 1 x 1
-    ##   `COUNT(*)`
-    ##        <int>
-    ## 1          9
+    ##   COUNT(*)
+    ## 1        9
 
 The query returns the number 9, indicating that our table now contains 9
 records.
@@ -414,7 +411,8 @@ but the key now cannot be traced back the parent table. When deleting
 records, it is the user’s responsibility to delete downstream records if
 desired.
 
-# The Library Table in R
+The Library Table in R
+======================
 
 For acoustic monitoring programs, all target monitoring species will
 have target sound signals by which they can be positively identified to
@@ -453,10 +451,8 @@ be confirmed with the following code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(library);")
 ```
 
-    ## # A tibble: 1 x 8
-    ##      id   seq table   from      to        on_update on_delete match
-    ##   <int> <int> <chr>   <chr>     <chr>     <chr>     <chr>     <chr>
-    ## 1     0     0 species speciesID speciesID CASCADE   NO ACTION NONE
+    ##   id seq   table      from        to on_update on_delete match
+    ## 1  0   0 species speciesID speciesID   CASCADE NO ACTION  NONE
 
 Thus, any attempt to enter a new library record that does have an entry
 in the **species** table will throw an error. Human-made sounds that may
@@ -473,14 +469,12 @@ qry(db.path = db.path,
     statement = "SELECT * FROM library LIMIT 5")
 ```
 
-    ## # A tibble: 5 x 4
-    ##   libraryID      speciesID type  description                             
-    ##   <chr>          <chr>     <chr> <chr>                                   
-    ## 1 btgn_other     btgn      other other                                   
-    ## 2 btgn_zhee      btgn      song  Typical zhee-zhee-zhee territorial sound
-    ## 3 copo_other     copo      other other                                   
-    ## 4 copo_song      copo      song  "a loud \"poorwill\""                   
-    ## 5 coyote_general coyote    call  Any coyote sound
+    ##         libraryID speciesID  type                              description
+    ## 1:     btgn_other      btgn other                                    other
+    ## 2:      btgn_zhee      btgn  song Typical zhee-zhee-zhee territorial sound
+    ## 3:     copo_other      copo other                                    other
+    ## 4:      copo_song      copo  song                        a loud "poorwill"
+    ## 5: coyote_general    coyote  call                         Any coyote sound
 
 The *libraryID* denotes a unique ID for each target signal. In rows 1
 and 2 of the **library** object, note that the *speciesID* is ‘btgn’ for
@@ -500,7 +494,8 @@ often categorized as songs or calls. Lastly, the *description* column
 can contain information describing the signal of interest, but is not
 required.
 
-# The List and listItems Tables in R
+The List and listItems Tables in R
+==================================
 
 The **list** table simply stores the names of lists; ultimately each
 list is a collection of items, like a menu, which are stored in the
@@ -517,8 +512,8 @@ new record to the **people** table (which has a column called
 “projectRole”), we may generate a list called “projectRole” and create
 entries for it, such as “PI”, “Lead-Ring Monitor”,and “Field
 Technician”. This list can be linked to the Access form’s field
-“projectRole”, forcing users to select from this an entry from the
-list. See
+“projectRole”, forcing users to select from this an entry from the list.
+See
 [here](https://support.office.com/en-us/article/create-a-list-of-choices-by-using-a-list-box-or-combo-box-70abf4a9-0439-4885-9099-b9fa83517603#__toc356995225)
 for more information.
 
@@ -545,14 +540,12 @@ will hold. We can view the contents of the sample **lists** table with
 RSQLite::dbReadTable(conn = conx, name = "lists")
 ```
 
-    ## # A tibble: 6 x 2
-    ##   listID                   description                                                       
-    ##   <chr>                    <chr>                                                             
-    ## 1 Bilbo's List             A list of species in which Bilbo has expertise.                   
-    ## 2 Frodo's List             A list of species in which Frodo has expertise.                   
-    ## 3 Middle Earth             All monitoring targets for the Middle Earth monitoring program.   
-    ## 4 Middle Earth Birds       A list of all the birds in the Middle Earth monitoring program.   
-    ## 5 Middle Earth Mammals     A list of all the mammals in the Middle Earth monitoring program. 
+    ##                     listID                                                        description
+    ## 1             Bilbo's List                    A list of species in which Bilbo has expertise.
+    ## 2             Frodo's List                    A list of species in which Frodo has expertise.
+    ## 3             Middle Earth    All monitoring targets for the Middle Earth monitoring program.
+    ## 4       Middle Earth Birds    A list of all the birds in the Middle Earth monitoring program.
+    ## 5     Middle Earth Mammals  A list of all the mammals in the Middle Earth monitoring program.
     ## 6 Target Species Templates A list of templateIDs to use for automatic scanning of recordings.
 
 Our **lists** table identifies six lists. The descriptions indicate that
@@ -571,11 +564,9 @@ RSQLite::dbGetQuery(conn = conx,
                                  WHERE listID = 'Frodo''s List' ")
 ```
 
-    ## # A tibble: 3 x 4
-    ##   listID       dbTable dbColumn  item 
-    ##   <chr>        <chr>   <chr>     <chr>
-    ## 1 Frodo's List species speciesID ecdo 
-    ## 2 Frodo's List species speciesID gaqu 
+    ##         listID dbTable  dbColumn item
+    ## 1 Frodo's List species speciesID ecdo
+    ## 2 Frodo's List species speciesID gaqu
     ## 3 Frodo's List species speciesID verd
 
 Here, we see a list called “Frodo’s List” containing three items (ecdo,
@@ -603,10 +594,8 @@ We confirm this with the following statement:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(listItems);")
 ```
 
-    ## # A tibble: 1 x 8
-    ##      id   seq table from   to     on_update on_delete match
-    ##   <int> <int> <chr> <chr>  <chr>  <chr>     <chr>     <chr>
-    ## 1     0     0 lists listID listID CASCADE   NO ACTION NONE
+    ##   id seq table   from     to on_update on_delete match
+    ## 1  0   0 lists listID listID   CASCADE NO ACTION  NONE
 
 Resulting output shows that the field *listID* from the table
 **listItems** maps to the field *listID* in the table **lists**. Note
@@ -663,15 +652,15 @@ disconnect from the database:
 RSQLite::dbDisconnect(conx)
 ```
 
-# The Species and Library Tables in Access
+The Species and Library Tables in Access
+========================================
 
 The **species** table plays a prominent role in **AMMonitor**, and as
 such is a primary tab in the Access front end. Selecting the species tab
 displays the species form, with each form element tagged to a specific
 column in the **species** table. Further, the **library** form is nested
 within the **species** form, providing a convenient way to view all
-library items associated with a given
-species.
+library items associated with a given species.
 
 <kbd>
 
@@ -686,15 +675,15 @@ species.
 Notice that the library is also a secondary tab under the Species
 primary tab. This facilitates more generic searching.
 
-# The List and listItems Tables in Access
+The List and listItems Tables in Access
+=======================================
 
 Because lists are so flexible and used in many different capacities in
 **AMMonitor**, they are listed as a sub-tab under the “Program Mgt” tab.
 Here, Bilbo’s list is displayed on the **list** form (in which listID
 and description are tagged to the table’s columns). The **listItems**
 form is nested within the **lists** form, providing an easy way to
-create, read, update, or delete records for any given
-list.
+create, read, update, or delete records for any given list.
 
 <kbd>
 
@@ -710,7 +699,8 @@ Notice at the bottom of this form that Bilbo’s List is record 1 of 6
 to view other lists, and click on the sun icon button to create a new
 list and add new items to it.
 
-# Chapter Summary
+Chapter Summary
+===============
 
 In this chapter, you learned about the **species** and **library**
 tables. The **species** table allows species to be identified by ITIS
@@ -723,24 +713,13 @@ You also learned about **lists** and **listItems**, tables that can be
 used for multiple purposes in an **AMMonitor** framework. We use lists
 in many of the coming chapters.
 
-# Chapter References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-taxize">
-
-1\. Chamberlain S, Szocs E. Taxize: Taxonomic search and retrieval in r
+1. Chamberlain S, Szocs E. Taxize: Taxonomic search and retrieval in r
 \[Internet\]. Comprehensive R Archive Network; 2013. Available:
 <https://cran.r-project.org/web/packages/taxize/index.html>
 
-</div>
-
-<div id="ref-Mporas2016">
-
-2\. Mporas I, Paraskevas M. Automatic forest wood logging identification
+2. Mporas I, Paraskevas M. Automatic forest wood logging identification
 based on acoustic monitoring. Proceedings of the 9th Hellenic Conference
-on Artificial Intelligence. 2016;35. 
-
-</div>
-
-</div>
+on Artificial Intelligence. 2016;35.

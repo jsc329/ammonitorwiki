@@ -1,11 +1,11 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Background](#background)
+-   [Chapter Introduction](#chapter-introduction)
 -   [Gratitude](#gratitude)
 -   [Chapter References](#chapter-references)
 
-Background
-==========
+Chapter Introduction
+====================
 
 Amid climate change and rapidly shifting land uses, effective methods
 for monitoring natural resources are critical to support

@@ -1,3 +1,23 @@
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
+
+-   [Chapter Introduction](#chapter-introduction)
+-   [Keys](#keys)
+    -   [Primary Keys](#primary-keys)
+    -   [Foreign Keys](#foreign-keys)
+-   [Create the database](#create-the-database)
+-   [Interacting with Tables](#interacting-with-tables)
+-   [The AMMonitor Database Front
+    End](#the-ammonitor-database-front-end)
+    -   [SQLite ODBC](#sqlite-odbc)
+    -   [Linking Access to the SQLite
+        database](#linking-access-to-the-sqlite-database)
+    -   [Access Forms](#access-forms)
+-   [Chapter Summary](#chapter-summary)
+-   [Bibliography](#bibliography)
+
+Chapter Introduction
+====================
+
 The primary goal of **AMMonitor** is to provide a system that
 efficiently processes remotely captured data so that agencies or
 organizations tasked with managing natural resources can easily compare
@@ -188,10 +208,12 @@ For this chapter, we will use `dbCreateSample()` to generate a sample
 SQLite database named “Chap2.sqlite”. Below, we fill all tables with
 sample data by specifying ‘all’ for the tables argument.
 
-    # Create a sample database for this chapter
-    dbCreateSample(db.name = "Chap2.sqlite", 
-                   file.path = paste0(getwd(),"/database"), 
-                   tables =  'all')
+``` r
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap2.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  'all')
+```
 
     ## An AMMonitor database has been created with the name Chap2.sqlite which consists of the following tables:
 
@@ -204,18 +226,22 @@ sample data by specifying ‘all’ for the tables argument.
 Next, we connect to the database in R using RSQLite’s `dbConnect()`
 function, where we identify the SQLite driver in the ‘drv’ argument:
 
-    # Establish the database file path as db.path
-    db.path <- paste0(getwd(), '/database/Chap2.sqlite')
+``` r
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap2.sqlite')
 
-    # Connect to the database
-    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
 
 Finally, we send a SQLite statement to enforce foreign key constraints:
 
-    # Turn the SQLite foreign constraints on
-    RSQLite::dbExecute(conn = conx, statement = 
-                  "PRAGMA foreign_keys = ON;"
-              )
+``` r
+# Turn the SQLite foreign constraints on
+RSQLite::dbExecute(conn = conx, statement = 
+              "PRAGMA foreign_keys = ON;"
+          )
+```
 
     ## [1] 0
 
@@ -234,8 +260,10 @@ functions. For example, throughout this vignette, we will be using the
 `dbTables()` function to view a particular table’s columns, the type of
 data it stores, and its primary keys. For example:
 
-    # Look at the structure of the deployment table
-    dbTables(db.path = db.path, table = 'deployment')
+``` r
+# Look at the structure of the deployment table
+dbTables(db.path = db.path, table = 'deployment')
+```
 
     ## $deployment
     ##   cid          name         type notnull dflt_value pk comment
@@ -279,8 +307,15 @@ keys. We can send a **query** to the SQLite database, and request the
 foreign key information for the **deployment** table with the following
 code:
 
-    # Return foreign key information for the deployment table
-    RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
+``` r
+# Return foreign key information for the deployment table
+RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
+```
+
+    ##   id seq     table        from          to on_update on_delete match
+    ## 1  0   0    people    personID    personID   CASCADE NO ACTION  NONE
+    ## 2  1   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
+    ## 3  2   0 equipment equipmentID equipmentID   CASCADE NO ACTION  NONE
 
 Here, we use the `dbGetQuery()` function to send a SQLite query to the
 database (i.e., we are asking for something from the database). We
@@ -314,11 +349,17 @@ the table is relatively small, we can use the RSQLite function
 specify our **conx** object in the ‘conn’ argument, and “people” as the
 table of interest in the ‘name’ argument.
 
-    # Read the entire table and store as get.people
-    get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
+``` r
+# Read the entire table and store as get.people
+get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
 
-    # Look at the entire table (printed as a tibble)
-    get.people
+# Look at the entire table (printed as a tibble)
+get.people
+```
+
+    ##   personID firstName lastName          projectRole                    email        phone
+    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
 
 As shown, the sample **people** table has two records. There are four
 primary ways to work with records: Create, Read, Update, or Delete
@@ -337,10 +378,12 @@ program by passing an ALTER TABLE SQL command to the function
 *startDate* and indicate that this column will store VARCHAR (character)
 data.
 
-    # Add a new column called StartDate
-    RSQLite::dbExecute(conn = conx, statement = 
-              "ALTER TABLE people ADD COLUMN startDate varchar;"
-    ) 
+``` r
+# Add a new column called StartDate
+RSQLite::dbExecute(conn = conx, statement = 
+          "ALTER TABLE people ADD COLUMN startDate varchar;"
+) 
+```
 
 ALTER TABLE may also be used to delete columns. However, we strongly
 advise against deleting any default **AMMonitor** tables or columns –
@@ -395,10 +438,12 @@ itself with the file name “AMMonitor\_sqlite.accdb”, and you can save it
 to your **database** folder as “Chap2\_sqlite.accdb” with the following
 code:
 
-    # Save the Access form to your database directory
-    save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
-                package = "AMMonitor"), 
-         file = "database/Chap2_demo.accdb")
+``` r
+# Save the Access form to your database directory
+save(list = system.file("extdata", "AMMonitor_sqlite.accdb",
+            package = "AMMonitor"), 
+     file = "database/Chap2_demo.accdb")
+```
 
 Hopefully, you now have the Access file in your **AMMonitor** database
 folder, recognizable by the “accdb” extension. Remember, this file is
@@ -605,8 +650,8 @@ to the **AMMonitor** Navigation Form introduced earlier in the chapter.
 > customized to your liking.*
 
 The Navigation Form can be set as the default form that appears when the
-Access database is first opened. This can be achieved by going to File |
-Options | Current Database, and setting the Navigation Form as the
+Access database is first opened. This can be achieved by going to File
+\| Options \| Current Database, and setting the Navigation Form as the
 Display Form. You may also add a customized title and icon here as well.
 
 <kbd>

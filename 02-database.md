@@ -1,19 +1,22 @@
-Chapter 2: The AMMonitor Database
-================
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
-  - [Keys](#keys)
-      - [Primary Keys](#primary-keys)
-      - [Foreign Keys](#foreign-keys)
-  - [Create the database](#create-the-database)
-  - [Interacting with Tables](#interacting-with-tables)
-  - [The AMMonitor Database Front
+-   [Chapter Introduction](#chapter-introduction)
+-   [Keys](#keys)
+    -   [Primary Keys](#primary-keys)
+    -   [Foreign Keys](#foreign-keys)
+-   [Create the database](#create-the-database)
+-   [Interacting with Tables](#interacting-with-tables)
+-   [The AMMonitor Database Front
     End](#the-ammonitor-database-front-end)
-      - [SQLite ODBC](#sqlite-odbc)
-      - [Linking Access to the SQLite
+    -   [SQLite ODBC](#sqlite-odbc)
+    -   [Linking Access to the SQLite
         database](#linking-access-to-the-sqlite-database)
-      - [Access Forms](#access-forms)
-  - [Chapter Summary](#chapter-summary)
-  - [Bibliography](#bibliography)
+    -   [Access Forms](#access-forms)
+-   [Chapter Summary](#chapter-summary)
+-   [Bibliography](#bibliography)
+
+Chapter Introduction
+====================
 
 The primary goal of **AMMonitor** is to provide a system that
 efficiently processes remotely captured data so that agencies or
@@ -56,8 +59,7 @@ projects.” \[2\]
 
 An **AMMonitor** SQLite database is created with the `dbCreate()`
 function, and should be stored in the “database” folder within the main
-AMMonitor
-directory.
+AMMonitor directory.
 
 <kbd>
 
@@ -68,8 +70,7 @@ directory.
 > SQLite database file.*
 
 Before we actually create the database, we provide an overview of the
-tables within an **AMMonitor**
-database.
+tables within an **AMMonitor** database.
 
 <kbd>
 
@@ -131,7 +132,8 @@ be run semi-automatically.
 Though Fig. 2.2 provides an overview of the **AMMonitor** database, we
 will introduce each table in depth in the coming chapters.
 
-# Keys
+Keys
+====
 
 Keys are an important concept in relational databases. We highlight two
 types of keys below:
@@ -145,10 +147,10 @@ small key symbol next to it, indicating that this column is the table’s
 primary key. You can see that the table has two other columns, labeled
 *firstName* and *lastName*. Thus, a record (a row in the table) in this
 table may have an entry such as *personID* = “bbaggins”, *firstName* =
-“Bilbo”, and *lastName* = “Baggins”. We can use SQLite code to
-retrieve this unique row in the table by simply finding the record where
-the ‘personID’ column has a value of “bbaggins”. The primary key cannot
-be duplicated, thus “bbaggins” will always point to Bilbo’s record.
+“Bilbo”, and *lastName* = “Baggins”. We can use SQLite code to retrieve
+this unique row in the table by simply finding the record where the
+‘personID’ column has a value of “bbaggins”. The primary key cannot be
+duplicated, thus “bbaggins” will always point to Bilbo’s record.
 
 In some tables, mutiple columns compose the primary key. For example,
 the **deployment** table (2.1b) uses three columns as the primary key,
@@ -179,7 +181,8 @@ information, view a
 [tutorial](https://www.tutorialspoint.com/sql/sql-rdbms-concepts.htm) on
 relational database concepts.
 
-# Create the database
+Create the database
+===================
 
 Creating the **AMMonitor** database is extremely simple. Here, users
 have two options:
@@ -283,9 +286,9 @@ number, integer, logical). Because this is a SQLite database, the
 character types must be recognized by SQLite. Here, notice that most
 columns are set to VARCHAR(255), which means the columns store
 characters that are variable in length (up to 255 characters). The
-‘notes’ column stores TEXT, which can accommodate lengthy text
-entries. See <https://www.sqlite.org/datatype3.html> for more
-information on SQLite data types.
+‘notes’ column stores TEXT, which can accommodate lengthy text entries.
+See <https://www.sqlite.org/datatype3.html> for more information on
+SQLite data types.
 
 The field *notnull* indicates whether an entry is required for each
 column or not (1 = required; 0 = not required). You can see that the
@@ -309,18 +312,16 @@ code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
 ```
 
-    ## # A tibble: 3 x 8
-    ##      id   seq table     from        to          on_update on_delete match
-    ##   <int> <int> <chr>     <chr>       <chr>       <chr>     <chr>     <chr>
-    ## 1     0     0 people    personID    personID    CASCADE   NO ACTION NONE 
-    ## 2     1     0 locations locationID  locationID  CASCADE   NO ACTION NONE 
-    ## 3     2     0 equipment equipmentID equipmentID CASCADE   NO ACTION NONE
+    ##   id seq     table        from          to on_update on_delete match
+    ## 1  0   0    people    personID    personID   CASCADE NO ACTION  NONE
+    ## 2  1   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
+    ## 3  2   0 equipment equipmentID equipmentID   CASCADE NO ACTION  NONE
 
 Here, we use the `dbGetQuery()` function to send a SQLite query to the
 database (i.e., we are asking for something from the database). We
 provide the database connection, and then pass the SQLite query in the
 ‘statement’ argument. In this case, the SQLite query is “PRAGMA
-foreign\_key\_list(deployment);”. The query returns a dataframe with 3
+foreign\_key\_list(deployment);”. The query returns a data.frame with 3
 rows, indicating that the **deployment** table has 3 foreign keys. For
 instance, the column *personID* in the table **people** maps to the
 column *personID* in the **deployment** table.
@@ -337,7 +338,8 @@ ACTION on\_delete setting. If you want to delete Bilbo’s deployments,
 you will need to do so intentionally (with SQLite commands or through
 the Microsoft Access interface, described later).
 
-# Interacting with Tables
+Interacting with Tables
+=======================
 
 There are many ways to interact with tables in a SQLite database, and
 many tables are automatically populated by **AMMonitor** functions.
@@ -355,18 +357,16 @@ get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
 get.people
 ```
 
-    ## # A tibble: 2 x 6
-    ##   personID firstName lastName projectRole          email                    phone       
-    ##   <chr>    <chr>     <chr>    <chr>                <chr>                    <chr>       
-    ## 1 bbaggins Bilbo     Baggins  Lead Ring Monitor I  ringmaster2001@shire.net none        
-    ## 2 fbaggins Frodo     Baggins  Lead Ring Monitor II fbaggins@shire.net       888-ONE-RING
+    ##   personID firstName lastName          projectRole                    email        phone
+    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
 
 As shown, the sample **people** table has two records. There are four
 primary ways to work with records: Create, Read, Update, or Delete
 (CRUD). C means “Create a new record”, R means “Read a record”, U means
-“Update a record” and D means “Delete a record”. We will demonstrate
-the CRUD operations in Chapter 3, when we look at the **people** table
-in depth.
+“Update a record” and D means “Delete a record”. We will demonstrate the
+CRUD operations in Chapter 3, when we look at the **people** table in
+depth.
 
 The standard **people** table comes with six columns. The *personID* is
 the primary key of this table, and uniquely identifies each record in
@@ -390,7 +390,8 @@ advise against deleting any default **AMMonitor** tables or columns –
 doing so may produce function errors, and we will not be able to assist
 you in fixing them.
 
-# The AMMonitor Database Front End
+The AMMonitor Database Front End
+================================
 
 While a monitoring team member can always interact with the database
 through R (as shown above), not all team members will be proficient in
@@ -398,8 +399,7 @@ R, and may prefer an alternative database interface. To that end,
 **AMMonitor** comes with a Microsoft Access front end, which is simply
 an Access navigation form that connects to the SQLite database. This
 front end provides users with a form-like feel for entering or updating
-records. The actual data, however, remain in the SQLite
-database.
+records. The actual data, however, remain in the SQLite database.
 
 <kbd>
 
@@ -451,16 +451,17 @@ simply a collection of forms that can connect to a SQLite database, such
 as the “Chap2.sqlite” database that we have been working with. The next
 step is to actually make that connection.
 
-## SQLite ODBC
+SQLite ODBC
+-----------
 
 To connect Access to our Chap2.sqlite database, we need a “driver”,
 which is a code snippet that will allow the SQLite database to connect
 to Microsoft Access. We will be using an ODBC driver, which stands for
 Open Database Connectivity. You can obtain the SQLite driver from
-<http://www.ch-werner.de/sqliteodbc/>. Make sure you select the
-appropriate driver for your machine’s operating system, and install it.
-As of this writing, we have been using the SQLite3 ODBC Driver on a
-machine running Windows 10 with no problems.
+<a href="http://www.ch-werner.de/sqliteodbc/" class="uri">http://www.ch-werner.de/sqliteodbc/</a>.
+Make sure you select the appropriate driver for your machine’s operating
+system, and install it. As of this writing, we have been using the
+SQLite3 ODBC Driver on a machine running Windows 10 with no problems.
 
 Download the driver for your machine and install it. Then follow these
 steps for Windows users (Mac users may need a different approach):
@@ -479,9 +480,8 @@ steps for Windows users (Mac users may need a different approach):
 > *Figure 2.4. The ODBC Data Source Administrator dialogue box allows
 > you to create new ODBC connections (Open Data Base Connectivity)*.
 
-2.  A new dialogue box will open, prompting you to select a driver.
-    Locate the SQLite3 ODBC Driver you just installed, and click
-Finish.
+1.  A new dialogue box will open, prompting you to select a driver.
+    Locate the SQLite3 ODBC Driver you just installed, and click Finish.
 
 <kbd>
 
@@ -492,7 +492,7 @@ Finish.
 > *Figure 2.5. Select the SQLite3 ODBC Driver to let your computer
 > communicate with the SQLite database*.
 
-3.  Another new dialogue box will open. You need to name your data
+1.  Another new dialogue box will open. You need to name your data
     source, navigate to a particular SQLite database, and press OK.
     Here, we are naming our data source Chap2\_sqlite, and will connect
     to the sqlite database called chap2.sqlite using the Browse button.
@@ -502,8 +502,7 @@ Finish.
     be enforced, including a timeout entry (if there is database
     inactivity after a given period of time, the connection will
     automatically break). Other options for this dialogue box can be
-    found
-[here](http://www.ch-werner.de/sqliteodbc/html/index.html).
+    found [here](http://www.ch-werner.de/sqliteodbc/html/index.html).
 
 <kbd>
 
@@ -514,12 +513,11 @@ Finish.
 > *Figure 2.6. Give your connection a unique name, and browse to your
 > SQLite database file.*
 
-4.  You should now see this new data source listed in the User DSN tab;
+1.  You should now see this new data source listed in the User DSN tab;
     it will allow you to connect to your SQLite database. You may have
     many data sources (e.g., one for each chapter if you wish). When it
     is time to launch your own monitoring program, however, the data
-    source will connect to your program’s **AMMonitor** SQLite
-database.
+    source will connect to your program’s **AMMonitor** SQLite database.
 
 <kbd>
 
@@ -530,7 +528,8 @@ database.
 > *Figure 2.7. The new DNS should now be listed in your ODBC Data Source
 > dialogue box.*
 
-## Linking Access to the SQLite database
+Linking Access to the SQLite database
+-------------------------------------
 
 The next step is connect the Microsoft Access file to the SQLite
 database, employing the connection you just created. Here are the
@@ -542,8 +541,7 @@ required steps.
 2.  Click the External Data tab. This tab allows us to connect Access to
     an external database, such as an Excel file, another Access
     database, a text file or XML file. Here, we will use an ODBC
-    connection, where ODBC stands for Open Database Connectivity.
-<kbd>
+    connection, where ODBC stands for Open Database Connectivity. <kbd>
 
 <img src="Chap2_Figs/ExternalTab.PNG" width="100%" style="display: block; margin: auto auto auto 0;" />
 
@@ -551,10 +549,9 @@ required steps.
 
 > *Figure 2.8. Open Access, and click on the External Data tab.*
 
-3.  Clicking on the ODBC Database button will bring up a new dialogue
+1.  Clicking on the ODBC Database button will bring up a new dialogue
     box. Here, we want to **link** to the data source by creating a
-    linked table. Press
-OK.
+    linked table. Press OK.
 
 <kbd>
 
@@ -565,11 +562,10 @@ OK.
 > *Figure 2.9. Indicate that you would like to link to the SQLite
 > database (as opposed to importing the database into Access.*
 
-4.  Now, we wish to locate and use the data source we just created
+1.  Now, we wish to locate and use the data source we just created
     (which uses a SQLite3 driver to connect to our SQLite database). It
     will likely be listed under the Machine Data Source tab, and is
-    highlighted in blue when clicked. Press
-OK.
+    highlighted in blue when clicked. Press OK.
 
 <kbd>
 
@@ -579,11 +575,10 @@ OK.
 
 > *Figure 2.10. Locate your new database connection.*
 
-5.  The previous action will display a new dialogue box. This new box
+1.  The previous action will display a new dialogue box. This new box
     will ask which SQLite tables you wish to connect to. Press the
     Select All button to the right, which will highlight all of the
-    tables in blue. Then press
-OK.
+    tables in blue. Then press OK.
 
 <kbd>
 
@@ -594,11 +589,10 @@ OK.
 > *Figure 2.11. Press the Select All button to connect all the SQLite
 > tables to Access.*
 
-6.  Under the “All Access Objects” left menu, you will see the tables.
+1.  Under the “All Access Objects” left menu, you will see the tables.
     Each table has a globe symbol and arrow, indicating that each table
     is linked to the SQLite database table. This means we can now use
-    Access to work with the data in our database
-tables.
+    Access to work with the data in our database tables.
 
 <kbd>
 
@@ -609,8 +603,7 @@ tables.
 > *Figure 2.12. The linked tables appear as “globes” in the left menu.*
 
 Click on the **people** table, and you will see the two records
-currently in the SQLite database in a spreadsheet
-view:
+currently in the SQLite database in a spreadsheet view:
 
 <kbd>
 
@@ -619,19 +612,19 @@ view:
 </kbd>
 
 > *Figure 2.13. You can work with tables in Access, but most tables will
-> be filled in by R\!*
+> be filled in by R!*
 
 A new record can be added by entering data into the row with the \*
 symbol. Keep in mind, however, that many tables will be automatically
 populated by **AMMonitor** functions.
 
-## Access Forms
+Access Forms
+------------
 
 Though you may work with tables directly as above, you can alternatively
 use the Navigation form introduced earlier in the chapter. Locate the
 Navigation form by collapsing the list of Tables (press the double arrow
-icon to the right of the word “Tables”), and opening the list of
-Forms.
+icon to the right of the word “Tables”), and opening the list of Forms.
 
 <kbd>
 
@@ -642,11 +635,10 @@ Forms.
 > *Figure 2.14. The Access forms are diplayed in the left menu. The
 > Navigation Form is the master form.*
 
-Here, you can see that the AMMonitor front end comes with many
+Here, you can see that the **AMMonitor** front end comes with many
 individual forms that can be customized; these individual forms are
 combined into the Navigation Form. Opening the Navigation will bring you
-to AMMonitor Navigation Form introduced earlier in the
-chapter.
+to the **AMMonitor** Navigation Form introduced earlier in the chapter.
 
 <kbd>
 
@@ -658,10 +650,9 @@ chapter.
 > customized to your liking.*
 
 The Navigation Form can be set as the default form that appears when the
-Access database is first opened. This can be achieved by going to File |
-Options | Current Database, and setting the Navigation Form as the
-Display Form. You may also add a customized title and icon here as
-well.
+Access database is first opened. This can be achieved by going to File
+\| Options \| Current Database, and setting the Navigation Form as the
+Display Form. You may also add a customized title and icon here as well.
 
 <kbd>
 
@@ -672,7 +663,8 @@ well.
 > *Figure 2.16. Force the Navigation Form to open when you open the
 > Access file.*
 
-# Chapter Summary
+Chapter Summary
+===============
 
 Our intention for this chapter was to introduce you to the **AMMonitor**
 database. We have covered a short introduction to relational databases,
@@ -688,24 +680,13 @@ single database, and begin by establishing database standards that apply
 to your team. You can also modify the Access front-end to meet the needs
 of your monitoring effort.
 
-# Bibliography
+Bibliography
+============
 
-<div id="refs" class="references">
-
-<div id="ref-RSQLite">
-
-1\. Müller K, Wickham H, James DA, Falcon S. RSQLite: ’SQLite’ interface
+1. Müller K, Wickham H, James DA, Falcon S. RSQLite: ’SQLite’ interface
 for r (version 2.1,1) \[Internet\]. Comprehensive R Archive Network;
 2018. Available:
 <https://cran.r-project.org/web/packages/RSQLite/index.html>
 
-</div>
-
-<div id="ref-SQLite">
-
-2\. SQLite \[Internet\]. SQLite.org; 2018. Available:
+2. SQLite \[Internet\]. SQLite.org; 2018. Available:
 <https://www.sqlite.org/index.html>
-
-</div>
-
-</div>

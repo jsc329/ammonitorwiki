@@ -1,3 +1,17 @@
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
+
+-   [Chapter Introduction](#chapter-introduction)
+-   [“CRUD” operations in R](#crud-operations-in-r)
+    -   [Reading records](#reading-records)
+    -   [Creating records](#creating-records)
+    -   [Updating records](#updating-records)
+    -   [Deleting records](#deleting-records)
+-   [“CRUD” operations in Access](#crud-operations-in-access)
+-   [Chapter Summary](#chapter-summary)
+
+Chapter Introduction
+====================
+
 The **people** table in an **AMMonitor** SQLite database tracks
 information about all members involved in a monitoring program. In
 addition to providing a convenient contact book, this table is used to
@@ -14,10 +28,12 @@ pre-populates sample data into tables specified by the user. For
 demonstration purposes in this chapter, we will only pre-populate the
 **people** table.
 
-    # Create a sample database for this chapter
-    dbCreateSample(db.name = "Chap3.sqlite", 
-                   file.path = paste0(getwd(),"/database"), 
-                   tables =  "people")
+``` r
+# Create a sample database for this chapter
+dbCreateSample(db.name = "Chap3.sqlite", 
+               file.path = paste0(getwd(),"/database"), 
+               tables =  "people")
+```
 
     ## An AMMonitor database has been created with the name Chap3.sqlite which consists of the following tables:
 
@@ -30,17 +46,21 @@ demonstration purposes in this chapter, we will only pre-populate the
 Next, we connect to the database with RSQLite’s `dbConnect()` function,
 where we must identify the SQLite driver in the ‘drv’ argument:
 
-    # Establish the database file path as db.path
-    db.path <- paste0(getwd(), '/database/Chap3.sqlite')
+``` r
+# Establish the database file path as db.path
+db.path <- paste0(getwd(), '/database/Chap3.sqlite')
 
-    # Connect to the database
-    conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+# Connect to the database
+conx <- RSQLite::dbConnect(drv = dbDriver('SQLite'), dbname = db.path)
+```
 
 Finally, we send a SQL statement that will enforce foreign key
 constraints:
 
-    # Turn the SQLite foreign constraints on
-    RSQLite::dbExecute(conn = conx, statement = "PRAGMA foreign_keys = ON;")
+``` r
+# Turn the SQLite foreign constraints on
+RSQLite::dbExecute(conn = conx, statement = "PRAGMA foreign_keys = ON;")
+```
 
     ## [1] 0
 
@@ -50,8 +70,10 @@ stored, and default values. We point to the database by inputting the
 **db.path** object to the ‘db.path’ argument, and indicate “people” as
 the table of interest in the ‘table’ argument:
 
-    # Look at information about the people table
-    dbTables(db.path = db.path, table = "people")
+``` r
+# Look at information about the people table
+dbTables(db.path = db.path, table = "people")
+```
 
     ## $people
     ##   cid        name         type notnull dflt_value pk comment
@@ -96,11 +118,17 @@ function `dbReadTable()` to read the entire table into R’s memory, again
 specifying our **conx** object in the ‘conn’ argument, and “people” as
 the table of interest in the ‘name’ argument.
 
-    # Read the entire table and store as get.people
-    get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
+``` r
+# Read the entire table and store as get.people
+get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
 
-    # Look at the entire table (printed as a tibble)
-    get.people
+# Look at the entire table (printed as a tibble)
+get.people
+```
+
+    ##   personID firstName lastName          projectRole                    email        phone
+    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
 
 The *personID* is the primary key of this table, and uniquely identifies
 each record in the **people** table. Duplicate *personID*s are not
@@ -111,7 +139,9 @@ Notice that once this information object is read from SQLite into R, it
 can be treated as a typical R data.frame. We can use the `class()`
 function to confirm that the **get.people** object is a data.frame.
 
-    class(get.people)
+``` r
+class(get.people)
+```
 
     ## [1] "data.frame"
 
@@ -138,30 +168,47 @@ to return all fields (columns) of the table. The simple statement below
 gives no identifying information about which records (rows) should be
 returned, so all records will be selected and returned:
 
-    # Use * to select all rows and columns of the people table
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = "SELECT * 
-                                     FROM people")
+``` r
+# Use * to select all rows and columns of the people table
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM people")
+```
+
+    ##   personID firstName lastName          projectRole                    email        phone
+    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
 
 To only look at the first record, we can add the statement “LIMIT 1” to
 the end of our character string (if we had many records and only wanted
 to see the first 12, we could use, e.g., “LIMIT 12”):
 
-    # Only look at the first  record
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = "SELECT * 
-                                     FROM people 
-                                     LIMIT 1")
+``` r
+# Only look at the first  record
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM people 
+                                 LIMIT 1")
+```
+
+    ##   personID firstName lastName         projectRole                    email phone
+    ## 1 bbaggins     Bilbo  Baggins Lead Ring Monitor I ringmaster2001@shire.net  none
 
 If we only want to return information on a particular column, we can
 name that column specifically in the SQLite character string instead of
 using the ‘\*’ symbol. Below, we demonstrate using the *firstName*
 column:
 
-    # Only look at the firstName column
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = "SELECT firstName 
-                                     FROM people")
+``` r
+# Only look at the firstName column
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT firstName 
+                                 FROM people")
+```
+
+    ##   firstName
+    ## 1     Bilbo
+    ## 2     Frodo
 
 More complex queries can be constructed depending on the information
 needed. Next, we query all columns, but introduce a **where** statement
@@ -169,11 +216,16 @@ to indicate that we only want records where the first name is equal to
 ‘Frodo’. We have to add single quotes around ‘Frodo’ because it is a
 character.
 
-    # Only select records with "Frodo" in the firstName column
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = "SELECT * 
-                                     FROM people 
-                                     WHERE firstName = 'Frodo' ") 
+``` r
+# Only select records with "Frodo" in the firstName column
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM people 
+                                 WHERE firstName = 'Frodo' ") 
+```
+
+    ##   personID firstName lastName          projectRole              email        phone
+    ## 1 fbaggins     Frodo  Baggins Lead Ring Monitor II fbaggins@shire.net 888-ONE-RING
 
 As with `dbReadTable()`, results returned from `dbGetQuery()` can be
 stored as a data.frame for further manipulation in R.
@@ -193,16 +245,27 @@ database for you. It returns the results as a data.table in R. The below
 code shows how you can use `qry()` to read in an entire table, or to use
 a SQLite statement to select records of interest:
 
-    # Read in the entire people table
-    qry(db.path = db.path, 
-        table = 'people')
+``` r
+# Read in the entire people table
+qry(db.path = db.path, 
+    table = 'people')
+```
 
-    # Only select records with "Frodo" in the firstName column
-    qry(db.path = db.path, 
-        table = NULL,
-        statement = "SELECT * 
-                     FROM people 
-                     WHERE firstName = 'Frodo' ") 
+    ##    personID firstName lastName          projectRole                    email        phone
+    ## 1: bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2: fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
+
+``` r
+# Only select records with "Frodo" in the firstName column
+qry(db.path = db.path, 
+    table = NULL,
+    statement = "SELECT * 
+                 FROM people 
+                 WHERE firstName = 'Frodo' ") 
+```
+
+    ##    personID firstName lastName          projectRole              email        phone
+    ## 1: fbaggins     Frodo  Baggins Lead Ring Monitor II fbaggins@shire.net 888-ONE-RING
 
 The `qry()` approach is essentially the same as `dbReadTable()` or
 `dbGetQuery()`, except that it allows you to input a **db.path** object
@@ -218,19 +281,21 @@ names in the data.frame exactly match the field names in the database
 itself. We take care to ensure that the data types in the data.frame
 match those expected by the database.
 
-    # Create a dataframe of records to add
-    add.people <- data.frame(personID = c('gandalf', 
-                                          'saruman'),
-                             firstName = c('Gandalf', 
-                                           'Saruman'),
-                             lastName = c('The Grey', 
-                                          'The White'),
-                             projectRole = c('Wizard Consultant', 
-                                             'Power Seeker'),
-                             email = c('gandalf@middle.earth',
-                                       'saruman@isengard.net'),
-                             phone = c(NA, 
-                                       NA))
+``` r
+# Create a dataframe of records to add
+add.people <- data.frame(personID = c('gandalf', 
+                                      'saruman'),
+                         firstName = c('Gandalf', 
+                                       'Saruman'),
+                         lastName = c('The Grey', 
+                                      'The White'),
+                         projectRole = c('Wizard Consultant', 
+                                         'Power Seeker'),
+                         email = c('gandalf@middle.earth',
+                                   'saruman@isengard.net'),
+                         phone = c(NA, 
+                                   NA))
+```
 
 The *personID* is the primary key; it is required and should not
 duplicate keys that already exist in the table. The *firstName*,
@@ -248,14 +313,22 @@ header. We set ‘append’ to TRUE in order to add new data to an existing
 table, and we set ‘overwrite’ to FALSE to indicate that it will not
 overwrite existing records.
 
-    # Bind new records to the people table of the database
-    RSQLite::dbWriteTable(conn = conx, name = 'people', value = add.people,
-                 row.names = FALSE, overwrite = FALSE,
-                 append = TRUE, header = FALSE)
+``` r
+# Bind new records to the people table of the database
+RSQLite::dbWriteTable(conn = conx, name = 'people', value = add.people,
+             row.names = FALSE, overwrite = FALSE,
+             append = TRUE, header = FALSE)
 
-    # Check database to confirm new records were added
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = 'SELECT * FROM people')
+# Check database to confirm new records were added
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = 'SELECT * FROM people')
+```
+
+    ##   personID firstName  lastName          projectRole                    email        phone
+    ## 1 bbaggins     Bilbo   Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
+    ## 2 fbaggins     Frodo   Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
+    ## 3  gandalf   Gandalf  The Grey    Wizard Consultant     gandalf@middle.earth         <NA>
+    ## 4  saruman   Saruman The White         Power Seeker     saruman@isengard.net         <NA>
 
 Alternatively, one can add a new record by constructing an entire
 character string of SQL syntax and passing it to the RSQLite function
@@ -267,27 +340,29 @@ but R does not do this automatically, and any long character statements
 can become cumbersome as a result, making this option more difficult to
 use:
 
-    # Insert a new record using SQLite syntax 
-    RSQLite::dbExecute(conn = conx, 
-                       statement = 
-                   "INSERT INTO people (
-                       personID, 
-                       firstName, 
-                       lastName, 
-                       projectRole, 
-                       email, 
-                       phone
-                      )
-                    VALUES (
-                      'gimli',
-                      'Gimli',
-                      'Son of Gloin',
-                      'Support Staff', 
-                      'gimli@dwarves.org',
-                      '1-800-AND-MYAX'
-                      )"
-              
-    ) # close the dbExecute statement
+``` r
+# Insert a new record using SQLite syntax 
+RSQLite::dbExecute(conn = conx, 
+                   statement = 
+               "INSERT INTO people (
+                   personID, 
+                   firstName, 
+                   lastName, 
+                   projectRole, 
+                   email, 
+                   phone
+                  )
+                VALUES (
+                  'gimli',
+                  'Gimli',
+                  'Son of Gloin',
+                  'Support Staff', 
+                  'gimli@dwarves.org',
+                  '1-800-AND-MYAX'
+                  )"
+          
+) # close the dbExecute statement
+```
 
     ## [1] 1
 
@@ -295,8 +370,17 @@ use:
 to the table. We use `dbGetQuery()` to check on all fields and records
 of the table, confirming that our new records have been added:
 
-    # Check on the table
-    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM people")
+``` r
+# Check on the table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM people")
+```
+
+    ##   personID firstName     lastName          projectRole                    email          phone
+    ## 1 bbaggins     Bilbo      Baggins  Lead Ring Monitor I ringmaster2001@shire.net           none
+    ## 2 fbaggins     Frodo      Baggins Lead Ring Monitor II       fbaggins@shire.net   888-ONE-RING
+    ## 3  gandalf   Gandalf     The Grey    Wizard Consultant     gandalf@middle.earth           <NA>
+    ## 4  saruman   Saruman    The White         Power Seeker     saruman@isengard.net           <NA>
+    ## 5    gimli     Gimli Son of Gloin        Support Staff        gimli@dwarves.org 1-800-AND-MYAX
 
 Updating records
 ----------------
@@ -307,11 +391,13 @@ in single quotes. Below, we pass a SQL statement that finds all records
 where *lastName* is equal to Baggins, and modify those phone numbers to
 become 1-800-shire:
 
-    # Update cell phones for anyone with last name baggins:
-    RSQLite::dbExecute(conn = conx, 
-                       statement = "UPDATE people 
-                                    SET phone = '1-800-shire'
-                                    WHERE LastName = 'Baggins' ")
+``` r
+# Update cell phones for anyone with last name baggins:
+RSQLite::dbExecute(conn = conx, 
+                   statement = "UPDATE people 
+                                SET phone = '1-800-shire'
+                                WHERE LastName = 'Baggins' ")
+```
 
     ## [1] 2
 
@@ -320,11 +406,17 @@ This action returns a “2” to convey that 2 records were updated.
 Again, we can use `dbGetQuery()` to check that our Baggins phone number
 updates were successful:
 
-    # Check on the table
-    RSQLite::dbGetQuery(conn = conx, 
-                        statement = "SELECT * 
-                                     FROM people 
-                                     WHERE lastName = 'Baggins'")
+``` r
+# Check on the table
+RSQLite::dbGetQuery(conn = conx, 
+                    statement = "SELECT * 
+                                 FROM people 
+                                 WHERE lastName = 'Baggins'")
+```
+
+    ##   personID firstName lastName          projectRole                    email       phone
+    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net 1-800-shire
+    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 1-800-shire
 
 Deleting records
 ----------------
@@ -334,18 +426,28 @@ To delete specific records from a table, we again invoke the
 combine the DELETE statement with a WHERE statement to delete any
 records containing ‘Gimli’ in the *firstName* column:
 
-    # Remove the Gimli record
-    RSQLite::dbExecute(conn = conx, 
-                       statement = "DELETE FROM people 
-                                    WHERE firstName = 'Gimli' ")
+``` r
+# Remove the Gimli record
+RSQLite::dbExecute(conn = conx, 
+                   statement = "DELETE FROM people 
+                                WHERE firstName = 'Gimli' ")
+```
 
     ## [1] 1
 
 Another call to `dbGetQuery()` confirms that our deletion was
 successful:
 
-    # Check on the table
-    RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM people")
+``` r
+# Check on the table
+RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM people")
+```
+
+    ##   personID firstName  lastName          projectRole                    email       phone
+    ## 1 bbaggins     Bilbo   Baggins  Lead Ring Monitor I ringmaster2001@shire.net 1-800-shire
+    ## 2 fbaggins     Frodo   Baggins Lead Ring Monitor II       fbaggins@shire.net 1-800-shire
+    ## 3  gandalf   Gandalf  The Grey    Wizard Consultant     gandalf@middle.earth        <NA>
+    ## 4  saruman   Saruman The White         Power Seeker     saruman@isengard.net        <NA>
 
 **Note that records should be deleted with extreme care.** As mentioned
 in Chapter 2, an **AMMonitor** database does not invoke “cascade
@@ -361,8 +463,10 @@ information would no longer be present in the **people** table.
 Finally, we disconnect from the database when finished with
 modifications:
 
-    # Disconnect from the database
-    RSQLite::dbDisconnect(conx)
+``` r
+# Disconnect from the database
+RSQLite::dbDisconnect(conx)
+```
 
 “CRUD” operations in Access
 ===========================

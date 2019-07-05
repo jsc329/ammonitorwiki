@@ -1,17 +1,19 @@
 ---
 title: "Chapter 4: The Species, Library, and Lists Tables"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter-04-Species-and-Library.md")
+# rmarkdown::render(input = "04-species-library-list.Rmd", output_format = "md_document", output_file = "Chapter-04-The-Species-,-Library-and-Lists-Tables.md")
 
 ```
 
@@ -30,6 +32,8 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) # may or may not be needed
 ```
+
+# Chapter Introduction
 
 This chapter covers the **species**, **library**, **lists**, and **listItems** tables in the **AMMonitor** database. The **species** and **library** tables can be used to track groups of target monitoring species, as well as the sounds by which they are detected and monitored. The **lists** and **listItems** tables allow users to create lists of items, which can be used to enhance the integrity of the database. 
 

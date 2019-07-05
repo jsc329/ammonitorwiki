@@ -25,7 +25,7 @@ source("includes.R")
 ```
 
 
-# Background
+# Chapter Introduction
 
 Amid climate change and rapidly shifting land uses, effective methods for monitoring natural resources are critical to support scientifically-informed resource management decisions [@Holling1978; @Walters1986; @Lee1993; @Pollock2002; @Allen2015]. The practice of using Autonomous Monitoring Units (AMUs) to monitor wildlife species has grown immensely in the past decade, with monitoring projects across species from birds, to bats, amphibians, insects, terrestrial mammals, and marine mammals [@August2015; @Burton2015].
 

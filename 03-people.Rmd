@@ -1,10 +1,12 @@
 ---
 title: "Chapter 3: The People Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -31,6 +33,7 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 unlink(db.path) 
 ```
 
+# Chapter Introduction
 
 The **people** table in an **AMMonitor** SQLite database tracks information about all members involved in a monitoring program. In addition to providing a convenient contact book, this table is used to identify project members who annotate species presence or absence in an audio or image file, or who deploy monitoring equipment at a monitoring station. 
 

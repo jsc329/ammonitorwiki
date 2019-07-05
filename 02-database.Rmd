@@ -1,10 +1,12 @@
 ---
 title: "Chapter 2:  The AMMonitor Database"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -32,6 +34,7 @@ if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.p
 unlink(db.path) 
 ```
 
+# Chapter Introduction
 
 The primary goal of **AMMonitor** is to provide a system that efficiently processes remotely captured data so that agencies or organizations tasked with managing natural resources can easily compare the current state of the ecosystem (e.g., species occupancy patterns) to management objectives. Autonomous Monitoring Units (AMUs) have the capacity to collect a massive amount of information in a short period of time, requiring that monitoring teams have an effective data management plan in place.
 

@@ -1,6 +1,6 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Getting Started with AMMonitor](#getting-started-with-ammonitor)
+-   [Chapter Introduction](#chapter-introduction)
 -   [Installing AMMonitor](#installing-ammonitor)
 -   [Cloud-Based Account](#cloud-based-account)
 -   [AMMonitor Directory Structure](#ammonitor-directory-structure)
@@ -9,8 +9,8 @@
 -   [Chapter Summary](#chapter-summary)
 -   [Chapter References](#chapter-references)
 
-Getting Started with AMMonitor
-==============================
+Chapter Introduction
+====================
 
 In this chapter, we outline the R package **AMMonitor** and provide
 guidance on getting started. **AMMonitor** is a multi-purpose monitoring

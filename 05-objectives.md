@@ -1,11 +1,14 @@
-Chapter 5: The Objectives Table
-================
+<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
-  - [Create the chapter database](#create-the-chapter-database)
-  - [The Objectives Table in SQLite](#the-objectives-table-in-sqlite)
-  - [The Objectives Table in Access](#the-objectives-table-in-access)
-  - [Chapter Summary](#chapter-summary)
-  - [Chapter References](#chapter-references)
+-   [Chapter Introduction](#chapter-introduction)
+-   [Create the chapter database](#create-the-chapter-database)
+-   [The Objectives Table in SQLite](#the-objectives-table-in-sqlite)
+-   [The Objectives Table in Access](#the-objectives-table-in-access)
+-   [Chapter Summary](#chapter-summary)
+-   [Chapter References](#chapter-references)
+
+Chapter Introduction
+====================
 
 This chapter is about documenting the objectives of a monitoring effort.
 Setting natural resource objectives can be very difficult, but they are
@@ -64,12 +67,12 @@ such, example objectives may include:
 
 Setting objectives can be difficult, and a discussion of how to set
 objectives is well beyond our scope. For additional information, see
-\[1–8\]. Here, we simply wish to highlight how objectives (of any
-type) can be logged in the **AMMonitor** database. In Chapter 19, we
-will illustrate how to use monitoring results to assess an example
-objective.
+\[1–8\]. Here, we simply wish to highlight how objectives (of any type)
+can be logged in the **AMMonitor** database. In Chapter 19, we will
+illustrate how to use monitoring results to assess an example objective.
 
-# Create the chapter database
+Create the chapter database
+===========================
 
 Here, we use `dbCreateSample()` to create a database called
 “Chap5.sqlite”, which will be stored in a folder (directory) called
@@ -121,7 +124,8 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-# The Objectives Table in SQLite
+The Objectives Table in SQLite
+==============================
 
 We begin by viewing the structure of the **objectives** table:
 
@@ -147,22 +151,22 @@ dbTables(db.path = db.path, table = "objectives")
 `dbTables()` identifies the name of each column, the primary key, the
 type of data stored in each column, and required column entries.
 
-  - *objectiveID* - the table’s primary key (must be unique and less
+-   *objectiveID* - the table’s primary key (must be unique and less
     than 255 characters). Should be a brief identifier that is easily
     typed.
-  - *listID* - a list record that is provided in the **lists** table, if
+-   *listID* - a list record that is provided in the **lists** table, if
     applicable.
-  - *speciesID* - a species record that is given in the **species**
+-   *speciesID* - a species record that is given in the **species**
     table, if applicable.
-  - *objective* - the stated objective in report-ready form.
-  - *indicator* - specifies what exactly will be measured.
-  - *units* - specifies the units of measure.
-  - *direction* - indicates the desired direction, such as increase,
+-   *objective* - the stated objective in report-ready form.
+-   *indicator* - specifies what exactly will be measured.
+-   *units* - specifies the units of measure.
+-   *direction* - indicates the desired direction, such as increase,
     maximize, decrease, minimize, or maintain.
-  - *min* - the minimum acceptable target, if applicable.
-  - *max* - the maximum acceptable target, if applicable.
-  - *standard* - the stated target, if applicable.
-  - *narrative* - A text field that allows any number of characters to
+-   *min* - the minimum acceptable target, if applicable.
+-   *max* - the maximum acceptable target, if applicable.
+-   *standard* - the stated target, if applicable.
+-   *narrative* - A text field that allows any number of characters to
     be stored.
 
 This table also contains foreign keys that are linked to other database
@@ -173,11 +177,9 @@ tables, identified using the PRAGMA statement below:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(objectives);")
 ```
 
-    ## # A tibble: 2 x 8
-    ##      id   seq table   from      to        on_update on_delete match
-    ##   <int> <int> <chr>   <chr>     <chr>     <chr>     <chr>     <chr>
-    ## 1     0     0 species speciesID speciesID CASCADE   NO ACTION NONE 
-    ## 2     1     0 lists   listID    listID    CASCADE   NO ACTION NONE
+    ##   id seq   table      from        to on_update on_delete match
+    ## 1  0   0 species speciesID speciesID   CASCADE NO ACTION  NONE
+    ## 2  1   0   lists    listID    listID   CASCADE NO ACTION  NONE
 
 Resulting output shows that the field *speciesID* from the table
 **objectives** maps to the field *speciesID* in the table **species**.
@@ -208,13 +210,11 @@ objectives <- RSQLite::dbGetQuery(conn = conx,
 objectives[1:6]
 ```
 
-    ## # A tibble: 4 x 6
-    ##   objectiveID    listID       speciesID objective                                   indicator units      
-    ##   <chr>          <chr>        <chr>     <chr>                                       <chr>     <chr>      
-    ## 1 midEarth       Middle Earth <NA>      Conserve native biodiversity                <NA>      <NA>       
-    ## 2 btgn_occupancy <NA>         btgn      Maximize Black-tailed Gnatcatcher occupancy Psi       Probability
-    ## 3 ecdo_occupancy <NA>         ecdo      Minimize Eurasian Collared-dove occupancy   Psi       Probability
-    ## 4 verd_occupancy <NA>         verd      Maintain Verdin Occupancy                   Psi       Probability
+    ##      objectiveID       listID speciesID                                   objective indicator       units
+    ## 1       midEarth Middle Earth      <NA>                Conserve native biodiversity      <NA>        <NA>
+    ## 2 btgn_occupancy         <NA>      btgn Maximize Black-tailed Gnatcatcher occupancy       Psi Probability
+    ## 3 ecdo_occupancy         <NA>      ecdo   Minimize Eurasian Collared-dove occupancy       Psi Probability
+    ## 4 verd_occupancy         <NA>      verd                   Maintain Verdin Occupancy       Psi Probability
 
 Here, our sample data consists of four records, and we are displaying
 the first six columns only. The first objective’s ID is simply
@@ -226,8 +226,8 @@ rates; we have elected to set the primary keys by the species
 abbreviation, followed by the word “occupancy” for the primary keys. In
 each case, the *listID* is set to <NA>, the *speciesID* is linked to the
 primary key in the **species** table, the indicator to be measured is
-“Psi” (which is the Greek symbol \(\psi\), and is commonly used to
-denote “occupancy rate”), and “Probability” is the unit of measure.
+“Psi” (which is the Greek symbol *ψ*, and is commonly used to denote
+“occupancy rate”), and “Probability” is the unit of measure.
 
 Objectives are not required to be associated with a **speciesID** or
 **listID**, however. For example, in some U.S. National Parks,
@@ -243,10 +243,8 @@ species of the southwestern U.S. and northern Mexico.
 objectives[4, c(1, 7:10)]
 ```
 
-    ## # A tibble: 1 x 5
-    ##   objectiveID    direction   min   max standard
-    ##   <chr>          <chr>     <dbl> <dbl>    <dbl>
-    ## 1 verd_occupancy Maintain   0.35  0.45      0.4
+    ##      objectiveID direction  min  max standard
+    ## 4 verd_occupancy  Maintain 0.45 0.55      0.4
 
 Here, we see an objective with the *objectiveID* of “verd\_occupancy”.
 Note that *direction* is set to “Maintain.” Directions are typically
@@ -271,13 +269,13 @@ monitoring data with the package RPresence \[9,10\], and will store the
 results in a dedicated AMModels library. In Chapter 19 (Assessment), we
 will compare the results of the occupancy analysis against Objective 3.
 
-# The Objectives Table in Access
+The Objectives Table in Access
+==============================
 
 In the **AMMonitor** Access front end, Objectives are a primary tab,
 located at the top of the Navigation Form. Once selected, the tab
 reveals a form linked to the **objectives** table, where each objective
-is displayed
-singly.
+is displayed singly.
 
 <kbd>
 
@@ -295,7 +293,8 @@ Later in the book, we will eventually pit this objective against some
 analyses to gauge how well Middle Earth is doing with respect to this
 objective.
 
-# Chapter Summary
+Chapter Summary
+===============
 
 In this chapter, you learned about the **AMMonitor** database table that
 stores objectives. Setting objectives can be very difficult, but they
@@ -303,88 +302,45 @@ are usually the reason a monitoring program exists. This may be the
 hardest table to fill out in the entire SQLite database, but is perhaps
 the most important.
 
-# Chapter References
+Chapter References
+==================
 
-<div id="refs" class="references">
-
-<div id="ref-Conroy">
-
-1\. Conroy M, Peterson J. Decision making in natural resource
-management: A structured, adaptive approach \[Internet\].
-Wiley-Blackwell; 2013. Available:
+1. Conroy M, Peterson J. Decision making in natural resource management:
+A structured, adaptive approach \[Internet\]. Wiley-Blackwell; 2013.
+Available:
 <http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470671742.html>
 
-</div>
-
-<div id="ref-Keeney">
-
-2\. Keeney RL. Developing objectives and attributes. In: Edwards W,
-Miles RFJ, Winterfeldt D von, editors. Advances in decision analysis.
+2. Keeney RL. Developing objectives and attributes. In: Edwards W, Miles
+RFJ, Winterfeldt D von, editors. Advances in decision analysis.
 Cambridge University Press; pp. 104–128.
 doi:[10.1017/cbo9780511611308.008](https://doi.org/10.1017/cbo9780511611308.008)
 
-</div>
-
-<div id="ref-Gregory">
-
-3\. Gregory R. Structured decision making: A practical guide to
+3. Gregory R. Structured decision making: A practical guide to
 environmental management choices. New York: Wiley-Blackwell; 2012. p.
-312 p. 
+312 p.
 
-</div>
+4. Goodwin P, Wright G. Decision analysis for management judgment. John
+Wiley & Sons; 2014.
 
-<div id="ref-Goodwin">
+5. Walters C. Adaptive management of renewable resources. New York:
+Macmillan; 1986. p. 374 p.
 
-4\. Goodwin P, Wright G. Decision analysis for management judgment. John
-Wiley & Sons; 2014. 
-
-</div>
-
-<div id="ref-Walters1986">
-
-5\. Walters C. Adaptive management of renewable resources. New York:
-Macmillan; 1986. p. 374 p. 
-
-</div>
-
-<div id="ref-Fuller2014">
-
-6\. Fuller AK. Decision making in natural resource management: A
+6. Fuller AK. Decision making in natural resource management: A
 structured adaptive approach. Journal of Wildlife Management. 2014;78:
-175–176. 
+175–176.
 
-</div>
+7. Williams BK. Adaptive management of natural resources-framework and
+issues. Journal of Environmental Management. 2011;92: 1346–1353.
 
-<div id="ref-Williams2011">
-
-7\. Williams BK. Adaptive management of natural resources-framework and
-issues. Journal of Environmental Management. 2011;92: 1346–1353. 
-
-</div>
-
-<div id="ref-Runge2011">
-
-8\. Runge MC. An introduction to adaptive management for threatened and
+8. Runge MC. An introduction to adaptive management for threatened and
 endangered species. Journal of Fish and Wildlife Management. 2011;2:
-220–233. 
+220–233.
 
-</div>
-
-<div id="ref-RPresence">
-
-9\. Hines J. RPresence for presence: Software to estimate patch
-occupancy and related parameters (version 12.10) \[Internet\]. U.S.
-Geological Survey, Patuxent Wildlife Research Center; 2018. Available:
+9. Hines J. RPresence for presence: Software to estimate patch occupancy
+and related parameters (version 12.10) \[Internet\]. U.S. Geological
+Survey, Patuxent Wildlife Research Center; 2018. Available:
 <https://www.mbr-pwrc.usgs.gov/software/presence.html>
 
-</div>
-
-<div id="ref-Fiske2011">
-
-10\. Fiske IJ, Chandler RB. Unmarked: An r package for fitting
+10. Fiske IJ, Chandler RB. Unmarked: An r package for fitting
 hierarchical models of wildlife occurrence and abundance. Journal of
-Statistical Software. 2011;43: 1–23. 
-
-</div>
-
-</div>
+Statistical Software. 2011;43: 1–23.
