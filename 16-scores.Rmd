@@ -1,17 +1,19 @@
 ---
 title: "Chapter 16: The Scores Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "16-scores.Rmd", output_format = "md_document", output_file = "Chapter 16 - The Scores Table.md")
+# rmarkdown::render(input = "16-scores.Rmd", output_format = "md_document", output_file = "Chapter-16-The-Scores-Table.md")
 
 ```
 
@@ -31,6 +33,8 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
+
+# Chapter Introduction
 
 The premise of automated acoustic monitoring is that a research team can efficiently scan new audio recordings for target signals by creating templates, which are models of a target signal. When a template is run against a recording, all detected signals receive a score quantifying similarity between the signal and the template. 
 

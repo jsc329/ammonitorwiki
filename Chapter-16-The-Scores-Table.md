@@ -403,12 +403,12 @@ RSQLite::dbGetQuery(conn = conx,
     ## 5       5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                    NA                    NA blob[37.23 kB]
     ## 6       6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                    NA                    NA blob[37.23 kB]
     ##             timestamp
-    ## 1 2019-07-05 12:10:29
-    ## 2 2019-07-05 12:10:29
-    ## 3 2019-07-05 12:10:29
-    ## 4 2019-07-05 12:10:29
-    ## 5 2019-07-05 12:10:29
-    ## 6 2019-07-05 12:10:29
+    ## 1 2019-07-05 12:10:48
+    ## 2 2019-07-05 12:10:48
+    ## 3 2019-07-05 12:10:48
+    ## 4 2019-07-05 12:10:48
+    ## 5 2019-07-05 12:10:48
+    ## 6 2019-07-05 12:10:48
 
 Notice that the first detected event in the recording
 midEarth3\_2016-03-12\_07-00-00.wav was produced by the template
@@ -450,7 +450,7 @@ str(scores)
     ##  $ features             :List of 1
     ##   ..$ : raw  58 0a 00 00 ...
     ##   ..- attr(*, "class")= chr "blob"
-    ##  $ timestamp            : chr "2019-07-05 12:10:29"
+    ##  $ timestamp            : chr "2019-07-05 12:10:48"
 
 Here, we confirm the returned object is a data.frame. *Features* of each
 event are returned as a list of 1, and are of serialized “raw” data
