@@ -4,6 +4,8 @@ output:
   github_document:
     toc: true
     toc_depth: 3
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -14,11 +16,6 @@ csl: plos.csl
 
 ```
 
-```{r, echo=FALSE}
-htmltools::img(src = knitr::image_uri('ammonitor-footer.png'), 
-               alt = 'logo', 
-               style = 'position:absolute; top:0; right:0; padding:5px;')
-```
 
 
 
