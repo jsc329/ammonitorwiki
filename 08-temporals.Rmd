@@ -1,17 +1,19 @@
 ---
 title: "Chapter 8: The Temporals Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "08-temporals.Rmd", output_format = "md_document", output_file = "Chapter-08-temporals.md")
+# rmarkdown::render(input = "08-temporals.Rmd", output_format = "md_document", output_file = "Chapter-08-The-Temporals-Table.md")
 
 ```
 
@@ -30,6 +32,8 @@ db.path <- paste0(getwd(), '/database/', db.name)
 if (file.exists('db.path')) dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path) 
 file.remove(db.path) 
 ```
+
+# Chapter Introduction
 
 The **temporals** table tracks temporal information -- such as weather conditions and sunrise times -- at monitoring locations. Temporal information can be used as covariates in an analysis. For example, species distribution patterns may be limited by a range of temperatures, species behavioral patterns may be affected by moon phase, and species detectability may be a function of weather conditions. Additionally, temporal information can be leveraged to automatically set the recording or photo **schedule** (Chapter 9: Schedule) and to automatically update the **prioritization** table (Chapter 10). Thus, this chapter and the two that follow differ from previous chapters in that the **temporals**, **schedule**, and **prioritization** tables are all updated automatically. Instead of using SQLite syntax or an MS Access interface, you will use **AMMonitor** functions to directly populate these tables in R. 
 
