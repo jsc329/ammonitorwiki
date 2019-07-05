@@ -728,19 +728,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 13.4 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 12.6 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8.9 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.2 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.1 % of the time.
+    ## Finished model 3. Model leni_vocals is active 1.6 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.6 % of the time.
+    ## Finished model 4. Model verd_vocals is active 16.9 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -1078,19 +1078,19 @@ test_optim['prioritization']
 ```
 
     ## $prioritization
-    ##     locationID speciesID       date pMax     pCurrent weight init
-    ##  1: location@1      btgn 2019-07-06 0.95 1.000000e+00      0    0
-    ##  2: location@1      copo 2019-07-06 0.95 1.110223e-15      1    0
-    ##  3: location@1      leni 2019-07-06 0.95 1.000000e+00      0    0
-    ##  4: location@1      verd 2019-07-06 0.95 1.000000e+00      0    0
-    ##  5: location@2      btgn 2019-07-06 0.95 1.000000e+00      0    0
-    ##  6: location@2      copo 2019-07-06 0.95 1.110223e-15      1    0
-    ##  7: location@2      leni 2019-07-06 0.95 1.000000e+00      0    0
-    ##  8: location@2      verd 2019-07-06 0.95 1.000000e+00      0    0
-    ##  9: location@3      btgn 2019-07-06 0.95 1.000000e+00      0    0
-    ## 10: location@3      copo 2019-07-06 0.95 1.110223e-15      1    0
-    ## 11: location@3      leni 2019-07-06 0.95 1.000000e+00      0    0
-    ## 12: location@3      verd 2019-07-06 0.95 1.000000e+00      0    0
+    ##     locationID speciesID       date pMax     pCurrent      weight init
+    ##  1: location@1      btgn 2019-07-06 0.95 7.813383e-01 0.042505216    0
+    ##  2: location@1      copo 2019-07-06 0.95 1.110223e-15 0.359120813    0
+    ##  3: location@1      leni 2019-07-06 0.95 1.110223e-15 0.359120813    0
+    ##  4: location@1      verd 2019-07-06 0.95 6.377253e-04 0.239253159    0
+    ##  5: location@2      btgn 2019-07-06 0.95 9.194133e-01 0.007986877    0
+    ##  6: location@2      copo 2019-07-06 0.95 1.110223e-15 0.372099979    0
+    ##  7: location@2      leni 2019-07-06 0.95 1.110223e-15 0.372099979    0
+    ##  8: location@2      verd 2019-07-06 0.95 9.707627e-04 0.247813164    0
+    ##  9: location@3      btgn 2019-07-06 0.95 7.800780e-01 0.042809179    0
+    ## 10: location@3      copo 2019-07-06 0.95 1.110223e-15 0.359006469    0
+    ## 11: location@3      leni 2019-07-06 0.95 1.110223e-15 0.359006469    0
+    ## 12: location@3      verd 2019-07-06 0.95 6.341415e-04 0.239177884    0
 
 The prioritization table contains 12 rows; one row for each of the four
 target species at each of three active monitoring locations. Though the
@@ -1115,21 +1115,21 @@ test_optim$schedule
 ```
 
     ##       Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
-    ##  1: Recording 2019-07-06   06:00:00 2019-07-06 06:01:00         False Optim Calendar location@1   False
-    ##  2: Recording 2019-07-06   06:12:00 2019-07-06 06:13:00         False Optim Calendar location@1   False
-    ##  3: Recording 2019-07-06   06:24:00 2019-07-06 06:25:00         False Optim Calendar location@1   False
-    ##  4: Recording 2019-07-06   06:36:00 2019-07-06 06:37:00         False Optim Calendar location@1   False
-    ##  5: Recording 2019-07-06   06:48:00 2019-07-06 06:49:00         False Optim Calendar location@1   False
-    ##  6: Recording 2019-07-06   06:00:00 2019-07-06 06:01:00         False Optim Calendar location@2   False
-    ##  7: Recording 2019-07-06   06:12:00 2019-07-06 06:13:00         False Optim Calendar location@2   False
-    ##  8: Recording 2019-07-06   06:24:00 2019-07-06 06:25:00         False Optim Calendar location@2   False
-    ##  9: Recording 2019-07-06   06:36:00 2019-07-06 06:37:00         False Optim Calendar location@2   False
-    ## 10: Recording 2019-07-06   06:48:00 2019-07-06 06:49:00         False Optim Calendar location@2   False
-    ## 11: Recording 2019-07-06   06:00:00 2019-07-06 06:01:00         False Optim Calendar location@3   False
-    ## 12: Recording 2019-07-06   06:12:00 2019-07-06 06:13:00         False Optim Calendar location@3   False
-    ## 13: Recording 2019-07-06   06:24:00 2019-07-06 06:25:00         False Optim Calendar location@3   False
-    ## 14: Recording 2019-07-06   06:36:00 2019-07-06 06:37:00         False Optim Calendar location@3   False
-    ## 15: Recording 2019-07-06   06:48:00 2019-07-06 06:49:00         False Optim Calendar location@3   False
+    ##  1: Recording 2019-07-06   07:00:00 2019-07-06 07:01:00         False Optim Calendar location@1   False
+    ##  2: Recording 2019-07-06   07:12:00 2019-07-06 07:13:00         False Optim Calendar location@1   False
+    ##  3: Recording 2019-07-06   07:24:00 2019-07-06 07:25:00         False Optim Calendar location@1   False
+    ##  4: Recording 2019-07-06   07:36:00 2019-07-06 07:37:00         False Optim Calendar location@1   False
+    ##  5: Recording 2019-07-06   07:48:00 2019-07-06 07:49:00         False Optim Calendar location@1   False
+    ##  6: Recording 2019-07-06   07:00:00 2019-07-06 07:01:00         False Optim Calendar location@2   False
+    ##  7: Recording 2019-07-06   07:12:00 2019-07-06 07:13:00         False Optim Calendar location@2   False
+    ##  8: Recording 2019-07-06   07:24:00 2019-07-06 07:25:00         False Optim Calendar location@2   False
+    ##  9: Recording 2019-07-06   07:36:00 2019-07-06 07:37:00         False Optim Calendar location@2   False
+    ## 10: Recording 2019-07-06   07:48:00 2019-07-06 07:49:00         False Optim Calendar location@2   False
+    ## 11: Recording 2019-07-06   07:00:00 2019-07-06 07:01:00         False Optim Calendar location@3   False
+    ## 12: Recording 2019-07-06   07:12:00 2019-07-06 07:13:00         False Optim Calendar location@3   False
+    ## 13: Recording 2019-07-06   07:24:00 2019-07-06 07:25:00         False Optim Calendar location@3   False
+    ## 14: Recording 2019-07-06   07:36:00 2019-07-06 07:37:00         False Optim Calendar location@3   False
+    ## 15: Recording 2019-07-06   07:48:00 2019-07-06 07:49:00         False Optim Calendar location@3   False
 
 This is the schedule that can be pushed to Google Calendar, if desired.
 Notice that the schedule has a total of 15 rows; five for each of three
@@ -1231,15 +1231,15 @@ qryPrioritization(conn = conx)
     ##    locationID speciesID weight  pCurrent pMax       date init
     ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 3  location@1      leni      0 0.9630177 0.95 2016-03-31    0
+    ## 3  location@1      leni      0 0.9541456 0.95 2016-03-31    0
     ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
     ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 7  location@2      leni      0 0.9622358 0.95 2016-03-31    0
+    ## 7  location@2      leni      0 0.9539204 0.95 2016-03-31    0
     ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
     ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 11 location@3      leni      0 0.9630365 0.95 2016-03-31    0
+    ## 11 location@3      leni      0 0.9541541 0.95 2016-03-31    0
     ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0
 
 By default, `qryPrioritization()` will return records associated with

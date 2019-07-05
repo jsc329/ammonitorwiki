@@ -1,17 +1,19 @@
 ---
 title: "Chapter 10: The Priorities and Prioritization Tables"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "10-prioritization.Rmd", output_format = "md_document", output_file = "Chapter 10 - The Priorities and Prioritization Tables.md")
+# rmarkdown::render(input = "10-prioritization.Rmd", output_format = "md_document", output_file = "Chapter-10-The-Priorities-and-Prioritization-Tables.md")
 
 ```
 
@@ -39,6 +41,7 @@ if (length(ammlmodels) > 0 ) {activity <- rmModel(amml = activity, ammlmodels)}
 saveRDS(activity, file = 'ammls/activity.RDS')
 ```
 
+# Chapter Introduction
 
 In Chapter 9, we introduced the `scheduleSun()` and `scheduleFixed()` functions to populate a Google Calendar for smartphone-based monitoring. In this chapter, we introduce new functions that optimize the recording schedules based on when species are most likely to be captured by smartphone monitoring (i.e. adaptive sampling). This process involves the **temporals**, **priorities**, **prioritization** and **schedule** tables of an **AMMonitor** database.
 
