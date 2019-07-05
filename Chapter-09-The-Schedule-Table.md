@@ -28,9 +28,9 @@ specifying when audio recordings or photos should be collected. The
 **AMMonitor** functions create future calendar entries that can be
 pushed to the Google cloud on a daily basis via a Google API key. When
 the phone connects to a cellular or Wi-Fi network, its calendar is
-synced with Google Calendar. Calendar entries are then dispatched to the
-smartphone’s camera or audio apps, providing instructions on when to
-collect data (see xxx in prep for full details).
+synced with Google Calendar. Calendar entries then act as triggers that
+engage the smartphone’s camera or audio apps, providing instructions on
+when to collect data (see Donovan et al. in prep for full details).
 
 Historical calendar entries stored in the **schedule** table are useful
 for comparing scheduled events with the recordings or photos delivered
