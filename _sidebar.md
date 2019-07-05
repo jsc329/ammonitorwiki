@@ -13,7 +13,7 @@
 * [Chapter 11: The Recordings Table](Chapter-11-The-Recordings-Table)
 * [Chapter 12: The Photos Table](Chapter-12-The-Photos-Table)
 * [Chapter 13: The Soundscape Table](Chapter-13-The-Soundscape-Table)
-* [Chapter 14: The Annotations Table](Chapter 14 - The Annotations Table)
+* [Chapter 14: The Annotations Table](Chapter-14-The Annotations-Table)
 * [Chapter 15: The Templates Table](Chapter 15 - The Templates Table)
 * [Chapter 16: The Scores Table](Chapter 16 - The Scores Table)
 * [Chapter 17: The Classifications Table](Chapter 17 - The Classifications Table)

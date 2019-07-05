@@ -581,13 +581,7 @@ simply grab photos from the web and add them to our working directory:
 ``` r
 # Load magick
 library(magick)
-```
 
-    ## Linking to ImageMagick 6.9.9.14
-    ## Enabled features: cairo, freetype, fftw, ghostscript, lcms, pango, rsvg, webp
-    ## Disabled features: fontconfig, x11
-
-``` r
 # Grab some stock free images from web
 coyote <- magick::image_read("https://images.stockfreeimages.com/11102/sfixl/111027410.jpg")
 

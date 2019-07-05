@@ -1,17 +1,19 @@
 ---
 title: "Chapter 14: The Annotations Table"
 output:
-  github_document:
+  md_document:
+    variant: markdown_github
     toc: true
     toc_depth: 3
-    df_print: tibble
+    includes:
+      in_header: header.html
 bibliography: refs.bib
 csl: plos.csl
 ---
 
 ```{r, echo = F}
 # to create md file for the code.usgs.gov wiki, in the console type:
-# rmarkdown::render(input = "14-annotations.Rmd", output_format = "md_document", output_file = "Chapter 14 - The Annotations Table.md")
+# rmarkdown::render(input = "14-annotations.Rmd", output_format = "md_document", output_file = "Chapter-14-The Annotations-Table.md")
 ```
 
 ```{r echo = F}
@@ -31,6 +33,8 @@ if (file.exists('db.path'))
   {dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)} 
 unlink(db.path) 
 ```
+
+# Chapter Introduction
 
 In this chapter, we discuss the **annotations** table of an **AMMonitor** database. This table stores information about human-created annotations of photos or recordings. For example, a monitoring team member may listen to an audio recording (stored in the **AMMonitor** recordings directory) while viewing a spectrogram of the recording, and identify signals of interest belonging to a specific species. Alternatively, a monitoring team member may view photos (stored in the **AMMonitor** photos or motion directories), and identify specific targets that may have been captured.
 
