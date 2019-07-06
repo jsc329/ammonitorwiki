@@ -1,24 +1,7 @@
-<div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
+Chapter 9: The Schedule Table
+================
 
--   [Chapter Introduction](#chapter-introduction)
--   [Introduction to the Schedule
-    Table](#introduction-to-the-schedule-table)
--   [Setting a sun-based sampling schedule with
-    scheduleSun()](#setting-a-sun-based-sampling-schedule-with-schedulesun)
--   [Setting a fixed sampling schedule with
-    scheduleFixed()](#setting-a-fixed-sampling-schedule-with-schedulefixed)
--   [Working with the Google Calendar
-    API](#working-with-the-google-calendar-api)
-    -   [Step 1: Setting up a Google API Service
-        Account](#step-1-setting-up-a-google-api-service-account)
-    -   [Step 2: Sharing the Service Token with Monitoring
-        Equipment](#step-2-sharing-the-service-token-with-monitoring-equipment)
--   [The Schedule Table in Access](#the-schedule-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
-
-Chapter Introduction
-====================
+# Chapter Introduction
 
 The **schedule** table may be used by smartphone monitoring programs.
 This table links each piece of equipment (e.g., a smartphone with an
@@ -49,11 +32,12 @@ based on target species monitoring priorities \[1\].
 
 We begin by using the `dbCreateSample()` function to create a database
 called “Chap9.sqlite”, which will be stored in a folder (directory)
-called “database” within the **AMMonitor** main directory, which should
-be your working directory in R. Recall that `dbCreateSample()` generates
-all tables of an **AMMonitor** database, and then pre-populates sample
-data into tables specified by the user. For demonstration purposes, we
-will only pre-populate a few necessary tables below:
+called **database** within the **AMMonitor** main directory, which
+should be your working directory in R. Recall that `dbCreateSample()`
+generates all tables of an **AMMonitor** database, and then
+pre-populates sample data into tables specified by the user. For
+demonstration purposes, we will only pre-populate a few necessary tables
+below:
 
 ``` r
 # Create a sample database for this chapter
@@ -91,9 +75,7 @@ constraints.
 
 ``` r
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 
     ## <SQLiteResult>
@@ -101,8 +83,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-Introduction to the Schedule Table
-==================================
+# Introduction to the Schedule Table
 
 The **schedule** table tracks monitoring events assigned to smartphone
 monitoring equipment. Scheduled events are synced to Google Calendar,
@@ -110,7 +91,8 @@ and include acoustic recordings, timed photographs, or motion-triggered
 photographs that can be used for natural resource monitoring.
 
 If you use Google Calendar, the fields in the **schedule** table will
-look familiar:
+look
+familiar:
 
 <kbd>
 
@@ -153,13 +135,13 @@ Google Calendar API, and will be generated automatically based on user
 input fed to the **AMMonitor** functions covered in this chapter. The
 *subject* field can be set to ‘recording’, ‘photo’, or ‘motion’, and is
 the vehicle that identifies what type of data should be collected by the
-smartphone: recording will capture an audio recording, photo will
-capture a timed photograph, and motion will enable motion-triggered
+smartphone: ‘recording’ will capture an audio recording, ‘photo’ will
+capture a timed photograph, and ‘motion’ will enable motion-triggered
 photos, similar to a camera trap. (The *subject* field can also be used
 to schedule mobile data mode, in which the phones connect to mobile data
-and sync with cloud-based storage; see xxx in prep for details). Lastly,
-the *tz* column records the timezone associated with a particular
-scheduled event, based on the location of deployed equipment.
+and sync with cloud-based storage; see Donovan et al. in prep for
+details). Lastly, the *tz* column records the timezone associated with a
+particular scheduled event, based on the location of deployed equipment.
 
 We use `dbGetQuery()` to retrieve the records present in our sample
 **schedule** table:
@@ -167,9 +149,9 @@ We use `dbGetQuery()` to retrieve the records present in our sample
 ``` r
 # Retrieve the first 5 sample records stored in the schedule table
 schedule <- RSQLite::dbGetQuery(conn = conx, 
-                       statement = "SELECT * 
-                                    FROM schedule
-                                    LIMIT 5;")
+                                statement = "SELECT * 
+                                             FROM schedule
+                                             LIMIT 5;")
 
 # Display a few selected columns
 schedule[, c(1:7, 10)]
@@ -182,7 +164,7 @@ schedule[, c(1:7, 10)]
     ## 4     equip@4 location@2 recording 2016-03-26  07:00:00 2016-03-26 07:01:00   False
     ## 5     equip@5 location@3 recording 2016-03-21  07:30:00 2016-03-21 07:31:00   False
 
-Observe that the *equipmentID* (which is linked to a specific Google
+Observe that an *equipmentID* (which is linked to a specific Google
 account via the **accounts** table) is assigned to each record. The
 *locationID* is automatically populated based on the current deployment
 for that equipment, based on the **deployment** table.
@@ -205,8 +187,7 @@ Note that if the primary key entries in the **equipment** or
 **locations** tables are updated, changes will cascade to the
 **schedule** table as well.
 
-Setting a sun-based sampling schedule with scheduleSun()
-========================================================
+# Setting a sun-based sampling schedule with scheduleSun()
 
 Sun-based sampling allows us to schedule monitoring events that are
 automatically staggered around sunrise and/or sunset at actively
@@ -236,14 +217,14 @@ allows us to input a string of locationIDs for which we want to generate
 sun-based calendars. In this argument, we want to make sure that the
 string of locationIDs we input actually matches locationIDs present in
 the **locations** table, and that these locations are currently being
-actively monitoring with a piece of equipment in the **deployment**
+actively monitored with a piece of equipment in the **deployment**
 table. The third argument is ‘calendar.key’, where we can specify a
 Google API service token (discussed later). Below, we set ‘calendar.key’
 to NULL to start out by testing the function. In the ‘subject’ argument,
 we indicate that this scheduled event will be a “recording”. The
-‘start.date’ and ‘end.date’ arguments allow us to set the limits of the
-calendar (inclusive) and must be characters in YYYY-mm-dd format. The
-‘duration’ argument is a scalar integer for specifying the recording
+‘start.date’ and ‘end.date’ arguments allow us to set the limits of
+the calendar (inclusive) and must be characters in YYYY-mm-dd format.
+The ‘duration’ argument is a scalar integer for specifying the recording
 length in minutes; below, we set a ‘duration’ of 3 to indicate that each
 recording should be three minutes long. In ‘n.rise’, we specify the
 number of recording events that should be staggered around sunrise;
@@ -260,11 +241,10 @@ without pushing any events to Google Calendar:
 
 ``` r
 # ------------------------------------------------------------
-# Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
+# If argument 'db.insert' and 'google.push' = FALSE, 
 # schedules are created and returned to the user as a data.table 
 # for inspection. The schedule is not added to the database, and 
-# is not pushed to Google Calendar. 
-# A calendar.key to connect to Google is not needed.
+# is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
 scheduleSun(db.path = db.path,
@@ -319,10 +299,10 @@ file.path to the ‘calendar.key’, which we will discuss below.
 
 ``` r
 # ------------------------------------------------------------
-# Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
-# schedules are created and returned to the user as a
-# data.table, added to the database, and are pushed to
-# Google Calendar. A calendar.key is required.
+# If argument 'db.insert' and 'google.push' = TRUE,
+# schedules are created and returned to the user as a 
+# data.table, added to the database, and pushed to Google Calendar. 
+# A calendar.key is required.
 # ------------------------------------------------------------  
 
 scheduleSun(db.path = db.path,
@@ -342,7 +322,7 @@ scheduleSun(db.path = db.path,
 `scheduleSun()` returns status messages (not shown) informing us as to
 whether events were successfully uploaded to the Google Calendar and
 added to the database for each monitoring location. It also returns a
-data.table of the information that was added to the database.
+data.table of the scheduled events added to the database.
 
 If we change our minds about the events we have added to the Google
 Calendar, we can delete them using the function `scheduleDelete()`. In
@@ -360,14 +340,16 @@ scheduleDelete(db.path = db.path,
 ```
 
 `scheduleDelete()` will yield status messages to inform us that events
-were successfully deleted.
+were successfully deleted. (View the `scheduleDelete()` helpfile for
+additional options to delete events directly based on the Google account
+rather than the locationID.)
 
 One last option with the `scheduleSun()` function is the capacity to
 create a sun-based calendar without any database at all. In this case,
 users can set the ‘db.path’ argument to NULL. We pass our desired inputs
 to the ‘start.date’, ‘end.date’, ‘duration’, ‘n.rise’, ‘n.set’, and
-‘spacing’ arguments just as we did in the previous examples. However, if
-we aren’t using a database, we have to provide some location names of
+‘spacing’ arguments just as we did in the previous examples. However,
+if we aren’t using a database, we have to provide some location names of
 our choice in the ‘locationID’ argument (this input is required by
 Google Calendar), as well as latitude and longitude vectors of the same
 length as the ‘locationID’ vector. We also need to identify the
@@ -378,7 +360,7 @@ with a database.
 
 ``` r
 # ------------------------------------------------------------
-# Example 3: Users can create a sun-based calendar independent
+# Users can create a sun-based calendar independent
 # of the database by ignoring the db.path argument and instead
 # using the optional lat, long, and timezone arguments.
 # ------------------------------------------------------------
@@ -421,8 +403,7 @@ column names are formatted for direct use with the Google Calendar API
 write it to a CSV, and manually load it into a Google Calendar ourselves
 (or apply it to other uses).
 
-Setting a fixed sampling schedule with scheduleFixed()
-======================================================
+# Setting a fixed sampling schedule with scheduleFixed()
 
 Fixed sampling allows us to schedule audio recording events at the
 precise times we want to sample. To set a fixed schedule, we use the
@@ -430,37 +411,36 @@ function `scheduleFixed()`.
 
 The arguments to `scheduleFixed()` are similar to `scheduleSun()`,
 except that the sun-based arguments disappear, and we instead have a
-‘sampling.times’ argument that we use to feed fixed sampling times into
-the function. As usual, the ‘db.path’ argument will take our **db.path**
-object, which has stored the full file path to our database. Next, the
-‘locationID’ argument allows us to input a string of locationIDs for
-which we want to generate fixed calendars. In this argument, since we
-are using the database, we need to make sure that the string of
-locationIDs we input actually matches locationIDs present in the
-**locations** table, and that these locations are currently being
-actively monitoring with a piece of equipment in the **deployment**
+‘sampling.times’ argument that we use to feed fixed sampling times
+into the function. As usual, the ‘db.path’ argument will take our
+**db.path** object, which has stored the full file path to our database.
+Next, the ‘locationID’ argument allows us to input a string of
+locationIDs for which we want to generate fixed calendars. In this
+argument, since we are using the database, we need to make sure that the
+string of locationIDs we input actually matches locationIDs present in
+the **locations** table, and that these locations are currently being
+actively monitored with a piece of equipment in the **deployment**
 table. The third argument is ‘calendar.key’, where we can specify a
 Google API service token we generated (see below). For now, we set this
 argument to NULL since we begin with a test of the function. In the
-‘subject’ argument, we indicate that the event should be a “recording”.
-The ‘start.date’ and ‘end.date’ arguments allow us to set the limits of
-the calendar (inclusive) and must be characters in YYYY-mm-dd format.
-For the ‘sampling.times’ argument, our character vector of sampling
-times must be input in hh:mm:ss format using a 24-hour calendar (e.g.,
-we use 20:00:00 to indicate a sampling time at 8pm, rather than
-08:00:00, which would indicate a sampling time at 8am). The ‘duration’
-function again specifies how long the recording should be in minutes.
-Lastly, we set ‘db.insert’ and ‘google.push’ to FALSE to test out the
-function without adding the resulting schedule to the database, or
-pushing events to Google Calendar:
+‘subject’ argument, we indicate that the event should be a
+“recording”. The ‘start.date’ and ‘end.date’ arguments allow us to
+set the limits of the calendar (inclusive) and must be characters in
+YYYY-mm-dd format. For the ‘sampling.times’ argument, our character
+vector of sampling times must be input in hh:mm:ss format using a
+24-hour calendar (e.g., we use 20:00:00 to indicate a sampling time at
+8pm, rather than 08:00:00, which would indicate a sampling time at 8am).
+The ‘duration’ function again specifies how long the recording should be
+in minutes. Lastly, we set ‘db.insert’ and ‘google.push’ to FALSE to
+test out the function without adding the resulting schedule to the
+database, or pushing events to Google Calendar:
 
 ``` r
 # ------------------------------------------------------------
-# Example 1: If argument 'db.insert' and 'google.push' == FALSE, 
+# If argument 'db.insert' and 'google.push' = FALSE, 
 # schedules are created and returned to the user as a data.table 
 # for inspection. The schedule is not added to the database, and 
-# is not pushed to Google Calendar. 
-# A calendar.key to connect to Google is not needed.
+# is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
 scheduleFixed(db.path = db.path,
@@ -495,15 +475,15 @@ schedules, add them to the database, and push them to Google Calendar.
 
 ``` r
 # ------------------------------------------------------------
-# Example 2: If argument 'db.insert' = TRUE and google.push = 'TRUE',
-# schedules are created and returned to the user as a
-# data.table, added to the database, and pushed to
-# Google Calendar. A calendar.key is required.
+# If argument 'db.insert' and 'google.push' = TRUE,
+# schedules are created and returned to the user as a 
+# data.table, added to the database, and pushed to Google Calendar. 
+# A calendar.key is required.
 # ------------------------------------------------------------           
 
 scheduleFixed(db.path = db.path,
               locationID = c('location@1', 'location@2'),
-              calendar.key = './settings/calendar-10b0fdaac306.json',
+              calendar.key = 'settings/calendar-10b0fdaac306.json',
               subject = 'recording', 
               start.date = '2018-06-01',
               end.date = '2018-06-02',
@@ -528,7 +508,7 @@ addition to the db.path object and the service token calendar.key,
 # Delete events from the Google Calendar itself:
 scheduleDelete(db.path = db.path,
                locationID = c('location@1', 'location@2'),
-               calendar.key = './settings/calendar-10b0fdaac306.json',
+               calendar.key = 'settings/calendar-10b0fdaac306.json',
                start.date = '2018-06-01',
                end.date = '2018-06-02') 
 ```
@@ -542,16 +522,17 @@ can ignore the ‘db.path’ argument. We pass our desired inputs to the
 ‘start.date’, ‘end.date’, ‘sampling.times’, and ‘duration’ arguments
 just as we did in the previous examples. However, since we aren’t using
 a database, we have to provide some location names of our choice in the
-‘locationID’ argument (required by Google Calendar), as well as latitude
-and longitude vectors of the same length as the ‘locationID’ vector. We
-also need to identify the ‘timezone’ as an [Olson names-formatted time
+‘locationID’ argument (required by Google Calendar), as well as
+latitude and longitude vectors of the same length as the ‘locationID’
+vector. We also need to identify the ‘timezone’ as an [Olson
+names-formatted time
 zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
 We set ‘db.insert’ and ‘google.push’ to FALSE since we aren’t working
 with a database.
 
 ``` r
 # ------------------------------------------------------------
-# Example 3: Users can create a sun-based calendar independent 
+# Users can create a fixed calendar independent 
 # of the database by ignoring the db.path argument and instead 
 # using the optional lat, long, and timezone arguments. 
 # ------------------------------------------------------------   
@@ -586,16 +567,15 @@ column names are formatted for direct use with the Google Calendar API
 write it to a CSV, and manually load it into a Google Calendar ourselves
 (or apply it to other uses).
 
-Working with the Google Calendar API
-====================================
+# Working with the Google Calendar API
 
-As mentioned in Chapter 7: Equipment, you should have one primary Google
-account which is not connected to a piece of monitoring equipment,
-through which you will manage the Google Calendar API described below.
-The primary Google account will also be used to manage the Dropbox API
-covered in Chapter 11: Recordings. Meanwhile, each piece of
-smartphone-based monitoring equipment will have its own Google account
-independent of the primary account.
+As mentioned in Chapter 7, you should have one primary Google account
+which is not connected to a piece of monitoring equipment, through which
+you will manage the Google Calendar API described below. The primary
+Google account will also be used to manage the Dropbox API covered in
+Chapter 11: Recordings. Meanwhile, each piece of smartphone-based
+monitoring equipment will have its own Google account independent of the
+primary account.
 
 To illustrate, we begin by viewing the first few records of the
 **accounts** table:
@@ -603,8 +583,8 @@ To illustrate, we begin by viewing the first few records of the
 ``` r
 # Retrieve sample data stored in the accounts table
 accounts <- RSQLite::dbGetQuery(conn = conx,
-                       statement = "SELECT * 
-                                    FROM accounts;")
+                                statement = "SELECT * 
+                                             FROM accounts;")
 
 # Display the first 10 records and a few selected columns
 accounts[1:10, c(1:4,8)]
@@ -639,15 +619,15 @@ link will take you to any Google account you are currently logged into,
 **so make sure you are logged into the primary Google account connected
 to a smartphone used in your monitoring program.**
 
-Step 1: Setting up a Google API Service Account
------------------------------------------------
+## Step 1: Setting up a Google API Service Account
 
 1.  Once you have logged into your principal smartphone monitoring
     account and opened
     <https://console.developers.google.com/apis/api/calendar/overview>,
     you should accept any welcome pop-ups and Terms of Service
     notifications. Then, you will see a Google API Developer’s screen
-    like the one below. Click “Enable”.
+    like the one below. Click
+“Enable”.
 
 <kbd>
 
@@ -658,7 +638,8 @@ Step 1: Setting up a Google API Service Account
 > *Figure 9.2. Log into your main Google account, and then enable the
 > calendar API.*
 
-1.  On the left-hand tab, select “Credentials”, and then “Create”.
+2.  On the left-hand tab, select “Credentials”, and then
+“Create”.
 
 <kbd>
 
@@ -668,8 +649,9 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.3. Create credentials.*
 
-1.  You will arrive at a new project landing page that looks like the
-    one below. Choose a project name, then click “Create”.
+3.  You will arrive at a new project landing page that looks like the
+    one below. Choose a project name, then click
+“Create”.
 
 <kbd>
 
@@ -679,9 +661,10 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.4. Give your project name something meaningful.*
 
-1.  Click the blue “Create credentials” button, which will bring up a
+4.  Click the blue “Create credentials” button, which will bring up a
     drop-down menu of options as shown below. Select the “Service
-    Account Key” option.
+    Account Key”
+option.
 
 <kbd>
 
@@ -691,7 +674,7 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.5. Select the “Service account key” option.*
 
-1.  Finally, you will arrive at the page that allows you to create a
+5.  Finally, you will arrive at the page that allows you to create a
     service account key. Under “Service account”, select the “New
     service account” option. Create a name of your choosing in the
     “Service account name” field (this will also auto-populate the
@@ -700,10 +683,11 @@ Step 1: Setting up a Google API Service Account
     ‘AMMonitor@complete-sprite-213216.iam.gserviceaccount.com’. (COPY
     THIS SERVICE ACCOUNT NAME onto a Sticky Note or notebook for
     safekeeping – you will need it later on in Step 2.) In the “Role”
-    dropdown menu, choose Project &gt; Owner. Lastly, for “Key type”,
-    make sure that the JSON option is selected. Your screen should look
+    dropdown menu, choose Project \> Owner. Lastly, for “Key type”, make
+    sure that the JSON option is selected. Your screen should look
     something like the one below (though be sure to choose a Service
-    account name meaningful to you). When finished, click “Create”.
+    account name meaningful to you). When finished, click
+“Create”.
 
 <kbd>
 
@@ -713,14 +697,15 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.6. Finalize your service account.*
 
-1.  A new dialogue box will prompt an automatic download of the JSON
+6.  A new dialogue box will prompt an automatic download of the JSON
     key. On a PC running Windows 10, you will experience a download of
     the JSON file and a pop up prompting you to store the file in a
     folder of your choosing. You should navigate to the **settings**
     folder in your monitoring project directory, and store the file
     there. This process may vary on different operating systems.
-    Incidentally, the **settings** folder also holds our dark-sky key
-    from Chapter 8: Temporals.
+    Incidentally, the **settings** folder also holds our Dark Sky key
+    from Chapter 8:
+Temporals.
 
 <kbd>
 
@@ -731,8 +716,9 @@ Step 1: Setting up a Google API Service Account
 > *Figure 9.7. Store the json file somewhere logical. We store ours in
 > the “settings” directory with other API settings.*
 
-1.  Finally, you will recieve a message notifying you that the private
-    key has been saved to your computer.
+7.  Finally, you will recieve a message notifying you that the private
+    key has been saved to your
+computer.
 
 <kbd>
 
@@ -740,7 +726,7 @@ Step 1: Setting up a Google API Service Account
 
 </kbd>
 
-> *Figure 9.8. You’re done!*
+> *Figure 9.8. You’re done\!*
 
 Incidentally, [JSON](https://en.wikipedia.org/wiki/JSON) is a data
 format commonly exchanged by internet servers such as Google. You can
@@ -748,8 +734,7 @@ use a text editor to view the file, where you will see several sets of
 key-value entries that allow **AMMonitor** functions to connect to the
 Google accounts of each smartphone.
 
-Step 2: Sharing the Service Token with Monitoring Equipment
------------------------------------------------------------
+## Step 2: Sharing the Service Token with Monitoring Equipment
 
 The service account key generated in Step 1 should be associated with
 your primary Google management account (in our example, the primary
@@ -770,7 +755,8 @@ log into that account and navigate to the following web address:
     pane, select the main calendar account for this device. In the
     demonstration image below, our main account’s name is ‘midEarth4’.
     Select the 3 vertical dots that say “Options for \[Name\] Account”,
-    and then select “Settings and sharing”.
+    and then select “Settings and
+sharing”.
 
 <kbd>
 
@@ -782,12 +768,13 @@ log into that account and navigate to the following web address:
 > device, you will need to share each unique account with the main
 > account to allow R to communicate with each piece of equipment.*
 
-1.  In the left-hand panel, select “Share with specific people”. Then,
+2.  In the left-hand panel, select “Share with specific people”. Then,
     click “Add people”, and paste in the name of the Service Account ID
     you generated in Step 1.5. Below, our demonstration service account
     is named ‘AMMonitor@complete-sprite-213216.iam.gserviceaccount.com’.
     Next, under “Permissions”, select “Make changes to events”. Finally,
-    click “SEND” to save these settings.
+    click “SEND” to save these
+settings.
 
 <kbd>
 
@@ -797,13 +784,14 @@ log into that account and navigate to the following web address:
 
 > *Figure 9.10. Share the account with specific ‘people’.*
 
-1.  The settings for your monitoring smartphone’s calendar should now
+3.  The settings for your monitoring smartphone’s calendar should now
     look something like the image below. The settings page should
     contain the device’s Google account name (in this example,
     “midEarth4@gmail.com (Owner)”, followed by the Service Account ID
     address generated in step 1.5. This action is what allows us to
     interact with the monitoring device’s calendar directly through R
-    functions that use the Google Calendar API.
+    functions that use the Google Calendar
+API.
 
 <kbd>
 
@@ -840,8 +828,7 @@ When finished with the day’s work, we disconnect from the database.
 RSQLite::dbDisconnect(conx)
 ```
 
-The Schedule Table in Access
-============================
+# The Schedule Table in Access
 
 The schedule form can be accessed in a few different ways. Under the
 Locations primary tab, the **schedule** table is located as a secondary
@@ -860,8 +847,7 @@ tab.
 The data are displayed in red to remind users that schedules are
 generated in R, and should not edited directly.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter covered the **schedule** table, with which users interact
 via the `scheduleFixed()` or `scheduleSun()` functions, which can be
@@ -874,9 +860,16 @@ function, `scheduleOptim()`, which can be used to set schedules that
 have been optimized according to the weather forecast and target species
 activity models.
 
-Chapter References
-==================
+# Chapter References
 
-1. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+<div id="refs" class="references">
+
+<div id="ref-BalanticTemporal">
+
+1\. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
-Evolution.
+Evolution. 
+
+</div>
+
+</div>
