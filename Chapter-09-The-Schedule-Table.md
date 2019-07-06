@@ -30,7 +30,7 @@ pushed to the Google cloud on a daily basis via a Google API key. When
 the phone connects to a cellular or Wi-Fi network, its calendar is
 synced with Google Calendar. Calendar entries then act as triggers that
 engage the smartphone’s camera or audio apps, providing instructions on
-when to collect data (see Donovan et al. in prep for full details).
+when to collect data (see Donovan et al. in prep for details).
 
 Historical calendar entries stored in the **schedule** table are useful
 for comparing scheduled events with the recordings or photos delivered
