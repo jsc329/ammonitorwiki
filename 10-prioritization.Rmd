@@ -1,6 +1,7 @@
 ---
 title: "Chapter 10: The Priorities and Prioritization Tables"
 output:
+  html_document:
   md_document:
     variant: gfm
     toc: true
@@ -457,8 +458,8 @@ Secondly, the *weight* values should change as a function of *pCurrent*. Species
 
 Next, we look at the schedule table:
 ```{r, eval = TRUE}
-# Look at schedule table output, printed as a tibble
-test_optim$schedule
+# Look at schedule table output
+test_optim['schedule']
 ```
 
 This is the schedule that can be pushed to Google Calendar, if desired. Notice that the schedule has a total of 15 rows; five for each of three active monitoring locations because 'daily.site.constraint' was set to 5. The 5 minutes of sampling for each site have been allotted in 1-minute increments to the highest scoring hour (the hour where we are likely to get the highest payoff in terms of acoustically capturing our target species). Notice that this highest scoring hour may be different for different sites, or may be the same, depending on the temporal data available and the date upon which you are running this demo.
