@@ -7,6 +7,7 @@ output:
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -77,13 +78,13 @@ knitr::include_graphics('Chap11_Figs/directory.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 11.1.  Recordings should be placed (manually or automatically) into the "recording_drop" directory.  AMMonitor functions will move them to the more permanent "recordings" directory, and log each file's metadata into the database.*
+>*Figure 11.1. Recordings should be placed (manually or automatically) into the "recording_drop" directory. AMMonitor functions will move them to the more permanent "recordings" directory, and log each file's metadata into the database.*
 
-For this chapter, the directories of interest are the 'recording_drop' and 'recordings' folders, which store audio files for acoustic monitoring. These folders may end up storing many terabytes of data, and this content is best left in the cloud until needed. The 'recording_drop' folder is a landing folder for any new audio files collected by the monitoring team. Audio files may be manually collected by the monitoring team and placed there, or automatically placed in the drop folder via the cellular network (as described in chapters 9 and 10; also see xxx in prep).
+For this chapter, the directories of interest are the 'recording_drop' and 'recordings' folders, which store audio files for acoustic monitoring. These folders may end up storing many terabytes of data, and this content is best left in the cloud until needed. The 'recording_drop' folder is a landing folder for any new audio files collected by the monitoring team. Audio files may be manually collected by the monitoring team and placed there, or automatically placed in the drop folder via the cellular network (as described in chapters 9 and 10; see also Donovan et al. in prep).
 
 The primary function for this chapter is `dropboxMoveBatch()`, which searches the 'recording_drop' folder on Dropbox for new files. If new files are found, the function moves the files to the more permanent 'recordings' directory on Dropbox, and simultaneously records metadata about these files to the **recordings** table of an **AMMonitor** database. We will describe `dropboxMoveBatch()` later in the chapter.
 
-To illustrate processes involving recordings, we will use the `dbCreateSample()` function to create a database called "Chap11.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+To illustrate processes involving recordings, we will use the `dbCreateSample()` function to create a database called "Chap11.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Below, we create sample data for a few necessary tables using `dbCreateSample()`. We will auto-populate the **recordings** table with **AMMonitor** functions later on in the chapter:
 ```{r}
@@ -130,7 +131,7 @@ sampleRecordings[[1]]
 
 This object is a wave file (file extension .wav). It is 52.05 seconds long, and has a sampling rate of 44100 samples per second, with 52.05 \* 44100 = ~ 2295405 samples. The file was recorded with a single channel microphone (mono). 
 
-Next, we pretend that these four files were collected by Middle Earth monitoring equipment (one recording by equip\@3, two by equip\@4, and one by equip\@5), and deposited in the 'recording_drop' folder in the Dropbox cloud:  
+Next, we pretend that these four files were collected by Middle Earth monitoring equipment and deposited in the 'recording_drop' folder in the Dropbox cloud:  
 
 ```{r}
 # Write these as wave files to the recording_drop folder
@@ -144,7 +145,7 @@ tuneR::writeWave(object = sampleRecordings[[4]],
                  filename = "recording_drop/midEarth5_2016-03-21_07-30-00.wav")
 ```
 
-Notice that each file name is standardized as "accountID_date_time.wav". Programs that do not use smartphones as monitoring devices can standardize file names as "equipID_date_time.wav".  We have just simulated the process by which recordings are populated into the 'recording_drop' folder in your **AMMonitor** Dropbox directory. In practice, files can be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
+Notice that each file name is standardized as "accountID_date_time.wav". Programs that do not use smartphones as monitoring devices can standardize file names as "equipID_date_time.wav". We have just simulated the process by which recordings are populated into the 'recording_drop' folder in your **AMMonitor** Dropbox directory. In practice, files can be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
 
 The next step is to move these files out of the 'recording_drop' directory to the more permanent 'recordings' directory. During this process, we create metadata entries in the **recordings** database table for each recording. Logging this metadata is critical because **AMMonitor** needs an easy way to track all audio files collected by the monitoring team. To move files from 'recording_drop' to the 'recordings' directory (and simultaneously log new audio file metadata in the **recordings** table), we use the function `dropboxMoveBatch()`. 
 
@@ -165,7 +166,7 @@ Foreign key assigments can be confirmed with the following code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(recordings);")
 ```
 
-Here, we notice that the *equipmentID* column in the **recordings** table maps to the *equipmentID* column in the **equipment** table, and the *locationID* column in the **recordings** table maps to the *locationID* column in the **locations** table.   
+Here, we notice that the *equipmentID* column in the **recordings** table maps to the *equipmentID* column in the **equipment** table, and the *locationID* column in the **recordings** table maps to the *locationID* column in the **locations** table.  
 
 To summarize, the **recordings** table stores information about which wave files have been collected in an acoustic monitoring program, where they were collected, and which piece of equipment was employed to gather acoustic data. The table is currently empty:
 
@@ -203,7 +204,7 @@ knitr::include_graphics('Chap11_Figs/token-4.png', dpi = 500)
 
 </kbd>
 
->*Figure 11.2.  The R package rdrop2 can be used to let R communicate with your Dropbox account.*
+>*Figure 11.2. The R package rdrop2 can be used to let R communicate with your Dropbox account.*
 
 
 Press the Allow button. After you have selected "Allow", the browser will return confirmation that authentication has been received, and you can close the browser and return to R. 
@@ -218,7 +219,7 @@ knitr::include_graphics('Chap11_Figs/rdrop2.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 11.3.  You will see rdrop2 listed as a connected app within your Dropbox account.*
+>*Figure 11.3. You will see rdrop2 listed as a connected app within your Dropbox account.*
 
 Below, we view the token we created. 
 
@@ -274,12 +275,12 @@ For example, the function `dropboxMetadata()` retrieves file information for all
 meta <- dropboxMetadata(directory = 'recording_drop', 
                         token.path = 'settings/dropbox-token.RDS') 
 
-# Look at all rows of metdata, column 'path_display'
+# Look at all rows of metadata, column 'path_display'
 as.data.frame(meta[,'path_display'])
 ```
 A lot of information is passed back in the **meta** object, but we only view the filepath on Dropbox (*path_display*). Here, we can easily see that there are four files in the 'recording_drop' folder located in the cloud.
 
-The **AMMonitor** function `dropboxMetdata()` is convenient for checking whether Dropbox files are present in a folder of choice without having to manually log in to Dropbox. 
+The **AMMonitor** function `dropboxMetadata()` is convenient for checking whether Dropbox files are present in a folder of choice without having to manually log in to Dropbox. 
 
 Users will more regularly invoke the function `dropboxMoveBatch()`, which collects Dropbox metadata, moves files from a directory of choice to another directory of choice in Dropbox, parses information about files, and adds metadata to the **recordings** or **photos** table. Below, we indicate the 'db.path', use the 'table' argument to specify that we are dealing with the database's **recordings** table, put our 'recording_drop' directory in 'dir.from', and our long-term storage folder, 'recordings', in the 'dir.to' argument. Lastly, we input our Dropbox API token in 'token.path'.
 
@@ -313,14 +314,14 @@ recording.drop.meta
 
 ```
 
-In addition to moving files, `dropboxMoveBatch()` logs metadata in the **recordings** table when files are moved from the 'recording_drop' to the 'recordings' directory. Below, we query the database to confirm that metadata have been added for the four wave files:
+In addition to moving files, `dropboxMoveBatch()` logs metadata in the **recordings** table when files are moved from 'recording_drop' to the 'recordings' directory. Below, we query the database to confirm that metadata have been added for the four wave files:
 
 ```{r}
 RSQLite::dbGetQuery(conx, 'SELECT * 
                            FROM recordings')
 ```
 
-The table contains four rows. Because we followed the instructions in the smartphone set-up guide in the Chapter 7 xxx in prep, *recordingID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also auto-populated.
+The table contains four rows. Because we followed the instructions in the smartphone set-up guide in Donovan et al. in prep, *recordingID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also auto-populated.
 
 # Downloading and viewing recordings
 
@@ -348,7 +349,7 @@ wav1
 
 # Assessing the performance of equipment at active monitoring locations
 
-If your monitoring program takes advantage of the **schedule** table, the function `recordingsCheck()` can be used to check the number of recordings logged in the **recordings** table against the number of recordings there were actually *scheduled* in the **schedules** table. If there is a mismatch -- where recordings are being scheduled but not taken -- `recordingsCheck()` offers a convenient method for users to see which equipment might need attention. 
+If your monitoring program takes advantage of the **schedule** table, the function `recordingsCheck()` can be used to check the number of recordings logged in the **recordings** table against the number of recordings that were actually *scheduled* in the **schedules** table. If there is a mismatch -- where recordings are being scheduled but not taken -- `recordingsCheck()` offers a convenient method for users to see which equipment might need attention. 
 
 To illustrate this process, we view the scheduled recordings for our three pieces of equipment in the sample data:
 
@@ -405,9 +406,9 @@ knitr::include_graphics('Chap11_Figs/recordings.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 11.4.  The recordings table is populated by R.  Each recording can be annotated, where a monitoring member labels target signals within a given recording, as discussed in Chapter 14.*
+>*Figure 11.4. The recordings table is populated by R. Each recording can be annotated, where a monitoring member labels target signals within a given recording, as discussed in Chapter 14.*
 
-Notice that there are four recordings in the sample database. The not-so-friendly 'Hands Off' note indicates that recordings are logged automatically by R. Recordings can be annotated by members of the monitoring team, in which case a team member listens to the recording and identifies target signals within it. Recording-specific annotations are displayed a table beneath each record. We will illustrate how to annotate files in Chapter 14. 
+Notice that there are four recordings in the sample database. The 'Hands Off' note indicates that recordings are logged automatically by R. Recordings can be annotated by members of the monitoring team, in which case a team member listens to the recording and identifies target signals within it. Recording-specific annotations are displayed as a table beneath each record. We will illustrate how to annotate files in Chapter 14. 
 
 # Chapter Summary
 

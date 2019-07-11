@@ -49,7 +49,7 @@ this content is best left in the cloud until needed. The
 collected by the monitoring team. Audio files may be manually collected
 by the monitoring team and placed there, or automatically placed in the
 drop folder via the cellular network (as described in chapters 9 and 10;
-also see xxx in prep).
+see also Donovan et al. in prep).
 
 The primary function for this chapter is `dropboxMoveBatch()`, which
 searches the ‘recording\_drop’ folder on Dropbox for new files. If new
@@ -60,7 +60,7 @@ database. We will describe `dropboxMoveBatch()` later in the chapter.
 
 To illustrate processes involving recordings, we will use the
 `dbCreateSample()` function to create a database called “Chap11.sqlite”,
-which will be stored in a folder (directory) called “database” within
+which will be stored in a folder (directory) called **database** within
 the **AMMonitor** main directory (which should be your working directory
 in R). Recall that `dbCreateSample()` generates all tables of an
 **AMMonitor** database, and then pre-populates sample data into tables
@@ -158,9 +158,8 @@ long, and has a sampling rate of 44100 samples per second, with 52.05 \*
 microphone (mono).
 
 Next, we pretend that these four files were collected by Middle Earth
-monitoring equipment (one recording by equip@3, two by equip@4, and one
-by equip@5), and deposited in the ‘recording\_drop’ folder in the
-Dropbox cloud:
+monitoring equipment and deposited in the ‘recording\_drop’ folder in
+the Dropbox cloud:
 
 ``` r
 # Write these as wave files to the recording_drop folder
@@ -427,7 +426,7 @@ Dropbox API token generated using the steps above.
 meta <- dropboxMetadata(directory = 'recording_drop', 
                         token.path = 'settings/dropbox-token.RDS') 
 
-# Look at all rows of metdata, column 'path_display'
+# Look at all rows of metadata, column 'path_display'
 as.data.frame(meta[,'path_display'])
 ```
 
@@ -442,9 +441,9 @@ view the filepath on Dropbox (*path\_display*). Here, we can easily see
 that there are four files in the ‘recording\_drop’ folder located in the
 cloud.
 
-The **AMMonitor** function `dropboxMetdata()` is convenient for checking
-whether Dropbox files are present in a folder of choice without having
-to manually log in to Dropbox.
+The **AMMonitor** function `dropboxMetadata()` is convenient for
+checking whether Dropbox files are present in a folder of choice without
+having to manually log in to Dropbox.
 
 Users will more regularly invoke the function `dropboxMoveBatch()`,
 which collects Dropbox metadata, moves files from a directory of choice
@@ -480,10 +479,10 @@ dropboxMoveBatch(db.path = db.path,
     ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##    format           timestamp
-    ## 1:    wav 2019-07-05 11:46:38
-    ## 2:    wav 2019-07-05 11:46:38
-    ## 3:    wav 2019-07-05 11:46:38
-    ## 4:    wav 2019-07-05 11:46:38
+    ## 1:    wav 2019-07-11 15:18:10
+    ## 2:    wav 2019-07-11 15:18:10
+    ## 3:    wav 2019-07-11 15:18:10
+    ## 4:    wav 2019-07-11 15:18:10
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -522,11 +521,11 @@ recording.drop.meta <- dropboxMetadata(
 recording.drop.meta
 ```
 
-    ## list()
+    ## NULL
 
 In addition to moving files, `dropboxMoveBatch()` logs metadata in the
-**recordings** table when files are moved from the ‘recording\_drop’ to
-the ‘recordings’ directory. Below, we query the database to confirm that
+**recordings** table when files are moved from ‘recording\_drop’ to the
+‘recordings’ directory. Below, we query the database to confirm that
 metadata have been added for the four wave files:
 
 ``` r
@@ -540,14 +539,14 @@ RSQLite::dbGetQuery(conx, 'SELECT *
     ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##   format           timestamp
-    ## 1    wav 2019-07-05 11:46:38
-    ## 2    wav 2019-07-05 11:46:38
-    ## 3    wav 2019-07-05 11:46:38
-    ## 4    wav 2019-07-05 11:46:38
+    ## 1    wav 2019-07-11 15:18:10
+    ## 2    wav 2019-07-11 15:18:10
+    ## 3    wav 2019-07-11 15:18:10
+    ## 4    wav 2019-07-11 15:18:10
 
 The table contains four rows. Because we followed the instructions in
-the smartphone set-up guide in the Chapter 7 xxx in prep, *recordingID*
-is a unique ID that contains the *accountID* directly in the string
+the smartphone set-up guide in Donovan et al. in prep, *recordingID* is
+a unique ID that contains the *accountID* directly in the string
 (e.g. midEarth4), followed by underscores that separate the recording
 date (*startDate*), recording time (*startTime*), and format (*format*).
 The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also
@@ -606,10 +605,10 @@ Assessing the performance of equipment at active monitoring locations
 If your monitoring program takes advantage of the **schedule** table,
 the function `recordingsCheck()` can be used to check the number of
 recordings logged in the **recordings** table against the number of
-recordings there were actually *scheduled* in the **schedules** table.
-If there is a mismatch – where recordings are being scheduled but not
-taken – `recordingsCheck()` offers a convenient method for users to see
-which equipment might need attention.
+recordings that were actually *scheduled* in the **schedules** table. If
+there is a mismatch – where recordings are being scheduled but not taken
+– `recordingsCheck()` offers a convenient method for users to see which
+equipment might need attention.
 
 To illustrate this process, we view the scheduled recordings for our
 three pieces of equipment in the sample data:
@@ -707,13 +706,13 @@ The recordings table is a primary tab in the Access Navigation Form.
 > can be annotated, where a monitoring member labels target signals
 > within a given recording, as discussed in Chapter 14.*
 
-Notice that there are four recordings in the sample database. The
-not-so-friendly ‘Hands Off’ note indicates that recordings are logged
-automatically by R. Recordings can be annotated by members of the
-monitoring team, in which case a team member listens to the recording
-and identifies target signals within it. Recording-specific annotations
-are displayed a table beneath each record. We will illustrate how to
-annotate files in Chapter 14.
+Notice that there are four recordings in the sample database. The ‘Hands
+Off’ note indicates that recordings are logged automatically by R.
+Recordings can be annotated by members of the monitoring team, in which
+case a team member listens to the recording and identifies target
+signals within it. Recording-specific annotations are displayed as a
+table beneath each record. We will illustrate how to annotate files in
+Chapter 14.
 
 Chapter Summary
 ===============

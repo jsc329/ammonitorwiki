@@ -49,7 +49,7 @@ this content is best left in the cloud until needed. The
 collected by the monitoring team. Audio files may be manually collected
 by the monitoring team and placed there, or automatically placed in the
 drop folder via the cellular network (as described in chapters 9 and 10;
-also see xxx in prep).
+see also Donovan et al. in prep).
 
 The primary function for this chapter is `dropboxMoveBatch()`, which
 searches the ‘recording\_drop’ folder on Dropbox for new files. If new
@@ -60,7 +60,7 @@ database. We will describe `dropboxMoveBatch()` later in the chapter.
 
 To illustrate processes involving recordings, we will use the
 `dbCreateSample()` function to create a database called “Chap11.sqlite”,
-which will be stored in a folder (directory) called “database” within
+which will be stored in a folder (directory) called **database** within
 the **AMMonitor** main directory (which should be your working directory
 in R). Recall that `dbCreateSample()` generates all tables of an
 **AMMonitor** database, and then pre-populates sample data into tables
@@ -158,9 +158,8 @@ long, and has a sampling rate of 44100 samples per second, with 52.05 \*
 microphone (mono).
 
 Next, we pretend that these four files were collected by Middle Earth
-monitoring equipment (one recording by equip@3, two by equip@4, and one
-by equip@5), and deposited in the ‘recording\_drop’ folder in the
-Dropbox cloud:
+monitoring equipment and deposited in the ‘recording\_drop’ folder in
+the Dropbox cloud:
 
 ``` r
 # Write these as wave files to the recording_drop folder
@@ -223,10 +222,6 @@ Foreign key assigments can be confirmed with the following code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(recordings);")
 ```
 
-    ##   id seq     table        from          to on_update on_delete match
-    ## 1  0   0 equipment equipmentID equipmentID   CASCADE NO ACTION  NONE
-    ## 2  1   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
-
 Here, we notice that the *equipmentID* column in the **recordings**
 table maps to the *equipmentID* column in the **equipment** table, and
 the *locationID* column in the **recordings** table maps to the
@@ -241,9 +236,6 @@ acoustic data. The table is currently empty:
 # Return records in the recordings table as a tibble
 RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM recordings;")
 ```
-
-    ## [1] recordingID locationID  equipmentID startDate   startTime   filepath    tz          format      timestamp  
-    ## <0 rows> (or 0-length row.names)
 
 Getting an API token for Dropbox
 ================================
@@ -384,27 +376,6 @@ stored in the cloud. Below, we view a list of **rdrop2** functions:
 data.frame(ls("package:rdrop2"))
 ```
 
-    ##      ls..package.rdrop2..
-    ## 1                     %>%
-    ## 2                drop_acc
-    ## 3               drop_auth
-    ## 4               drop_copy
-    ## 5             drop_create
-    ## 6             drop_delete
-    ## 7                drop_dir
-    ## 8           drop_download
-    ## 9             drop_exists
-    ## 10               drop_get
-    ## 11      drop_get_metadata
-    ## 12           drop_history
-    ## 13 drop_list_shared_links
-    ## 14             drop_media
-    ## 15              drop_move
-    ## 16          drop_read_csv
-    ## 17            drop_search
-    ## 18             drop_share
-    ## 19            drop_upload
-
 For example, if useful, we could invoke `drop_upload()` to upload our
 four wave files to the ‘recording\_drop’ directory. When using
 **rdrop2** functions, remember that the file path is no longer your R
@@ -427,24 +398,18 @@ Dropbox API token generated using the steps above.
 meta <- dropboxMetadata(directory = 'recording_drop', 
                         token.path = 'settings/dropbox-token.RDS') 
 
-# Look at all rows of metdata, column 'path_display'
+# Look at all rows of metadata, column 'path_display'
 as.data.frame(meta[,'path_display'])
 ```
-
-    ##                              meta[, "path_display"]
-    ## 1 /recording_drop/midEarth4_2016-03-26_07-00-00.wav
-    ## 2 /recording_drop/midEarth3_2016-03-12_07-00-00.wav
-    ## 3 /recording_drop/midEarth4_2016-03-04_06-00-00.wav
-    ## 4 /recording_drop/midEarth5_2016-03-21_07-30-00.wav
 
 A lot of information is passed back in the **meta** object, but we only
 view the filepath on Dropbox (*path\_display*). Here, we can easily see
 that there are four files in the ‘recording\_drop’ folder located in the
 cloud.
 
-The **AMMonitor** function `dropboxMetdata()` is convenient for checking
-whether Dropbox files are present in a folder of choice without having
-to manually log in to Dropbox.
+The **AMMonitor** function `dropboxMetadata()` is convenient for
+checking whether Dropbox files are present in a folder of choice without
+having to manually log in to Dropbox.
 
 Users will more regularly invoke the function `dropboxMoveBatch()`,
 which collects Dropbox metadata, moves files from a directory of choice
@@ -467,20 +432,12 @@ dropboxMoveBatch(db.path = db.path,
 
     ## Move in progress, waiting 10 seconds for server to catch up...
 
+    ## ...Move still in progress, waiting 10 more seconds...
+    ## ...Move still in progress, waiting 10 more seconds...
+
     ## Move status: complete
 
     ## Added 4 new records to recordings table.
-
-    ##                          recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
-    ## 1: midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
-    ## 2: midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
-    ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
-    ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
-    ##    format           timestamp
-    ## 1:    wav 2019-07-05 11:47:41
-    ## 2:    wav 2019-07-05 11:47:41
-    ## 3:    wav 2019-07-05 11:47:41
-    ## 4:    wav 2019-07-05 11:47:41
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -496,12 +453,6 @@ recordings.meta <- dropboxMetadata(
   token.path = 'settings/dropbox-token.RDS')
 as.data.frame(recordings.meta[,'path_display'])
 ```
-
-    ##               recordings.meta[, "path_display"]
-    ## 1 /recordings/midEarth4_2016-03-26_07-00-00.wav
-    ## 2 /recordings/midEarth3_2016-03-12_07-00-00.wav
-    ## 3 /recordings/midEarth4_2016-03-04_06-00-00.wav
-    ## 4 /recordings/midEarth5_2016-03-21_07-30-00.wav
 
 A metadata check for the ‘dir.from’ folder (recording\_drop), confirms
 that it now contains nothing, returning an empty list() object.
@@ -519,11 +470,11 @@ recording.drop.meta <- dropboxMetadata(
 recording.drop.meta
 ```
 
-    ## list()
+    ## NULL
 
 In addition to moving files, `dropboxMoveBatch()` logs metadata in the
-**recordings** table when files are moved from the ‘recording\_drop’ to
-the ‘recordings’ directory. Below, we query the database to confirm that
+**recordings** table when files are moved from ‘recording\_drop’ to the
+‘recordings’ directory. Below, we query the database to confirm that
 metadata have been added for the four wave files:
 
 ``` r
@@ -531,20 +482,9 @@ RSQLite::dbGetQuery(conx, 'SELECT *
                            FROM recordings')
 ```
 
-    ##                         recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
-    ## 1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
-    ## 2 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
-    ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
-    ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
-    ##   format           timestamp
-    ## 1    wav 2019-07-05 11:47:41
-    ## 2    wav 2019-07-05 11:47:41
-    ## 3    wav 2019-07-05 11:47:41
-    ## 4    wav 2019-07-05 11:47:41
-
 The table contains four rows. Because we followed the instructions in
-the smartphone set-up guide in the Chapter 7 xxx in prep, *recordingID*
-is a unique ID that contains the *accountID* directly in the string
+the smartphone set-up guide in Donovan et al. in prep, *recordingID* is
+a unique ID that contains the *accountID* directly in the string
 (e.g. midEarth4), followed by underscores that separate the recording
 date (*startDate*), recording time (*startTime*), and format (*format*).
 The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also
@@ -603,10 +543,10 @@ Assessing the performance of equipment at active monitoring locations
 If your monitoring program takes advantage of the **schedule** table,
 the function `recordingsCheck()` can be used to check the number of
 recordings logged in the **recordings** table against the number of
-recordings there were actually *scheduled* in the **schedules** table.
-If there is a mismatch – where recordings are being scheduled but not
-taken – `recordingsCheck()` offers a convenient method for users to see
-which equipment might need attention.
+recordings that were actually *scheduled* in the **schedules** table. If
+there is a mismatch – where recordings are being scheduled but not taken
+– `recordingsCheck()` offers a convenient method for users to see which
+equipment might need attention.
 
 To illustrate this process, we view the scheduled recordings for our
 three pieces of equipment in the sample data:
@@ -620,16 +560,6 @@ RSQLite::dbGetQuery(conn = conx,
                                 WHERE subject = 'recording'
                                 ORDER BY locationID;")
 ```
-
-    ##   equipmentID locationID   subject  startDate startTime
-    ## 1     equip@3 location@1 recording 2016-03-12  07:00:00
-    ## 2     equip@3 location@1 recording 2016-03-13  07:00:00
-    ## 3     equip@4 location@2 recording 2016-03-04  06:00:00
-    ## 4     equip@4 location@2 recording 2016-03-26  07:00:00
-    ## 5     equip@5 location@3 recording 2016-03-21  07:30:00
-    ## 6     equip@5 location@3 recording 2016-03-24  07:30:00
-    ## 7     equip@5 location@3 recording 2016-03-24  08:00:00
-    ## 8     equip@5 location@3 recording 2016-03-25  09:00:00
 
 Notice that eight recordings were scheduled in the sample database. Two
 recordings were scheduled for location@1 and location@2, while four were
@@ -646,7 +576,7 @@ check.all <- recordingsCheck(db.path = db.path,
                              plot = TRUE)
 ```
 
-<img src="Chap11_Figs/unnamed-chunk-32-1.png" style="display: block; margin: auto auto auto 0;" />
+<img src="Chap11_Figs/unnamed-chunk-33-1.png" style="display: block; margin: auto auto auto 0;" />
 
 Here, the bar chart shows the number of scheduled and received
 recordings by date and location. The returned data.frame identifies the
@@ -656,15 +586,6 @@ recorded events.
 ``` r
 check.all
 ```
-
-    ##   locationID equipmentID  startDate   subject scheduled received proportion
-    ## 1 location@1     equip@3 2016-03-12 recording         1        1          1
-    ## 2 location@1     equip@3 2016-03-13 recording         1        0          0
-    ## 3 location@2     equip@4 2016-03-04 recording         1        1          1
-    ## 4 location@2     equip@4 2016-03-26 recording         1        1          1
-    ## 5 location@3     equip@5 2016-03-21 recording         1        1          1
-    ## 6 location@3     equip@5 2016-03-24 recording         2        0          0
-    ## 7 location@3     equip@5 2016-03-25 recording         1        0          0
 
 Alternatively, users may limit the performance summary to specific
 monitoring locations (using the ‘locationID’ arugment) and start dates
@@ -677,11 +598,6 @@ check.loc3 <- recordingsCheck(db.path = db.path,
                               plot = FALSE)
 check.loc3
 ```
-
-    ##   locationID equipmentID  startDate   subject scheduled received proportion
-    ## 5 location@3     equip@5 2016-03-21 recording         1        1          1
-    ## 6 location@3     equip@5 2016-03-24 recording         2        0          0
-    ## 7 location@3     equip@5 2016-03-25 recording         1        0          0
 
 If scheduled recordings are not arriving in Dropbox, the monitoring team
 may visit and troubleshoot misbehaving equipment. Additionally, the team
@@ -704,13 +620,13 @@ The recordings table is a primary tab in the Access Navigation Form.
 > can be annotated, where a monitoring member labels target signals
 > within a given recording, as discussed in Chapter 14.*
 
-Notice that there are four recordings in the sample database. The
-not-so-friendly ‘Hands Off’ note indicates that recordings are logged
-automatically by R. Recordings can be annotated by members of the
-monitoring team, in which case a team member listens to the recording
-and identifies target signals within it. Recording-specific annotations
-are displayed a table beneath each record. We will illustrate how to
-annotate files in Chapter 14.
+Notice that there are four recordings in the sample database. The ‘Hands
+Off’ note indicates that recordings are logged automatically by R.
+Recordings can be annotated by members of the monitoring team, in which
+case a team member listens to the recording and identifies target
+signals within it. Recording-specific annotations are displayed as a
+table beneath each record. We will illustrate how to annotate files in
+Chapter 14.
 
 Chapter Summary
 ===============
