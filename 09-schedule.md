@@ -265,18 +265,20 @@ without pushing any events to Google Calendar:
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = NULL,
-            subject = 'recording', 
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3,
-            n.set = 2,
-            spacing = 1,
-            db.insert = FALSE,
-            google.push = FALSE)
+sched <- scheduleSun(db.path = db.path,
+                     locationID = c('location@1', 'location@2'),
+                     calendar.key = NULL,
+                     subject = 'recording', 
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 2,
+                     n.rise = 3,
+                     n.set = 2,
+                     spacing = 1,
+                     db.insert = FALSE,
+                     google.push = FALSE)
+
+sched
 ```
 
     ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent  description private                  tz
@@ -323,18 +325,20 @@ file.path to the ‘calendar.key’, which we will discuss below.
 # A calendar.key is required.
 # ------------------------------------------------------------  
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = 'settings/calendar-10b0fdaac306.json',
-            subject = 'recording',
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3, 
-            n.set = 2, 
-            spacing = 1,
-            db.insert = TRUE,
-            google.push = TRUE)
+sched <- scheduleSun(db.path = db.path,
+                     locationID = c('location@1', 'location@2'),
+                     calendar.key = 'settings/calendar-10b0fdaac306.json',
+                     subject = 'recording',
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 2,
+                     n.rise = 3, 
+                     n.set = 2, 
+                     spacing = 1,
+                     db.insert = TRUE,
+                     google.push = TRUE)
+
+sched
 ```
 
 `scheduleSun()` returns status messages (not shown) informing us as to
@@ -383,18 +387,20 @@ with a database.
 # using the optional lat, long, and timezone arguments.
 # ------------------------------------------------------------
 
-scheduleSun(locationID = c('one_place', 'another_place'),
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 1,
-            n.rise = 2,
-            n.set = 1,
-            spacing = 4,
-            lat = c(44.475856, 43.234555),
-            long = c(-73.195142, -72.103589), 
-            timezone = 'America/New_york',
-            db.insert = FALSE,
-            google.push = FALSE)
+sched <- scheduleSun(locationID = c('one_place', 'another_place'),
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 1,
+                     n.rise = 2,
+                     n.set = 1,
+                     spacing = 4,
+                     lat = c(44.475856, 43.234555),
+                     long = c(-73.195142, -72.103589), 
+                     timezone = 'America/New_york',
+                     db.insert = FALSE,
+                     google.push = FALSE)
+
+sched
 ```
 
     ##       Subject Start Date Start Time   End Date End Time All Day Event  Description      Location Private
@@ -462,16 +468,18 @@ pushing events to Google Calendar:
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = NULL,
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = FALSE,
-              google.push = FALSE)
+sched <- scheduleFixed(db.path = db.path,
+                       locationID = c('location@1', 'location@2'),
+                       calendar.key = NULL,
+                       subject = 'recording', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02',
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       db.insert = FALSE,
+                       google.push = FALSE)
+
+sched
 ```
 
     ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent    description private                  tz
@@ -500,16 +508,17 @@ schedules, add them to the database, and push them to Google Calendar.
 # A calendar.key is required.
 # ------------------------------------------------------------           
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = 'settings/calendar-10b0fdaac306.json',
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = TRUE,
-              google.push = TRUE)
+sched <- scheduleFixed(db.path = db.path,
+                       locationID = c('location@1', 'location@2'),
+                       calendar.key = 'settings/calendar-10b0fdaac306.json',
+                       subject = 'recording', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02',
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       db.insert = TRUE,
+                       google.push = TRUE)
+sched
 ```
 
 `scheduleFixed()` will provide status messages informing us whether
@@ -555,16 +564,18 @@ with a database.
 # using the optional lat, long, and timezone arguments. 
 # ------------------------------------------------------------   
 
-scheduleFixed(locationID = 'mylocation', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02', 
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              lat = 33.6178, 
-              long = -114.5883, 
-              timezone = 'America/Los_angeles',
-              db.insert = FALSE, 
-              google.push = FALSE)
+sched <- scheduleFixed(locationID = 'mylocation', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02', 
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       lat = 33.6178, 
+                       long = -114.5883, 
+                       timezone = 'America/Los_angeles',
+                       db.insert = FALSE, 
+                       google.push = FALSE)
+
+sched
 ```
 
     ##      Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
@@ -876,6 +887,6 @@ activity models.
 Chapter References
 ==================
 
-1. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+1. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution.

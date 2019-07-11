@@ -1,13 +1,13 @@
 ---
 title: 'Chapter 9: The Schedule Table'
 output:
-  html_document:
   md_document:
     variant: markdown_github
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -141,18 +141,20 @@ As usual, the 'db.path' argument will take our **db.path** object, which is the 
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = NULL,
-            subject = 'recording', 
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3,
-            n.set = 2,
-            spacing = 1,
-            db.insert = FALSE,
-            google.push = FALSE)
+sched <- scheduleSun(db.path = db.path,
+                     locationID = c('location@1', 'location@2'),
+                     calendar.key = NULL,
+                     subject = 'recording', 
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 2,
+                     n.rise = 3,
+                     n.set = 2,
+                     spacing = 1,
+                     db.insert = FALSE,
+                     google.push = FALSE)
+
+sched
 ```
 
 In the output, we see that `scheduleSun()` has automatically populated the subject field with the word 'recording'. It has tracked our start and end dates as well as start and end times according to the user inputs we provided. Users can experiment with re-running this function using different inputs for 'duration', 'n.rise', 'n.set', and 'spacing' to observe how the function behaves. 
@@ -169,18 +171,20 @@ In order to successfully push to Google Calendar, we need to provide a file.path
 # A calendar.key is required.
 # ------------------------------------------------------------  
 
-scheduleSun(db.path = db.path,
-            locationID = c('location@1', 'location@2'),
-            calendar.key = 'settings/calendar-10b0fdaac306.json',
-            subject = 'recording',
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 2,
-            n.rise = 3, 
-            n.set = 2, 
-            spacing = 1,
-            db.insert = TRUE,
-            google.push = TRUE)
+sched <- scheduleSun(db.path = db.path,
+                     locationID = c('location@1', 'location@2'),
+                     calendar.key = 'settings/calendar-10b0fdaac306.json',
+                     subject = 'recording',
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 2,
+                     n.rise = 3, 
+                     n.set = 2, 
+                     spacing = 1,
+                     db.insert = TRUE,
+                     google.push = TRUE)
+
+sched
 ```
 
 `scheduleSun()` returns status messages (not shown) informing us as to whether events were successfully uploaded to the Google Calendar and added to the database for each monitoring location. It also returns a data.table of the scheduled events added to the database.
@@ -207,18 +211,20 @@ One last option with the `scheduleSun()` function is the capacity to create a su
 # using the optional lat, long, and timezone arguments.
 # ------------------------------------------------------------
 
-scheduleSun(locationID = c('one_place', 'another_place'),
-            start.date = '2018-06-01',
-            end.date = '2018-06-02',
-            duration = 1,
-            n.rise = 2,
-            n.set = 1,
-            spacing = 4,
-            lat = c(44.475856, 43.234555),
-            long = c(-73.195142, -72.103589), 
-            timezone = 'America/New_york',
-            db.insert = FALSE,
-            google.push = FALSE)
+sched <- scheduleSun(locationID = c('one_place', 'another_place'),
+                     start.date = '2018-06-01',
+                     end.date = '2018-06-02',
+                     duration = 1,
+                     n.rise = 2,
+                     n.set = 1,
+                     spacing = 4,
+                     lat = c(44.475856, 43.234555),
+                     long = c(-73.195142, -72.103589), 
+                     timezone = 'America/New_york',
+                     db.insert = FALSE,
+                     google.push = FALSE)
+
+sched
 ```
 
 In the third example, the field names on the returned data.table object look slightly different from those returned by a call to `scheduleSun()` when working with the database. There are no *locationID* or *equipmentID* columns because we are not linked with a database, and the column names are formatted for direct use with the Google Calendar API (e.g., "Start Date" instead of "startDate", "Location" instead of "locationID"). If desired, we could save this output to an R object, write it to a CSV, and manually load it into a Google Calendar ourselves (or apply it to other uses).
@@ -237,16 +243,18 @@ The arguments to `scheduleFixed()` are similar to `scheduleSun()`, except that t
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = NULL,
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = FALSE,
-              google.push = FALSE)
+sched <- scheduleFixed(db.path = db.path,
+                       locationID = c('location@1', 'location@2'),
+                       calendar.key = NULL,
+                       subject = 'recording', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02',
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       db.insert = FALSE,
+                       google.push = FALSE)
+
+sched
 ```
 
 As before, once we are satisfied with our tests of `scheduleFixed()`, we can set the arguments 'db.insert' and 'google.push' to TRUE to create schedules, add them to the database, and push them to Google Calendar. 
@@ -259,16 +267,17 @@ As before, once we are satisfied with our tests of `scheduleFixed()`, we can set
 # A calendar.key is required.
 # ------------------------------------------------------------           
 
-scheduleFixed(db.path = db.path,
-              locationID = c('location@1', 'location@2'),
-              calendar.key = 'settings/calendar-10b0fdaac306.json',
-              subject = 'recording', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02',
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              db.insert = TRUE,
-              google.push = TRUE)
+sched <- scheduleFixed(db.path = db.path,
+                       locationID = c('location@1', 'location@2'),
+                       calendar.key = 'settings/calendar-10b0fdaac306.json',
+                       subject = 'recording', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02',
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       db.insert = TRUE,
+                       google.push = TRUE)
+sched
 ```
 
 `scheduleFixed()` will provide status messages informing us whether events were successfully uploaded to the Google Calendar and added to the database for each monitoring location. It also returns a data.table of the information that was added to the database.
@@ -295,16 +304,18 @@ One last option with the `scheduleFixed()` function is the capacity to create a 
 # using the optional lat, long, and timezone arguments. 
 # ------------------------------------------------------------   
 
-scheduleFixed(locationID = 'mylocation', 
-              start.date = '2018-06-01',
-              end.date = '2018-06-02', 
-              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-              duration = 1, 
-              lat = 33.6178, 
-              long = -114.5883, 
-              timezone = 'America/Los_angeles',
-              db.insert = FALSE, 
-              google.push = FALSE)
+sched <- scheduleFixed(locationID = 'mylocation', 
+                       start.date = '2018-06-01',
+                       end.date = '2018-06-02', 
+                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+                       duration = 1, 
+                       lat = 33.6178, 
+                       long = -114.5883, 
+                       timezone = 'America/Los_angeles',
+                       db.insert = FALSE, 
+                       google.push = FALSE)
+
+sched
 
 ```
 
