@@ -317,8 +317,7 @@ recording.drop.meta
 In addition to moving files, `dropboxMoveBatch()` logs metadata in the **recordings** table when files are moved from 'recording_drop' to the 'recordings' directory. Below, we query the database to confirm that metadata have been added for the four wave files:
 
 ```{r}
-RSQLite::dbGetQuery(conx, 'SELECT * 
-                           FROM recordings')
+RSQLite::dbGetQuery(conx, 'SELECT * FROM recordings')
 ```
 
 The table contains four rows. Because we followed the instructions in the smartphone set-up guide in Donovan et al. in prep, *recordingID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also auto-populated.

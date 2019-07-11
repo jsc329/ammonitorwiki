@@ -7,6 +7,7 @@ output:
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -84,13 +85,13 @@ knitr::include_graphics('Chap12_Figs/directories.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 12.1.  Photos should be placed (manually or automatically) into the "photo_drop" directory or into the "motion_drop" directory (if captured by motion trigger).  AMMonitor functions will move them to the more permanent "photos" directory, and log each file's metadata into the database.*
+>*Figure 12.1. Photos should be placed (manually or automatically) into the "photo_drop" directory or into the "motion_drop" directory (if captured by motion trigger). AMMonitor functions will move them to the more permanent "photos" or "motion" directories, and log each file's metadata into the database.*
 
-For this chapter, the directories (folders) of interest are the 'photo_drop', 'photos', 'motion_drop', and 'motion' directories, which store photos for photo monitoring. Folders may end up storing many terabytes of data, and this content is best left in the cloud until needed. The 'photo_drop' and 'motion_drop' folders are landing folders for any new photo files collected by the monitoring team. These files may be manually collected by the monitoring team and placed there, or automatically placed in the drop folder via the cellular network (as described in chapters 9 and 10; also see xxx in prep).
+For this chapter, the directories (folders) of interest are the 'photo_drop', 'photos', 'motion_drop', and 'motion' directories, which store photos for photo monitoring. Folders may end up storing many terabytes of data, and this content is best left in the cloud until needed. The 'photo_drop' and 'motion_drop' folders are landing folders for any new photo files collected by the monitoring team. These files may be manually collected by the monitoring team and placed there, or automatically placed in the drop folder via the cellular network (as described in chapters 9 and 10; see also Donovan et al. in prep).
 
-Similar to Chapter 11 (Recordings), the primary function for this chapter is `dropboxMoveBatch()`, which searches the 'photo_drop' or 'motion_drop' folders on Dropbox for new files. If new files are found, the function moves the files to the more permanent 'photos' or 'motion' directory on Dropbox, and simultaneously records metadata about these files to the **photos** table of an **AMMonitor** database. We will describe `dropboxMoveBatch()` later in the chapter.
+Similar to Chapter 11 (Recordings), the primary function for this chapter is `dropboxMoveBatch()`, which searches the 'photo_drop' or 'motion_drop' folders on Dropbox for new files. If new files are found, the function moves the files to the more permanent 'photos' or 'motion' directories on Dropbox, and simultaneously records metadata about these files to the **photos** table of an **AMMonitor** database. We will describe `dropboxMoveBatch()` later in the chapter.
 
-To illustrate this process, we will use the `dbCreateSample()` function to create a database called "Chap12.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+To illustrate this process, we will use the `dbCreateSample()` function to create a database called "Chap12.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Below, we create sample data for a few necessary tables using `dbCreateSample()`. We will auto-populate the **photos** tables with **AMMonitor** functions later on in the chapter:
 ```{r}
@@ -117,7 +118,7 @@ After that, we send a SQL statement that will enforce foreign key constraints.
 RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
-As mentioned, we will assume that any new photos taken as a timed photograph will be placed in the 'photo_drop' directory in the Dropbox cloud, while motion-triggered photographs are delivered to the 'motion-drop' directory. The process of working with photos is the same for timed and motion-triggered photos. Because of that, we will only focus our attention on the **photo_drop** and **photos** directories to illustrate photographic monitoring with **AMMonitor**.
+As mentioned, we will assume that any new photos taken as a timed photograph will be placed in the 'photo_drop' directory in the Dropbox cloud, while motion-triggered photographs are delivered to the 'motion_drop' directory. The process of working with photos is the same for timed and motion-triggered photos. Because of that, we will only focus our attention on the **photo_drop** and **photos** directories to illustrate photographic monitoring with **AMMonitor**.
 
 To begin, our sample **photo_drop** directory has no files in it. Just as we rely on the package, tuneR [@tuneR], to work with recordings, we rely on the package, magick [@magick], to work with photos. Specifically, we will use the function `image_read()` to read in some jpeg files from the web. 
 
@@ -150,7 +151,7 @@ magick::image_write(kitfox, path = "photo_drop/midEarth4_2018-09-02_22-30-00.jpg
 magick::image_write(toad, path = "photo_drop/midEarth5_2018-09-05_08-30-00.jpg", format = "jpeg")
 ```
 
-Notice that each file name is standardized as "accountID_date_time.jpg", as described in [Donovan et al. in prep]. If your monitoring program does not use smartphones, the locationID may be used instead of accountID.  We have just simulated the process by which photos are populated into the 'photo_drop' folder in your **AMMonitor** Dropbox directory. In practice, files may be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
+Notice that each file name is standardized as "accountID_date_time.jpg", as described in [Donovan et al. in prep]. If your monitoring program does not use smartphones, the equipmentID may be used instead of accountID. We have just simulated the process by which photos are populated into the 'photo_drop' folder in your **AMMonitor** Dropbox directory. In practice, files may be collected by hand and manually placed in this folder, or files can be collected and sent via the cellular network as described in previous chapters.
 
 The next step is to move these files out of the 'photo_drop' directory to the more permanent 'photos' directory. During this process, we create metadata entries in the **photos** database table for each photo. Logging this metadata is critical because **AMMonitor** needs an easy way to track all files collected by the monitoring team. To move files from 'photo_drop' to the 'photos' directory (and simultaneously log new audio file metadata in the **photos** table), we use the function `dropboxMoveBatch()`. 
 
@@ -165,7 +166,7 @@ dbTables(db.path = db.path, table = 'photos')
 
 ```
 
-The *photoID* serves as the primary key and the name of the .jpg file. For example, the *photoID* for "midEarth4_2018-09-02_08-00-00.jpg" is ""midEarth4_2018-09-02_08-00-00". The table's *locationID* and *equipmentID* fields are foreign keys that identify the locationID and equipmentID associated with any given audio file. The table also tracks the *date* and *time* of day the photo was taken, the relative *filepath* to the photo in Dropbox, the [Olson names-formatted time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (*tz*), and the file *format* (e.g. jpg, which is the typical file format for Android smartphones). Finally, we store a *timestamp* to indicate when file metadata was appended to the SQLite database.
+The *photoID* serves as the primary key and the name of the .jpg file. For example, the *photoID* for "midEarth4_2018-09-02_08-00-00.jpg" is ""midEarth4_2018-09-02_08-00-00". The table's *locationID* and *equipmentID* fields are foreign keys that identify the locationID and equipmentID associated with any given file. The table also tracks the *date* and *time* of day the photo was taken, the relative *filepath* to the photo in Dropbox, the [Olson names-formatted time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List) (*tz*), and the file *format* (e.g. jpg, which is the typical file format for Android smartphones). Finally, we store a *timestamp* to indicate when file metadata was appended to the SQLite database.
 
 Foreign key assigments can be confirmed with the following code:
 
@@ -176,7 +177,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(photos);")
 
 Here, we can see that the *equipmentID* column in the **photos** table maps to the *equipmentID* column in the **equipment** table, and the *locationID* column in the **photos** table maps to the *locationID* column in the **locations** table.
 
-To summarize, the **photos** table stores information about which photos have been collected in a monitoring program, where they were collected, and which piece of equipment gathered the photo data. It does not store the photo itself, but rather stores the filepath leading to it.  The table is currently empty:
+To summarize, the **photos** table stores information about which photos have been collected in a monitoring program, where they were collected, and which piece of equipment gathered the photo data. It does not store the photo itself, but rather stores the filepath leading to it. The table is currently empty:
 
 ```{r, eval = T}
 # Return records in the photos table as a tibble
@@ -221,12 +222,12 @@ For example, the function `dropboxMetadata()` retrieves file information for all
 meta <- dropboxMetadata(directory = 'photo_drop', 
                         token.path = 'settings/dropbox-token.RDS') 
 
-# Look at all rows of metdata, column 'path_display'
+# Look at all rows of metadata, column 'path_display'
 as.data.frame(meta[,'path_display'])
 ```
 A lot of information is passed back in the **meta** object, but we only view the filepath on Dropbox (*path_display*). Here, we can see that there are three files in the 'photo_drop' folder.
 
-The **AMMonitor** function `dropboxMetdata()` is convenient for checking whether Dropbox files are present in a folder of choice without having to manually log in to Dropbox. 
+The **AMMonitor** function `dropboxMetadata()` is convenient for checking whether Dropbox files are present in a folder of choice without having to manually log in to Dropbox. 
 
 Users will more regularly invoke the function `dropboxMoveBatch()`, which grabs Dropbox metadata, moves files from a directory of choice to another directory of choice in Dropbox, parses information about files, and adds metadata to the **photos** or **recordings** table. Below, we indicate the 'db.path', use the 'table' argument to specify that we are dealing with the database's **photos** table, put our 'photo_drop' directory in 'dir.from', and our long-term storage folder, 'photos', in the 'dir.to' argument. Lastly, we input our Dropbox API token in 'token.path'.
 
@@ -267,7 +268,7 @@ RSQLite::dbGetQuery(conn = conx,
                                  FROM photos')
 ```
 
-The example table contains three photos. Because we followed the instructions in the phone set-up guide in the Chapter 7 and xxx in prep, *photoID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, *tz*, and *timestamp* columns were also auto-populated.
+The example table contains three photos. Because we followed the instructions in the phone set-up guide in Donovan et al. in prep, *photoID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, *tz*, and *timestamp* columns were also auto-populated.
 
 # Downloading and looking at photos
 
@@ -337,7 +338,7 @@ check.loc3
 
 If scheduled photos are not arriving in Dropbox, the monitoring team may visit and troubleshoot misbehaving equipment. Additionally, the team may inspect smartphone logs (stored in the **logs** table and logs folder within the **AMMonitor** directory) to discover the causes of suboptimal equipment performance.
 
-An important consideration in using `photosCheck()` is that it will check scheduled photographs versus delivery. This works fine for timed-photographs, but may show quite different results for motion-triggered photographs. With the motion-triggered schedule, an event is scheduled which tells the phone when to run the motion-trigger app, and photos are collected as triggered. If nothing triggers a photo, we would expect no photos to be logged. However, if an animal repeatedly triggers a photo to be taken, multiple photographs may be received for one scheduled event. 
+An important consideration in using `photosCheck()` is that it will check scheduled photographs versus delivery. This works fine for timed photographs, but may show quite different results for motion-triggered photographs. With the motion-triggered schedule, an event is scheduled which tells the phone when to run the motion-trigger app, and photos are collected as triggered. If nothing triggers a photo, we would expect no photos to be logged. However, if an animal repeatedly triggers a photo to be taken, multiple photographs may be received for one scheduled event. 
 
 # The Photos Table in Access
 
@@ -354,7 +355,7 @@ knitr::include_graphics('Chap12_Figs/photos.PNG', dpi = 500)
 
 >*Figure 12.2. The photos table is populated by R.*
 
-Notice that there are three photos in the sample database. The not-so-friendly 'Hands Off' note indicates that photos are logged automatically by R. Photos can be annotated by members of the monitoring team, in which case a team member views each photo and identifies target signals within it. Each photos's annotations are displayed (in this case, none). We will illustrate how to annotate files in Chapter 14. 
+Notice that there are three photos in the sample database. The 'Hands Off' note indicates that photos are logged automatically by R. Photos can be annotated by members of the monitoring team, in which case a team member views each photo and identifies target signals within it. Each photos's annotations are displayed (in this case, none). We will illustrate how to annotate files in Chapter 14. 
 
 # Chapter Summary
  
