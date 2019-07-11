@@ -2,7 +2,7 @@
 title: "Chapter 10: The Priorities and Prioritization Tables"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:

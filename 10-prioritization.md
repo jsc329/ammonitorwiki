@@ -1,24 +1,23 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Priorities Table](#the-priorities-table)
--   [The Prioritization Table](#the-prioritization-table)
--   [Simulating activity models with
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Priorities Table](#the-priorities-table)
+  - [The Prioritization Table](#the-prioritization-table)
+  - [Simulating activity models with
     simGlm()](#simulating-activity-models-with-simglm)
--   [Setting an optimized schedule with
+  - [Setting an optimized schedule with
     scheduleOptim()](#setting-an-optimized-schedule-with-scheduleoptim)
--   [Running a simulation experiment on historical temporal
+  - [Running a simulation experiment on historical temporal
     data](#running-a-simulation-experiment-on-historical-temporal-data)
--   [Running scheduleOptim() in a
+  - [Running scheduleOptim() in a
     script](#running-scheduleoptim-in-a-script)
--   [The Priorities Table in Access](#the-priorities-table-in-access)
--   [The Prioritization Table in
+  - [The Priorities Table in Access](#the-priorities-table-in-access)
+  - [The Prioritization Table in
     Access](#the-prioritization-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 In Chapter 9, we introduced the `scheduleSun()` and `scheduleFixed()`
 functions to populate a Google Calendar for smartphone-based monitoring.
@@ -47,24 +46,24 @@ species.
 **AMMonitor’s** temporally adaptive sampling algorithm is designed to
 maximize detection probabilities for a suite of focal species amid
 sampling constraints. The algorithm combines user-supplied species
-“activity” models (stored in the **ammls directory**) with site-specific
-weather forecasts (stored in the **temporals** table) to set an
-optimized sampling schedule for the following day. For example, an
-activity model for the Verdin (a songbird) provides the probability that
-a Verdin will be acoustically available (i.e., singing) within each hour
-at each site for the next 24 hours, given forecasted temporal conditions
-at a site and knowledge of Verdin behavior. A “stopping rule” for
-monitoring Verdin at each site can be invoked based on the cumulative
-likelihood that the species has already been acoustically captured.
-Thus, if it is likely that Verdin vocalized in previous monitoring
-efforts, we can drop Verdin from the prioritization scheme and focus our
-monitoring resources on species that have yet to be captured. In
-simulation work, we have found that over the course of a study season,
-the probability of acoustically capturing a focal species at least once
-via automated acoustic monitoring is higher (and acoustic capture occurs
-earlier in the season) when using the temporally adaptive optimized
-schedule as compared to a fixed schedule, potentially reducing the risk
-of false negatives and providing more confidence in detection
+“activity” models (stored in the **ammls directory**) with
+site-specific weather forecasts (stored in the **temporals** table) to
+set an optimized sampling schedule for the following day. For example,
+an activity model for the Verdin (a songbird) provides the probability
+that a Verdin will be acoustically available (i.e., singing) within each
+hour at each site for the next 24 hours, given forecasted temporal
+conditions at a site and knowledge of Verdin behavior. A “stopping rule”
+for monitoring Verdin at each site can be invoked based on the
+cumulative likelihood that the species has already been acoustically
+captured. Thus, if it is likely that Verdin vocalized in previous
+monitoring efforts, we can drop Verdin from the prioritization scheme
+and focus our monitoring resources on species that have yet to be
+captured. In simulation work, we have found that over the course of a
+study season, the probability of acoustically capturing a focal species
+at least once via automated acoustic monitoring is higher (and acoustic
+capture occurs earlier in the season) when using the temporally adaptive
+optimized schedule as compared to a fixed schedule, potentially reducing
+the risk of false negatives and providing more confidence in detection
 probability estimates \[2\].
 
 For this chapter, we will use the `dbCreateSample()` function to create
@@ -148,8 +147,7 @@ RSQLite::dbExecute(
 This action returns a ‘47’ to indicate that 47 records have applied the
 action of setting *dateRetrieved* equal to ‘2016-01-20’.
 
-The Priorities Table
-====================
+# The Priorities Table
 
 The **priorities** table allows us to store monitoring priorities for
 focal species at each active monitoring location. Depending on our
@@ -246,8 +244,8 @@ that all species in the **species** table should be used. Lastly, the
 populates the **priorities** table by first identifying all actively
 monitored locations. At each active location, it assigns equal priority
 weights to all species specified in the ‘speciesID’ argument. The same
-‘p.max’ value is assigned for each species at each location. Lastly, the
-‘db.insert’ argument allows users to test the function and view the
+‘p.max’ value is assigned for each species at each location. Lastly,
+the ‘db.insert’ argument allows users to test the function and view the
 outputs before committing new records to the **priorities** table.
 Below, we leave ‘db.insert’ as the default FALSE to demonstrate the
 function. The ‘db.insert’ argument in this function should be used with
@@ -280,8 +278,7 @@ attained. Because *db.insert* is set to FALSE, this prioritization
 scheme will not be implemented; the priorities from the sample data will
 be used in the examples that follow.
 
-The Prioritization Table
-========================
+# The Prioritization Table
 
 While the **priorities** table is filled in manually by the monitoring
 team, the **prioritization** table is automatically filled by
@@ -375,7 +372,7 @@ Our goal next is to create future monitoring events (e.g., recordings)
 that are pushed to each smartphone’s Google Calendar, given our
 monitoring priorities and any data transmission constraints limiting the
 number of events that can be collected. As monitoring progresses (where
-*init* ≠ 1), **AMMonitor** functions will change the *weight* and
+*init* \(\ne\) 1), **AMMonitor** functions will change the *weight* and
 *pCurrent* values through time based on *previous* predicted probability
 of capture values that have accumulated since initialization. Weights
 generally recede for species with higher probabilities of capture, and
@@ -384,7 +381,8 @@ increase for species whose probability of capture remains inadequate.
 As a preview of the prioritization process, the figure below
 demonstrates how *pCurrent* and *weight* values change from the
 beginning (2016-03-01) to the end (2016-03-31) of a hypothetical
-monitoring scenario for location@1 only:
+monitoring scenario for location@1
+only:
 
 <kbd>
 
@@ -405,8 +403,7 @@ future monitoring schedule (e.g., tomorrow) will target ‘btgn’ much more
 than the other species, because the *pCurrent* value for ‘btgn’ remains
 much lower.
 
-Simulating activity models with simGlm()
-========================================
+# Simulating activity models with simGlm()
 
 Creating an optimized schedule of future monitoring at various locations
 requires models that predict activity patterns for each target species
@@ -422,7 +419,8 @@ These covariates are stored in the **temporals** table of an
 **AMMonitor** database.
 
 Activity models will ultimately be stored in an AMModels library located
-in the **ammls** folder within the main **AMMonitor** directory.
+in the **ammls** folder within the main **AMMonitor**
+directory.
 
 <kbd>
 
@@ -658,14 +656,15 @@ covariate names by including ‘.N’ next to the covariate
 (e.g. ‘distRise.2’ or ‘temperature.3’ to denote distRise^2 or
 temperature^3 in the below example). Polynomial terms are automatically
 parsed and applied within `simGlm()` via the ‘.’ character. Lastly, the
-‘coefficients’ list element contains a numeric vector of the coefficient
-values we want to use in our model. For example, in the ‘btgn\_vocals’
-model below, the ‘intercept’ coefficient is -0.3, the ‘dayOfYear’
-coefficient is -0.002, and so on. Importantly, the coefficients are on
-the logit (log odds) scale to ensure that the final probability is
-constrained between 0 and 1. Take care to ensure that all covariate
-names match up correctly in order with the coefficient values you want
-to use.
+‘coefficients’ list element contains a numeric vector of the
+coefficient values we want to use in our model. For example, in the
+‘btgn\_vocals’ model below, the ‘intercept’ coefficient is -0.3, the
+‘dayOfYear’ coefficient is -0.002, and so on. Importantly, the
+coefficients are on the logit (log odds) scale to ensure that the final
+probability is constrained between 0 and 1. Take care to ensure that all
+covariate names match up correctly in order with the coefficient values
+you want to
+use.
 
 ``` r
 # Example list of model equations for vocalization for each of four species
@@ -732,11 +731,11 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 13.2 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 12.2 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8.6 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.1 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
@@ -777,7 +776,8 @@ The plot below gives the reader some sense of what the coefficients
 mean. Each of the four species is plotted in five panels, with the
 probability of vocalization per unit time on the y-axis. The x-axes vary
 across the five panels, and demonstrate the influence of several
-different covariates on vocalization probability by species.
+different covariates on vocalization probability by
+species.
 
 <kbd>
 
@@ -904,8 +904,7 @@ the library back to our *ammls* directory for future use:
 saveRDS(activity, file = 'ammls/activity.RDS')
 ```
 
-Setting an optimized schedule with scheduleOptim()
-==================================================
+# Setting an optimized schedule with scheduleOptim()
 
 After establishing monitoring priorities in the **priorities** table,
 initializing a new monitoring session with `priorityInit()`, and
@@ -939,27 +938,27 @@ Google Calendar and inserted to the **schedules** database table. The
 arguments *db.insert* and *google.push* offer the chance to test
 `scheduleOptim()` before implementing it. The other arguments include:
 
--   ‘db.path’ - The filepath to the **AMMonitor** database.
--   ‘calendar.key’ - The calendar key for the monitoring program’s
+  - ‘db.path’ - The filepath to the **AMMonitor** database.
+  - ‘calendar.key’ - The calendar key for the monitoring program’s
     primary Google account. The **accounts** table should have an entry
     for this key, and the key itself should be stored in the
     **settings** directory within the **AMMonitor** main directory (see
     Chapter 7: The Accounts, Equipment, Deployment, and Logs Tables, and
     Chapter 9: The Schedule Table). The ‘calendar.key’ argument can be
     set to NULL when we are merely testing the function.
--   ‘amml’ - The name of the AMModels library storing models that
+  - ‘amml’ - The name of the AMModels library storing models that
     predict activity based on forecasted weather conditions.
--   ‘choose.models’ - A character vector of the model names stored
+  - ‘choose.models’ - A character vector of the model names stored
     within the AMModels library. In practice, we may have many models
     stored in our AMModel library, and this argument forces us to
     specify which models we actually want to use. Model names do not
     need to be given in alphabetical order.
--   ‘time.units’ - Tells `scheduleOptim()` the time scale for how we
+  - ‘time.units’ - Tells `scheduleOptim()` the time scale for how we
     modeled our activity. If we modeled binomial vocalization
     probabilities or Poisson rates by the minute, then we input
     ‘by.minute’. If we modeled activity on an hourly basis, we input
     ‘by.hour’.
--   ‘temporals.key’ - The Dark Sky API key used to retrieve forecast
+  - ‘temporals.key’ - The Dark Sky API key used to retrieve forecast
     conditions at each monitoring location. The **accounts** table
     should have an entry for this key, and the key itself should be
     stored in the **settings** directory within the **AMMonitor** main
@@ -968,12 +967,12 @@ arguments *db.insert* and *google.push* offer the chance to test
     ‘temporals.key’. However, users can leave ‘temporals.key’ as the
     default NULL if they wish to conduct academic exercises or activity
     simulations using historical weather data \[2\].
--   ‘optimization.approach’ - The approach to be used to set the
+  - ‘optimization.approach’ - The approach to be used to set the
     optimized schedule. This argument requires a single character
     element of one of two options: ‘simple’ (default) or ‘max.per.hour’.
--   ‘daily.site.constraint’ - The number of recordings to be collected
+  - ‘daily.site.constraint’ - The number of recordings to be collected
     per site per day.
--   ‘max.per.hour’ - The maximum number of recordings to schedule per
+  - ‘max.per.hour’ - The maximum number of recordings to schedule per
     hour.
 
 Note that there are two alternative optimization approaches (‘simple’ or
@@ -996,9 +995,9 @@ locations.
 Under the ‘simple’ optimization approach, the ‘daily.site.constraint’
 argument should contain the number of 1-minute recording samples
 available to be taken each day at each site. In cases where
-‘daily.site.constraint’ &lt;= 30, all events are allotted into the
+‘daily.site.constraint’ \<= 30, all events are allotted into the
 highest scoring hour at evenly spaced intervals throughout the hour. If
-‘daily.site.constraint’ &gt; 30, remaining samples are allotted in the
+‘daily.site.constraint’ \> 30, remaining samples are allotted in the
 same way into the second highest scoring hour, and so on.
 
 Some users may chafe at the idea of concentrating all sampling power
@@ -1086,19 +1085,19 @@ test_optim['prioritization']
 ```
 
     ## $prioritization
-    ##     locationID speciesID       date pMax     pCurrent weight init
-    ##  1: location@1      btgn 2019-07-12 0.95 1.000000e+00      0    0
-    ##  2: location@1      copo 2019-07-12 0.95 1.110223e-15      1    0
-    ##  3: location@1      leni 2019-07-12 0.95 1.000000e+00      0    0
-    ##  4: location@1      verd 2019-07-12 0.95 1.000000e+00      0    0
-    ##  5: location@2      btgn 2019-07-12 0.95 1.000000e+00      0    0
-    ##  6: location@2      copo 2019-07-12 0.95 1.110223e-15      1    0
-    ##  7: location@2      leni 2019-07-12 0.95 1.000000e+00      0    0
-    ##  8: location@2      verd 2019-07-12 0.95 1.000000e+00      0    0
-    ##  9: location@3      btgn 2019-07-12 0.95 1.000000e+00      0    0
-    ## 10: location@3      copo 2019-07-12 0.95 1.110223e-15      1    0
-    ## 11: location@3      leni 2019-07-12 0.95 1.000000e+00      0    0
-    ## 12: location@3      verd 2019-07-12 0.95 1.000000e+00      0    0
+    ##     locationID speciesID       date pMax  pCurrent weight init
+    ##  1: location@1      btgn 2019-07-12 0.95 0.1267393      1    0
+    ##  2: location@1      copo 2019-07-12 0.95 1.0000000      0    0
+    ##  3: location@1      leni 2019-07-12 0.95 1.0000000      0    0
+    ##  4: location@1      verd 2019-07-12 0.95 1.0000000      0    0
+    ##  5: location@2      btgn 2019-07-12 0.95 0.2732602      1    0
+    ##  6: location@2      copo 2019-07-12 0.95 1.0000000      0    0
+    ##  7: location@2      leni 2019-07-12 0.95 1.0000000      0    0
+    ##  8: location@2      verd 2019-07-12 0.95 1.0000000      0    0
+    ##  9: location@3      btgn 2019-07-12 0.95 0.1234334      1    0
+    ## 10: location@3      copo 2019-07-12 0.95 1.0000000      0    0
+    ## 11: location@3      leni 2019-07-12 0.95 1.0000000      0    0
+    ## 12: location@3      verd 2019-07-12 0.95 1.0000000      0    0
 
 The prioritization table contains 12 rows; one row for each of the four
 target species at each of three active monitoring locations. Though the
@@ -1128,16 +1127,16 @@ test_optim$schedule
     ##  3: Recording 2019-07-12   06:24:00 2019-07-12 06:25:00         False Optim Calendar location@1   False
     ##  4: Recording 2019-07-12   06:36:00 2019-07-12 06:37:00         False Optim Calendar location@1   False
     ##  5: Recording 2019-07-12   06:48:00 2019-07-12 06:49:00         False Optim Calendar location@1   False
-    ##  6: Recording 2019-07-12   06:00:00 2019-07-12 06:01:00         False Optim Calendar location@2   False
-    ##  7: Recording 2019-07-12   06:12:00 2019-07-12 06:13:00         False Optim Calendar location@2   False
-    ##  8: Recording 2019-07-12   06:24:00 2019-07-12 06:25:00         False Optim Calendar location@2   False
-    ##  9: Recording 2019-07-12   06:36:00 2019-07-12 06:37:00         False Optim Calendar location@2   False
-    ## 10: Recording 2019-07-12   06:48:00 2019-07-12 06:49:00         False Optim Calendar location@2   False
-    ## 11: Recording 2019-07-12   06:00:00 2019-07-12 06:01:00         False Optim Calendar location@3   False
-    ## 12: Recording 2019-07-12   06:12:00 2019-07-12 06:13:00         False Optim Calendar location@3   False
-    ## 13: Recording 2019-07-12   06:24:00 2019-07-12 06:25:00         False Optim Calendar location@3   False
-    ## 14: Recording 2019-07-12   06:36:00 2019-07-12 06:37:00         False Optim Calendar location@3   False
-    ## 15: Recording 2019-07-12   06:48:00 2019-07-12 06:49:00         False Optim Calendar location@3   False
+    ##  6: Recording 2019-07-12   05:00:00 2019-07-12 05:01:00         False Optim Calendar location@2   False
+    ##  7: Recording 2019-07-12   05:12:00 2019-07-12 05:13:00         False Optim Calendar location@2   False
+    ##  8: Recording 2019-07-12   05:24:00 2019-07-12 05:25:00         False Optim Calendar location@2   False
+    ##  9: Recording 2019-07-12   05:36:00 2019-07-12 05:37:00         False Optim Calendar location@2   False
+    ## 10: Recording 2019-07-12   05:48:00 2019-07-12 05:49:00         False Optim Calendar location@2   False
+    ## 11: Recording 2019-07-12   05:00:00 2019-07-12 05:01:00         False Optim Calendar location@3   False
+    ## 12: Recording 2019-07-12   05:12:00 2019-07-12 05:13:00         False Optim Calendar location@3   False
+    ## 13: Recording 2019-07-12   05:24:00 2019-07-12 05:25:00         False Optim Calendar location@3   False
+    ## 14: Recording 2019-07-12   05:36:00 2019-07-12 05:37:00         False Optim Calendar location@3   False
+    ## 15: Recording 2019-07-12   05:48:00 2019-07-12 05:49:00         False Optim Calendar location@3   False
 
 This is the schedule that can be pushed to Google Calendar, if desired.
 Notice that the schedule has a total of 15 rows; five for each of three
@@ -1155,8 +1154,7 @@ making sure to add a file path to our Google Calendar service token in
 the ‘calendar.key’ argument (the functionality of these arguments is the
 same as that in Chapter 9: The Schedule Table).
 
-Running a simulation experiment on historical temporal data
-===========================================================
+# Running a simulation experiment on historical temporal data
 
 In advance of implementing a real-time optimized monitoring program
 integrated with daily forecast data, users may wish to test the concept
@@ -1167,7 +1165,8 @@ dates and locations of interest, and stored in the **temporals** table.
 First, for the purposes of demonstration only, we carefully use
 `dbClearTables()` to clear the **prioritization** table and start over
 (this is a function that should only be used in the testing stages of
-setting up a monitoring database):
+setting up a monitoring
+database):
 
 ``` r
 dbClearTables(db.path = db.path, tables = c('schedule', 'prioritization'))
@@ -1238,15 +1237,15 @@ qryPrioritization(conn = conx)
     ##    locationID speciesID weight  pCurrent pMax       date init
     ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 3  location@1      leni      0 0.9954541 0.95 2016-03-31    0
+    ## 3  location@1      leni      0 0.9995082 0.95 2016-03-31    0
     ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
     ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 7  location@2      leni      0 0.9956660 0.95 2016-03-31    0
+    ## 7  location@2      leni      0 0.9995868 0.95 2016-03-31    0
     ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
     ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 11 location@3      leni      0 0.9954602 0.95 2016-03-31    0
+    ## 11 location@3      leni      0 0.9995096 0.95 2016-03-31    0
     ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0
 
 By default, `qryPrioritization()` will return records associated with
@@ -1263,8 +1262,7 @@ the `dbDisconnect()` function:
 dbDisconnect(conx)
 ```
 
-Running scheduleOptim() in a script
-===================================
+# Running scheduleOptim() in a script
 
 `scheduleOptim()` may be employed on daily basis to set an optimized
 schedule pushed to each smartphone’s Google calendar. To facilitate the
@@ -1273,12 +1271,12 @@ may opt to automatically run `scheduleOptim()` daily via an “script”
 which is sourced each morning by a member of the monitoring team.
 Scripts are described in detail in Chapter 19.
 
-The Priorities Table in Access
-==============================
+# The Priorities Table in Access
 
 Because monitoring priorities are established at the discretion of the
 monitoring team, they can be found under the “Objectives” primary tab of
-the Access Navigation Form.
+the Access Navigation
+Form.
 
 <kbd>
 
@@ -1295,12 +1293,12 @@ three sites. Recall that for any given site, the sum of the weights must
 equal 1. Also recall that *pMax* provides a stopping rule that dictates
 when a species can be dropped from monitoring consideration at a site.
 
-The Prioritization Table in Access
-==================================
+# The Prioritization Table in Access
 
 The prioritization table is also located under the “Objectives tab”. The
 data are colored red to remind us that they are automatically filled in
-by **AMMonitor** functions and are not to be edited by hand.
+by **AMMonitor** functions and are not to be edited by
+hand.
 
 <kbd>
 
@@ -1316,8 +1314,7 @@ by **AMMonitor** functions and are not to be edited by hand.
 The search tool at the bottom of this form can be used to quickly locate
 current priorities for a given species at a given location.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter covered the **priorities** and **prioritization** tables,
 which are used to track the capture probabilities of multiple target
@@ -1334,11 +1331,22 @@ monitoring context, `scheduleOptim()` may be used with historical data
 to run simulations. More information about the optimization scheme
 employed in **AMMonitor** can be found in \[2\].
 
-Chapter References
-==================
+# Chapter References
 
-1. Otis D. 1978;
+<div id="refs" class="references">
 
-2. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
+<div id="ref-Otis1978">
+
+1\. Otis D. 1978; 
+
+</div>
+
+<div id="ref-BalanticTemporal">
+
+2\. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
-Evolution.
+Evolution. 
+
+</div>
+
+</div>
