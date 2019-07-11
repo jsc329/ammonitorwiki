@@ -264,8 +264,7 @@ recording.drop.meta
 In addition to moving files, `dropboxMoveBatch()` logs metadata when files are moved from the 'photo_drop' to the 'photos' directory. Now we can look at the **photos** table to see what was added:
 ```{r, eval = T}
 RSQLite::dbGetQuery(conn = conx, 
-                    statement = 'SELECT * 
-                                 FROM photos')
+                    statement = 'SELECT * FROM photos')
 ```
 
 The example table contains three photos. Because we followed the instructions in the phone set-up guide in Donovan et al. in prep, *photoID* is a unique ID that contains the *accountID* directly in the string (e.g. midEarth4), followed by underscores that separate the recording date (*startDate*), recording time (*startTime*), and format (*format*). The *equipmentID*, *locationID*, *filepath*, *tz*, and *timestamp* columns were also auto-populated.

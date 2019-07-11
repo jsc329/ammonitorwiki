@@ -14,7 +14,7 @@ Introduction
 An acoustic monitoring program can be used to monitor focal species of
 interest. However, it also can be used to monitor the ecosystem as a
 whole. This chapter discusses the analysis of “soundscapes” \[1\], which
-allows us to document the dominant frequencies of an ecosystem during
+allow us to document the acoustic properties of an ecosystem during
 certain times of the day or season. Monitoring programs can monitor
 soundscapes through time and space, allowing an investigation of how
 logging, agricultural expansion, energy development, and other land uses
@@ -29,18 +29,18 @@ components within sound samples.
 soundscape indices, such as acoustic complexity, bioindex, acoustic
 diversity index, and acoustic evenness index. Many of these concepts are
 derived from classic ecological diversity indices such as the
-Shannon-Weiner index. Several of these are described in a friendly
-paper: Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B.
-Pekin. 2011. A primer of acoustic analysis for landscape ecologists.
-Landscape Ecology 26: 1233-1246. doi: 10.1007/s10980-011-9636-9 \[3\].
+Shannon-Weiner index. Several of these are described in:
+Villanueva-Rivera, L. J., B. C. Pijanowski, J. Doucette, and B. Pekin.
+2011. A primer of acoustic analysis for landscape ecologists. Landscape
+Ecology 26: 1233-1246. doi: 10.1007/s10980-011-9636-9 \[3\].
 
 To illustrate the process of soundscape analysis with **AMMonitor**, we
 will use the `dbCreateSample()` function to create a database called
 “Chap13.sqlite”, which will be stored in a folder (directory) called
-“database” within the **AMMonitor** main directory (which should be your
-working directory in R). Recall that `dbCreateSample()` generates all
-tables of an **AMMonitor** database, and then pre-populates sample data
-into tables specified by the user.
+**database** within the **AMMonitor** main directory (which should be
+your working directory in R). Recall that `dbCreateSample()` generates
+all tables of an **AMMonitor** database, and then pre-populates sample
+data into tables specified by the user.
 
 Below, we create sample data for a few necessary tables using
 `dbCreateSample()`. We will auto-populate the **soundscape** table with
@@ -140,20 +140,8 @@ tuneR::writeWave(object = sampleRecordings[[4]],
                  filename = "recordings/midEarth5_2016-03-21_07-30-00.wav")
 
 # view the recordings table
-RSQLite::dbGetQuery(conx, 'SELECT * 
-                           FROM recordings')
+RSQLite::dbGetQuery(conx, 'SELECT * FROM recordings')
 ```
-
-    ##                         recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
-    ## 1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
-    ## 2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
-    ## 3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
-    ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
-    ##   format           timestamp
-    ## 1    wav 2018-10-22 17:27:33
-    ## 2    wav 2018-10-22 17:27:33
-    ## 3    wav 2018-10-22 17:27:33
-    ## 4    wav 2018-10-22 17:27:33
 
 As shown, the metadata for the four recordings are stored in the
 **recordings** table. The actual files reside in the Dropbox
@@ -167,12 +155,6 @@ recordings.meta <- dropboxMetadata(
   token.path = 'settings/dropbox-token.RDS')
 as.data.frame(recordings.meta[,'path_display'])
 ```
-
-    ##               recordings.meta[, "path_display"]
-    ## 1 /recordings/midEarth4_2016-03-26_07-00-00.wav
-    ## 2 /recordings/midEarth3_2016-03-12_07-00-00.wav
-    ## 3 /recordings/midEarth4_2016-03-04_06-00-00.wav
-    ## 4 /recordings/midEarth5_2016-03-21_07-30-00.wav
 
 As described in Chapter 11: Recordings, we can use the function
 `dropboxGetOneFile()` to copy a file to our working directory. Here, we
@@ -254,9 +236,7 @@ follows (borrowing liberally from the package helpfiles):
     “observation that many biotic sounds, such as bird songs, are
     characterized by an intrinsic variability of intensities, while some
     types of human generated noise (such as car passing or airplane
-    transit) present very constant intensity values” \[<span
-    class="citeproc-not-found"
-    data-reference-id="Pieretti">**???**</span>\].
+    transit) present very constant intensity values”.
 -   ndsi = normalized difference soundscape index, calculated with
     **soundecology**’s \[2\] `ndsi()` function. The ndsi seeks to
     “estimate the level of anthropogenic disturbance on the soundscape
@@ -265,7 +245,7 @@ follows (borrowing liberally from the package helpfiles):
     sound samples” \[5\].
 -   ndsi\_anthrophony = value for the anthrophony portion of the ndsi
     metric, calculated with **soundecology**’s \[2\] `ndsi()` function.
--   ndsi\_biophony = value for the biophony portion of the ndsi metric,
+-   ndsi\_biophony = value for the biophony portion of the NDSI metric,
     calculated with **soundecology**’s \[2\] `ndsi()` function.
 -   bioindex = bioacoustic index, calculated with **soundecology**’s
     \[2\] `bioacoustic_index()` function. The Bioacoustic Index is
@@ -275,7 +255,7 @@ follows (borrowing liberally from the package helpfiles):
     the sound level and the number of frequency bands used by the
     avifauna” \[6\].
 -   adi = acoustic diversity index, calculated with **soundecology**’s
-    \[2\] `acoustic_diversity()` function. The adi is calculated by
+    \[2\] `acoustic_diversity()` function. The ADI is calculated by
     dividing the spectrogram into bins (default 10) and taking the
     proportion of the signals in each bin above a threshold (default -50
     dBFS). The ADI is the result of the Shannon index applied to these
@@ -405,9 +385,6 @@ results <- AMMonitor::soundscape(db.path = NULL,
 results
 ```
 
-    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-05
-
 It is useful to check the results of the function before inserting to
 the database to confirm that all is well. Once confirmed, users may
 regularly use this function to obtain soundscape metrics for recordings
@@ -463,16 +440,10 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##   Acoustic Evenness Index: 0.000869
 
-    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-05
-
 ``` r
 # Check database to ensure events were added:
 RSQLite::dbGetQuery(conx, "SELECT * FROM soundscape")
 ```
-
-    ##                         recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-05
 
 As shown, the results of the `soundscape()` function have been uploaded
 to the **soundscape** table.
