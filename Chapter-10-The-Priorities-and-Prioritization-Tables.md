@@ -627,15 +627,15 @@ models <- simGlm(equation = equations,
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8.5 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.6 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.6 % of the time.
+    ## Finished model 3. Model leni_vocals is active 1.5 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17 % of the time.
+    ## Finished model 4. Model verd_vocals is active 17.2 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -1181,6 +1181,6 @@ Chapter References
 
 1. Otis D. 1978;
 
-2. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+2. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution.

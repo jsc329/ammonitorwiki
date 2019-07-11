@@ -1,6 +1,7 @@
 ---
 title: 'Chapter 9: The Schedule Table'
 output:
+  html_document:
   md_document:
     variant: markdown_github
     toc: true
@@ -363,7 +364,7 @@ knitr::include_graphics('Chap9_Figs/part-1-step-3.png', dpi = 500)
 
 >*Figure 9.3. Create credentials.*
 
- 
+
 3. You will arrive at a new project landing page that looks like the one below. Choose a project name, then click "Create".
 
 <kbd>
@@ -389,7 +390,7 @@ knitr::include_graphics('Chap9_Figs/part-1-step-6.png', dpi = 500)
 </kbd>
 
 >*Figure 9.5. Select the "Service account key" option.*
- 
+
 5. Finally, you will arrive at the page that allows you to create a service account key. Under "Service account", select the "New service account" option. Create a name of your choosing in the "Service account name" field (this will also auto-populate the "Service account ID" field). Below, our demonstration service account is named	'AMMonitor\@complete-sprite-213216.iam.gserviceaccount.com'. (COPY THIS SERVICE ACCOUNT NAME onto a Sticky Note or notebook for safekeeping -- you will need it later on in Step 2.)  In the "Role" dropdown menu, choose Project > Owner. Lastly, for "Key type", make sure that the JSON option is selected. Your screen should look something like the one below (though be sure to choose a Service account name meaningful to you). When finished, click "Create".
 
 <kbd>
@@ -437,7 +438,7 @@ Incidentally, [JSON](https://en.wikipedia.org/wiki/JSON) is a data format common
 ## Step 2: Sharing the Service Token with Monitoring Equipment
 
 The service account key generated in Step 1 should be associated with your primary Google management account (in our example, the primary management account is "midEarthMgt"). We now need to share each monitoring smartphone's main Google Calendar with this service account by logging into the Google account for each piece of monitoring equipment. 
-	
+
 For example, if we have a piece of equipment named "equip\@4", whose Google account is "midEarth4" in the **accounts** table, then we need to log into that account and navigate to the following web address: [https://calendar.google.com/calendar/render#main_7](https://calendar.google.com/calendar/render#main_7)
 
 

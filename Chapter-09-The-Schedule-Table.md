@@ -795,6 +795,6 @@ activity models.
 Chapter References
 ==================
 
-1. Balantic C, Donovan T. Temporally-adaptive acoustic sampling to
+1. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution.
