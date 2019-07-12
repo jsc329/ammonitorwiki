@@ -199,6 +199,20 @@ all records in the sample table.
 RSQLite::dbGetQuery(conn = conx, statement = 'SELECT * FROM priorities')
 ```
 
+    ##    locationID speciesID weight pMax
+    ## 1  location@1      btgn    0.2 0.95
+    ## 2  location@1      copo    0.3 0.95
+    ## 3  location@1      leni    0.3 0.95
+    ## 4  location@1      verd    0.2 0.95
+    ## 5  location@2      btgn    0.2 0.95
+    ## 6  location@2      copo    0.3 0.95
+    ## 7  location@2      leni    0.3 0.95
+    ## 8  location@2      verd    0.2 0.95
+    ## 9  location@3      btgn    0.2 0.95
+    ## 10 location@3      copo    0.3 0.95
+    ## 11 location@3      leni    0.3 0.95
+    ## 12 location@3      verd    0.2 0.95
+
 This example contains four target species at three locations. Focusing
 on location@1 only, “btgn” and “verd” have weights of 0.2, while “copo”
 and “leni” have weights of 0.3. From a monitoring perspective, this
@@ -248,6 +262,14 @@ prioritySet(db.path = db.path,
 
     ## Returning priorities, but no records have been overwritten in 
     ##  the existing priorities table because db.insert = FALSE
+
+    ##    locationID speciesID weight pMax
+    ## 1: location@1      btgn    0.5 0.99
+    ## 2: location@1      verd    0.5 0.99
+    ## 3: location@2      btgn    0.5 0.99
+    ## 4: location@2      verd    0.5 0.99
+    ## 5: location@3      btgn    0.5 0.99
+    ## 6: location@3      verd    0.5 0.99
 
 In the above example, monitoring priorities for the three locations are
 driven by two species of equal monitoring importance. Monitoring for
@@ -323,6 +345,20 @@ been initialized:
 RSQLite::dbGetQuery(conn = conx, 
                     statement = 'SELECT * FROM prioritization')
 ```
+
+    ##    locationID speciesID       date pMax pCurrent weight init
+    ## 1  location@1      btgn 2019-07-12 0.95        0    0.2    1
+    ## 2  location@1      copo 2019-07-12 0.95        0    0.3    1
+    ## 3  location@1      leni 2019-07-12 0.95        0    0.3    1
+    ## 4  location@1      verd 2019-07-12 0.95        0    0.2    1
+    ## 5  location@2      btgn 2019-07-12 0.95        0    0.2    1
+    ## 6  location@2      copo 2019-07-12 0.95        0    0.3    1
+    ## 7  location@2      leni 2019-07-12 0.95        0    0.3    1
+    ## 8  location@2      verd 2019-07-12 0.95        0    0.2    1
+    ## 9  location@3      btgn 2019-07-12 0.95        0    0.2    1
+    ## 10 location@3      copo 2019-07-12 0.95        0    0.3    1
+    ## 11 location@3      leni 2019-07-12 0.95        0    0.3    1
+    ## 12 location@3      verd 2019-07-12 0.95        0    0.2    1
 
 Note that `priorityInit()` has initialized monitoring with a total of 12
 rows, having repeated all four target species at each of our three
@@ -478,6 +514,34 @@ temporal.data <- RSQLite::dbGetQuery(
 data.table(names(temporal.data))
 ```
 
+    ##                    V1
+    ##  1:        locationID
+    ##  2:              type
+    ##  3:              date
+    ##  4:              time
+    ##  5:              hour
+    ##  6:       sunriseTime
+    ##  7:        sunsetTime
+    ##  8:   precipIntensity
+    ##  9: precipProbability
+    ## 10:        precipType
+    ## 11:       temperature
+    ## 12:          dewPoint
+    ## 13:          humidity
+    ## 14:          pressure
+    ## 15:         windSpeed
+    ## 16:          windGust
+    ## 17:       windBearing
+    ## 18:        cloudCover
+    ## 19:           uvIndex
+    ## 20:        visibility
+    ## 21:             ozone
+    ## 22:         moonPhase
+    ## 23:    nearestStation
+    ## 24:             units
+    ## 25:         timestamp
+    ##                    V1
+
 The **temporals** table was described in detail in Chapter 8: Temporals.
 Here, it is returned as a data.frame called **temporal.data** with 2229
 rows and 25 columns. Column names (n = 25) above are coerced to
@@ -504,6 +568,51 @@ temporal.data <- scheduleAddVars(temporal.data)
 # show the names of the temporal data; note there are now 38 columns
 data.table(names(temporal.data))
 ```
+
+    ##                    V1
+    ##  1:        locationID
+    ##  2:              type
+    ##  3:              date
+    ##  4:              time
+    ##  5:              hour
+    ##  6:       sunriseTime
+    ##  7:        sunsetTime
+    ##  8:   precipIntensity
+    ##  9: precipProbability
+    ## 10:        precipType
+    ## 11:       temperature
+    ## 12:          dewPoint
+    ## 13:          humidity
+    ## 14:          pressure
+    ## 15:         windSpeed
+    ## 16:          windGust
+    ## 17:       windBearing
+    ## 18:        cloudCover
+    ## 19:           uvIndex
+    ## 20:        visibility
+    ## 21:             ozone
+    ## 22:         moonPhase
+    ## 23:    nearestStation
+    ## 24:             units
+    ## 25:         timestamp
+    ## 26:         dayOfYear
+    ## 27:            dayCos
+    ## 28:            daySin
+    ## 29:     dayCosEquinox
+    ## 30:     daySinEquinox
+    ## 31:          distRise
+    ## 32:           distSet
+    ## 33:       distRiseCos
+    ## 34:        distSetCos
+    ## 35:       distRiseSin
+    ## 36:        distSetSin
+    ## 37:         hourSin24
+    ## 38:         hourCos24
+    ## 39:         hourSin12
+    ## 40:         hourCos12
+    ## 41:           moonCos
+    ## 42:           moonSin
+    ##                    V1
 
 `scheduleAddVars()` appends a number of variables we have found useful
 for modeling species activity patterns in our work. The *dayOfYear*
@@ -619,19 +728,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 13.2 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13.1 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 7.9 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.8 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.7 % of the time.
+    ## Finished model 3. Model leni_vocals is active 1.8 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.3 % of the time.
+    ## Finished model 4. Model verd_vocals is active 17.4 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -732,6 +841,11 @@ activity
     ##    [1] Middle Earth Conservancy
     ## 
     ## Models:
+    ##          name   class package
+    ## 1 btgn_vocals glm, lm      NA
+    ## 2 copo_vocals glm, lm      NA
+    ## 3 leni_vocals glm, lm      NA
+    ## 4 verd_vocals glm, lm      NA
     ## 
     ## Data:
     ## 
@@ -967,6 +1081,19 @@ test_optim['prioritization']
 ```
 
     ## $prioritization
+    ##     locationID speciesID       date pMax     pCurrent    weight init
+    ##  1: location@1      btgn 2019-07-13 0.95 2.274160e-05 0.2909363    0
+    ##  2: location@1      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  3: location@1      leni 2019-07-13 0.95 1.110223e-15 0.4364149    0
+    ##  4: location@1      verd 2019-07-13 0.95 5.973596e-02 0.2726488    0
+    ##  5: location@2      btgn 2019-07-13 0.95 3.764271e-05 0.2927325    0
+    ##  6: location@2      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  7: location@2      leni 2019-07-13 0.95 1.110223e-15 0.4391162    0
+    ##  8: location@2      verd 2019-07-13 0.95 7.980749e-02 0.2681513    0
+    ##  9: location@3      btgn 2019-07-13 0.95 2.270111e-05 0.2909448    0
+    ## 10: location@3      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ## 11: location@3      leni 2019-07-13 0.95 1.110223e-15 0.4364276    0
+    ## 12: location@3      verd 2019-07-13 0.95 5.983123e-02 0.2726275    0
 
 The prioritization table contains 12 rows; one row for each of the four
 target species at each of three active monitoring locations. Though the
@@ -991,6 +1118,22 @@ test_optim['schedule']
 ```
 
     ## $schedule
+    ##       Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
+    ##  1: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@1   False
+    ##  2: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@1   False
+    ##  3: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@1   False
+    ##  4: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@1   False
+    ##  5: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@1   False
+    ##  6: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@2   False
+    ##  7: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@2   False
+    ##  8: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@2   False
+    ##  9: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@2   False
+    ## 10: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@2   False
+    ## 11: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@3   False
+    ## 12: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@3   False
+    ## 13: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@3   False
+    ## 14: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@3   False
+    ## 15: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@3   False
 
 This is the schedule that can be pushed to Google Calendar, if desired.
 Notice that the schedule has a total of 15 rows; five for each of three
@@ -1086,6 +1229,20 @@ simulation is complete:
 # Query the prioritization table
 qryPrioritization(conn = conx)
 ```
+
+    ##    locationID speciesID weight  pCurrent pMax       date init
+    ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
+    ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
+    ## 3  location@1      leni      0 0.9990774 0.95 2016-03-31    0
+    ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
+    ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
+    ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
+    ## 7  location@2      leni      0 0.9988592 0.95 2016-03-31    0
+    ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
+    ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
+    ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
+    ## 11 location@3      leni      0 0.9990813 0.95 2016-03-31    0
+    ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0
 
 By default, `qryPrioritization()` will return records associated with
 the most recent day in monitoring period (in this case, 2016-03-31).
