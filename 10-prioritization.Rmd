@@ -54,6 +54,8 @@ For this chapter, we will use the `dbCreateSample()` function to create a databa
 
 Below, we use `dbCreateSample()` to pre-populate several necessary tables. We will auto-populate additional tables using **AMMonitor** functions later on in the chapter:
 
+<div class = 'admonition-wrapper note">
+
 ```{r}
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap10.sqlite", 
@@ -62,6 +64,8 @@ dbCreateSample(db.name = "Chap10.sqlite",
                            'accounts', 'species', 'priorities',
                            'temporals', 'people'))
 ```
+
+</div>
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
 ```{r}

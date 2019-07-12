@@ -385,6 +385,7 @@ $(document).ready(function () {
 <p><strong>AMMonitor’s</strong> temporally adaptive sampling algorithm is designed to maximize detection probabilities for a suite of focal species amid sampling constraints. The algorithm combines user-supplied species “activity” models (stored in the <strong>ammls directory</strong>) with site-specific weather forecasts (stored in the <strong>temporals</strong> table) to set an optimized sampling schedule for the following day. For example, an activity model for the Verdin (a songbird) provides the probability that a Verdin will be acoustically available (i.e., singing) within each hour at each site for the next 24 hours, given forecasted temporal conditions at a site and knowledge of Verdin behavior. A “stopping rule” for monitoring Verdin at each site can be invoked based on the cumulative likelihood that the species has already been acoustically captured. Thus, if it is likely that Verdin vocalized in previous monitoring efforts, we can drop Verdin from the prioritization scheme and focus our monitoring resources on species that have yet to be captured. In simulation work, we have found that over the course of a study season, the probability of acoustically capturing a focal species at least once via automated acoustic monitoring is higher (and acoustic capture occurs earlier in the season) when using the temporally adaptive optimized schedule as compared to a fixed schedule, potentially reducing the risk of false negatives and providing more confidence in detection probability estimates <span class="citation">[2]</span>.</p>
 <p>For this chapter, we will use the <code>dbCreateSample()</code> function to create a database called “Chap10.sqlite”, which will be stored in a folder (directory) called <strong>database</strong> within the <strong>AMMonitor</strong> main directory (which should be your working directory in R). Recall that <code>dbCreateSample()</code> generates all tables of an <strong>AMMonitor</strong> database, and then pre-populates sample data into tables specified by the user.</p>
 <p>Below, we use <code>dbCreateSample()</code> to pre-populate several necessary tables. We will auto-populate additional tables using <strong>AMMonitor</strong> functions later on in the chapter:</p>
+<p>&lt;div class = ’admonition-wrapper note&quot;&gt;</p>
 <pre class="r"><code># Create a sample database for this chapter
 dbCreateSample(db.name = &quot;Chap10.sqlite&quot;, 
                file.path = paste0(getwd(),&quot;/database&quot;), 
@@ -396,6 +397,7 @@ dbCreateSample(db.name = &quot;Chap10.sqlite&quot;,
 <pre><code>## 
 ## Sample data have been generated for the following tables: 
 ## accounts, people, species, equipment, locations, deployment, priorities, temporals</code></pre>
+</div>
 <p>Now, we connect to the database. First, we initialize a character object, <strong>db.path</strong>, that holds the database’s full file path. Then, we create a database connection object, <strong>conx</strong>, using RSQLite’s <code>dbConnect()</code> function, where we identify the SQLite driver in the ‘drv’ argument, and our <strong>db.path</strong> object in the ‘dbname’ argument:</p>
 <pre class="r"><code># Establish the database file path as db.path
 db.path &lt;- paste0(getwd(), &#39;/database/Chap10.sqlite&#39;)
@@ -701,13 +703,13 @@ models &lt;- simGlm(equation = equations,
                  model.family = &#39;binomial&#39;,
                  data = temporal.data)</code></pre>
 <pre><code>## Working on model 1 (btgn_vocals)...</code></pre>
-<pre><code>## Finished model 1. Model btgn_vocals is active 13.8 % of the time.</code></pre>
+<pre><code>## Finished model 1. Model btgn_vocals is active 12.7 % of the time.</code></pre>
 <pre><code>## Working on model 2 (copo_vocals)...</code></pre>
-<pre><code>## Finished model 2. Model copo_vocals is active 8.5 % of the time.</code></pre>
+<pre><code>## Finished model 2. Model copo_vocals is active 9.4 % of the time.</code></pre>
 <pre><code>## Working on model 3 (leni_vocals)...</code></pre>
-<pre><code>## Finished model 3. Model leni_vocals is active 1.7 % of the time.</code></pre>
+<pre><code>## Finished model 3. Model leni_vocals is active 1.6 % of the time.</code></pre>
 <pre><code>## Working on model 4 (verd_vocals)...</code></pre>
-<pre><code>## Finished model 4. Model verd_vocals is active 16.3 % of the time.</code></pre>
+<pre><code>## Finished model 4. Model verd_vocals is active 16.6 % of the time.</code></pre>
 <p>Each of these models is stored in a list (in this case a list of four, one for each species). The class of each model is <strong>glm</strong> (generalized linear model) and <strong>lm</strong> (linear model) generated from R’s base package, and each object contains a bevy of information about the model fitting process.</p>
 <pre class="r"><code># Look at the class of each model
 lapply(X = models, FUN = class)</code></pre>
@@ -865,19 +867,19 @@ str(object = test_optim, max.level = 1)</code></pre>
 <pre class="r"><code># Look at prioritization table output
 test_optim[&#39;prioritization&#39;]</code></pre>
 <pre><code>## $prioritization
-##     locationID speciesID       date pMax     pCurrent    weight init
-##  1: location@1      btgn 2019-07-13 0.95 7.748727e-05 0.1999951    0
-##  2: location@1      copo 2019-07-13 0.95 1.110223e-15 0.3000172    0
-##  3: location@1      leni 2019-07-13 0.95 1.110223e-15 0.3000172    0
-##  4: location@1      verd 2019-07-13 0.95 1.943125e-04 0.1999705    0
-##  5: location@2      btgn 2019-07-13 0.95 1.914710e-04 0.1999794    0
-##  6: location@2      copo 2019-07-13 0.95 1.110223e-15 0.3000295    0
-##  7: location@2      leni 2019-07-13 0.95 1.110223e-15 0.3000295    0
-##  8: location@2      verd 2019-07-13 0.95 2.758276e-04 0.1999616    0
-##  9: location@3      btgn 2019-07-13 0.95 7.431398e-05 0.1999955    0
-## 10: location@3      copo 2019-07-13 0.95 1.110223e-15 0.3000167    0
-## 11: location@3      leni 2019-07-13 0.95 1.110223e-15 0.3000167    0
-## 12: location@3      verd 2019-07-13 0.95 1.902387e-04 0.1999711    0</code></pre>
+##     locationID speciesID       date pMax     pCurrent weight init
+##  1: location@1      btgn 2019-07-13 0.95 0.0005386006      1    0
+##  2: location@1      copo 2019-07-13 0.95 1.0000000000      0    0
+##  3: location@1      leni 2019-07-13 0.95 1.0000000000      0    0
+##  4: location@1      verd 2019-07-13 0.95 1.0000000000      0    0
+##  5: location@2      btgn 2019-07-13 0.95 0.0011690633      1    0
+##  6: location@2      copo 2019-07-13 0.95 1.0000000000      0    0
+##  7: location@2      leni 2019-07-13 0.95 1.0000000000      0    0
+##  8: location@2      verd 2019-07-13 0.95 1.0000000000      0    0
+##  9: location@3      btgn 2019-07-13 0.95 0.0005298281      1    0
+## 10: location@3      copo 2019-07-13 0.95 1.0000000000      0    0
+## 11: location@3      leni 2019-07-13 0.95 1.0000000000      0    0
+## 12: location@3      verd 2019-07-13 0.95 1.0000000000      0    0</code></pre>
 <p>The prioritization table contains 12 rows; one row for each of the four target species at each of three active monitoring locations. Though the <em>locationID</em>, <em>speciesID</em>, and <em>pMax</em> columns should look the same as the first day, the <em>weight</em>, <em>pCurrent</em>, <em>date</em>, and <em>init</em> columns look different.</p>
 <p>Firstly, the <em>date</em> should change, and <em>init</em> will now hold values of 0 because the optimization routine was not initialized on this day.</p>
 <p>Secondly, the <em>weight</em> values should change as a function of <em>pCurrent</em>. Species whose probability of acoustic capture (<em>pCurrent</em>) went up dramatically may see their monitoring weights go down, while species whose <em>pCurrent</em> did not rise as rapidly may see their monitoring weights go up.</p>
@@ -940,15 +942,15 @@ qryPrioritization(conn = conx)</code></pre>
 <pre><code>##    locationID speciesID weight  pCurrent pMax       date init
 ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-## 3  location@1      leni      0 0.9925851 0.95 2016-03-31    0
+## 3  location@1      leni      0 0.9980467 0.95 2016-03-31    0
 ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
 ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-## 7  location@2      leni      0 0.9926180 0.95 2016-03-31    0
+## 7  location@2      leni      0 0.9978393 0.95 2016-03-31    0
 ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
 ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-## 11 location@3      leni      0 0.9925913 0.95 2016-03-31    0
+## 11 location@3      leni      0 0.9980499 0.95 2016-03-31    0
 ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0</code></pre>
 <p>By default, <code>qryPrioritization()</code> will return records associated with the most recent day in monitoring period (in this case, 2016-03-31). When a species’ <em>pCurrent</em> equals or exceeds <em>pMax</em>, that species’ weight becomes 0, allowing monitoring resources to focus on species that have not yet attained <em>pMax</em>.</p>
 <p>As usual, when finished working with an <strong>AMMonitor</strong> database, we use the <code>dbDisconnect()</code> function:</p>
