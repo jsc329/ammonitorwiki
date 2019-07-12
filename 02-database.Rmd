@@ -3,7 +3,7 @@ title: "Chapter 2:  The AMMonitor Database"
 output:
   html_document:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
