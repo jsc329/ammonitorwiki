@@ -1,15 +1,14 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Annotations Table](#the-annotations-table)
--   [Annotating recordings](#annotating-recordings)
--   [Annotating photos](#annotating-photos)
--   [The Annotations Table in Access](#the-annotations-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Annotations Table](#the-annotations-table)
+  - [Annotating recordings](#annotating-recordings)
+  - [Annotating photos](#annotating-photos)
+  - [The Annotations Table in Access](#the-annotations-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 In this chapter, we discuss the **annotations** table of an
 **AMMonitor** database. This table stores information about
@@ -19,26 +18,17 @@ monitoring team member may listen to an audio recording (stored in the
 recording, and identify signals of interest belonging to a specific
 species. Alternatively, a monitoring team member may view photos (stored
 in the **AMMonitor** photos or motion directories), and identify
-specific targets that may have been captured.
-
-Annotations are crucial for two reasons. First, the raw annotations
-identify which target signals are present within a given recording or
-photo. This information alone can be used to analyze species occurrence
-patterns, which may help meet monitoring objectives. Second,
-**AMMonitor** has many functions that automate the signal detection
-process (without human interaction). Even if only some files are
-manually annotated, they can be of great value in improving
-**AMMonitor** statistical learning models (detailed in the
-Classifications chapter), thus improving the ability of automated
-functions to correctly identify signals.
+specific targets that may have been captured. This information can be
+used to analyze species occurrence patterns, which may help meet
+monitoring objectives.
 
 To illustrate the process of annotating a photo or recording, we will
 use the `dbCreateSample()` function to create a database called
 “Chap14.sqlite”, which will be stored in a folder (directory) called
-“database” within the **AMMonitor** main directory (which should be your
-working directory in R). Recall that `dbCreateSample()` generates all
-tables of an **AMMonitor** database, and then pre-populates sample data
-into tables specified by the user.
+**database** within the **AMMonitor** main directory (which should be
+your working directory in R). Recall that `dbCreateSample()` generates
+all tables of an **AMMonitor** database, and then pre-populates sample
+data into tables specified by the user.
 
 Here, we create sample data for several tables in the `dbCreateSample()`
 function below. Note that we have not added sample data to the
@@ -49,12 +39,9 @@ the **annotations** table later in the chapter:
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap14.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('accounts', 'lists', 
-                          'people', 'species',
-                           'equipment', 'locations',
-                          'deployment', 'library',
-                          'listItems', 'recordings', 
-                          'photos'))
+               tables = c('accounts', 'lists', 'people', 'species',
+                           'equipment', 'locations', 'deployment', 'library',
+                          'listItems', 'recordings', 'photos'))
 ```
 
     ## An AMMonitor database has been created with the name Chap14.sqlite which consists of the following tables:
@@ -92,8 +79,7 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-The Annotations Table
-=====================
+# The Annotations Table
 
 We begin by looking at the **annotations** table. We can use the
 `dbTables()` function to view the table’s field summary:
@@ -231,8 +217,7 @@ As shown, this table has no records. Our goal is to add annotations to
 the sample recordings and photos that come with the **AMMonitor**
 package.
 
-Annotating recordings
-=====================
+# Annotating recordings
 
 The process of annotating a recording involves reading in an audio file
 (stored in the **recordings** directory on the cloud, and located within
@@ -322,7 +307,7 @@ them. Options are either ‘all’ or ‘focused’. If ‘all’ is selected, a
 existing annotations for the recording will be displayed to the user. If
 ‘focused’, the only annotations displayed will be those for the personID
 and listID declared in the interactive session. Use display = ‘all’ with
-caution! Note that if using display = ‘all’, an annotater may delete
+caution\! Note that if using display = ‘all’, an annotater may delete
 annotations made under another personID and listID. To avoid this
 danger, stick to using display = ‘focused’, which is the default. Note
 that if display = ‘focused’, the data.table returned by the function
@@ -340,19 +325,14 @@ Remaining arguments allow the user to customize the audio file
 spectrogram they will see during the annotation process.
 
 The **AMMonitor** `annotateRecording()` function is an interactive
-function, defined this way in [R’s
-documentation](https://stat.ethz.ch/R-manual/R-devel/library/base/html/interactive.html):
-“An interactive R session is one in which it is assumed that there is a
-human operator to interact with, so for example R can prompt for
-corrections to incorrect input or ask what to do next or if it is OK to
-move to the next plot.”
-
-We illustrate the general steps for annotating the file
+function; it assumes there is a human operator present to interact with
+prompts given by the function. Because the function is interactive, we
+illustrate the general steps for annotating the file
 ‘midEarth3\_2016-03-12\_07-00-00.wav’ using screenshots. In practice,
 users interact with this function via keyboard strokes and mouse clicks
 in R. Below, the ‘db.insert’ argument is set to FALSE, and the
-‘token.path’ argument is set to NULL because we are working with a local
-file.
+‘token.path’ argument is set to NULL because we are working with a
+local file.
 
 ``` r
 annos <- annotateRecording(db.path = db.path, 
@@ -433,13 +413,14 @@ We can continue adding annotations until we are finished.
 > *Figure 14.5. Press the ‘esc’ button twice (RStudio) or once (R) to
 > stop the annotations window.*
 
-To exit this screen, press ‘esc’ twice (RStudio) or right click twice
-(base R), and then press ‘q’ to quit the interactive mode. After
-quitting, `annotateRecording()` returns a data.table as below:
+To exit this screen, press ‘esc’ twice (if using RStudio) or right click
+twice (if using base R), and then press ‘q’ to quit the interactive
+mode. After quitting, `annotateRecording()` returns a data.table as
+below:
 
 ``` r
 # Look at the returned annotations
-subset(annos, select = -timestamp)
+annos
 ```
 
     ##     annotationID                       recordingID photoID               listID speciesID      libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn
@@ -458,22 +439,22 @@ subset(annos, select = -timestamp)
     ## 13:           NA midEarth4_2016-03-26_07-00-00.wav    <NA> Middle Earth Mammals    coyote coyote_general  2.767 18.502 1.4721 3.0600 512    0 hanning
     ## 14:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other  2.564 10.584 3.5364 6.4474 512    0 hanning
     ## 15:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other 23.769 41.187 3.1129 5.7594 512    0 hanning
-    ##                annotation personID
-    ##  1: 58,0a,00,00,00,02,... bbaggins
-    ##  2: 58,0a,00,00,00,02,... bbaggins
-    ##  3: 58,0a,00,00,00,02,... bbaggins
-    ##  4: 58,0a,00,00,00,02,... bbaggins
-    ##  5: 58,0a,00,00,00,02,... bbaggins
-    ##  6: 58,0a,00,00,00,02,... bbaggins
-    ##  7: 58,0a,00,00,00,02,... bbaggins
-    ##  8: 58,0a,00,00,00,02,... bbaggins
-    ##  9: 58,0a,00,00,00,02,... bbaggins
-    ## 10: 58,0a,00,00,00,02,... bbaggins
-    ## 11: 58,0a,00,00,00,02,... bbaggins
-    ## 12: 58,0a,00,00,00,02,... bbaggins
-    ## 13: 58,0a,00,00,00,02,... fbaggins
-    ## 14: 58,0a,00,00,00,02,... fbaggins
-    ## 15: 58,0a,00,00,00,02,... fbaggins
+    ##                annotation personID           timestamp
+    ##  1: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:23
+    ##  2: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:39
+    ##  3: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:59
+    ##  4: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:05
+    ##  5: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:10
+    ##  6: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:24
+    ##  7: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:29
+    ##  8: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:04:27
+    ##  9: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:04:52
+    ## 10: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:06
+    ## 11: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:12
+    ## 12: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:24
+    ## 13: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:10:49
+    ## 14: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:11:40
+    ## 15: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:11:57
 
 Annotations are returned in a table formatted according to the
 **annotations** table of the database. These records could have been
@@ -489,7 +470,8 @@ It is important to note the following:
 2.  Annotations stored in the database table **annotations** can be
     deleted at any time.
 
-3.  A file may be re-visited at any time to add more annotations.
+3.  A file may be re-visited at any time to add more annotations or
+    delete/correct existing annotations.
 
 4.  A file may be annotated by multiple people. For instance, notice
     that Frodo searched for only those targets in Frodo’s list. Bilbo
@@ -564,8 +546,7 @@ plotAnnotations(db.path = db.path,
 
 <img src="Chap14_Figs/unnamed-chunk-25-1.png" style="display: block; margin: auto auto auto 0;" />
 
-Annotating photos
-=================
+# Annotating photos
 
 A photo annotation is similar to a recording annotation, except that the
 photo is a single snapshot in time, and all that is required is to log
@@ -581,23 +562,27 @@ simply grab photos from the web and add them to our working directory:
 ``` r
 # Load magick
 library(magick)
+```
 
-# Grab some stock free images from web
+    ## Linking to ImageMagick 6.9.9.14
+    ## Enabled features: cairo, freetype, fftw, ghostscript, lcms, pango, rsvg, webp
+    ## Disabled features: fontconfig, x11
+
+``` r
+# Grab a stock free image from web
 coyote <- magick::image_read("https://images.stockfreeimages.com/11102/sfixl/111027410.jpg")
-
-kitfox <- magick::image_read("https://thumbs.dreamstime.com/t/red-fox-kit-sleeping-36129660.jpg")
-
-toad <- magick::image_read("https://thumbs.dreamstime.com/x/desert-dwelling-spadefoot-toad-and-flowers-21249004.jpg")
 
 # Return image info
 magick::image_info(coyote)
 ```
 
+    ## # A tibble: 1 x 7
     ##   format width height colorspace matte filesize density
-    ## 1   JPEG   880    657       sRGB FALSE   113825 300x300
+    ##   <chr>  <int>  <int> <chr>      <lgl>    <int> <chr>  
+    ## 1 JPEG     880    657 sRGB       FALSE   113825 300x300
 
-We now imagine that these photo jpg files were collected by the Middle
-Earth monitoring team, and write them to our working directory with the
+We now imagine that this photo jpg files was collected by the Middle
+Earth monitoring team, and write it to our working directory with the
 name of a photoID already contained in our sample database.
 
 ``` r
@@ -625,8 +610,7 @@ While `plotAnnotations()` can be used reliably to plot annotation data
 from recordings (i.e., spectrograms), the function is still in beta for
 plotting photo annotations, and may produce unexpected results.
 
-The Annotations Table in Access
-===============================
+# The Annotations Table in Access
 
 The recordings table is a primary tab in the Access Navigation Form, and
 annotations are displayed for each recording in the subform immediately
@@ -643,9 +627,9 @@ beneath the recording record.
 
 Notice that there are four recordings in the sample database, and the
 recording “midEarth3\_2016-03-12\_07-00-00.wav” has been selected. The
-not-so-friendly ‘Hands Off’ note indicates that recordings and their
-annotations are logged by R. Here, we see that Bilbo has added seven
-annotations to this recordingID.
+‘Hands Off’ note indicates that recordings and their annotations are
+logged by R. Here, we see that Bilbo has added seven annotations to this
+recordingID.
 
 Recording annotations can also be accessed via the secondary tab called
 “Annotations”, which are displayed in spreadsheet-type view with red
@@ -687,8 +671,7 @@ viewed by selected the secondary tab labeled “Annotations,” in which
 case the annotations are displayed in spreadsheet like view and are
 filtered to show only annotations for photos.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 In this chapter, you learned the **AMMonitor** approach for annotating
 recordings or photos. Annotations are an essential component of a
@@ -698,13 +681,24 @@ can be used to identify true absences, in which cases files are viewed
 by monitoring team members who confirm absence. We will revisit these
 concepts in Chapter 17: Classifications.
 
-Chapter References
-==================
+# Chapter References
 
-1. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
+<div id="refs" class="references">
+
+<div id="ref-tuneR">
+
+1\. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/tuneR/index.html>
 
-2. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
+</div>
+
+<div id="ref-monitoR">
+
+2\. Hafner S, Katz J. MonitoR: Acoustic template detection in r (version
 1.0.7) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <http://www.uvm.edu/rsenr/vtcfwru/R/?Page=monitoR/monitoR.htm>
+
+</div>
+
+</div>

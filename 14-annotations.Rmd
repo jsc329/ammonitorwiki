@@ -2,11 +2,12 @@
 title: "Chapter 14: The Annotations Table"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -36,23 +37,18 @@ unlink(db.path)
 
 # Chapter Introduction
 
-In this chapter, we discuss the **annotations** table of an **AMMonitor** database. This table stores information about human-created annotations of photos or recordings. For example, a monitoring team member may listen to an audio recording (stored in the **AMMonitor** recordings directory) while viewing a spectrogram of the recording, and identify signals of interest belonging to a specific species. Alternatively, a monitoring team member may view photos (stored in the **AMMonitor** photos or motion directories), and identify specific targets that may have been captured.
+In this chapter, we discuss the **annotations** table of an **AMMonitor** database. This table stores information about human-created annotations of photos or recordings. For example, a monitoring team member may listen to an audio recording (stored in the **AMMonitor** recordings directory) while viewing a spectrogram of the recording, and identify signals of interest belonging to a specific species. Alternatively, a monitoring team member may view photos (stored in the **AMMonitor** photos or motion directories), and identify specific targets that may have been captured. This information can be used to analyze species occurrence patterns, which may help meet monitoring objectives.
 
-Annotations are crucial for two reasons. First, the raw annotations identify which target signals are present within a given recording or photo. This information alone can be used to analyze species occurrence patterns, which may help meet monitoring objectives. Second, **AMMonitor** has many functions that automate the signal detection process (without human interaction). Even if only some files are manually annotated, they can be of great value in improving **AMMonitor** statistical learning models (detailed in the Classifications chapter), thus improving the ability of automated functions to correctly identify signals.
-
-To illustrate the process of annotating a photo or recording, we will use the `dbCreateSample()` function to create a database called "Chap14.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+To illustrate the process of annotating a photo or recording, we will use the `dbCreateSample()` function to create a database called "Chap14.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Here, we create sample data for several tables in the `dbCreateSample()` function below. Note that we have not added sample data to the **annotations** table. We will demonstrate how to create new entries in the **annotations** table later in the chapter:
 ```{r}
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap14.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('accounts', 'lists', 
-                          'people', 'species',
-                           'equipment', 'locations',
-                          'deployment', 'library',
-                          'listItems', 'recordings', 
-                          'photos'))
+               tables = c('accounts', 'lists', 'people', 'species',
+                           'equipment', 'locations', 'deployment', 'library',
+                          'listItems', 'recordings', 'photos'))
 ```
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
@@ -155,9 +151,7 @@ The argument 'db.path' is required to add annotations to the **annotations** tab
 
 The 'token.path' argument is required if the file to be annotated is located in the Dropbox cloud (point to your Dropbox token in the **settings** folder of the **AMMonitor** directory). The 'db.insert' argument has a default of FALSE, indicating that annotations will not be inserted to the **annotations** database table. It is a good idea to practice making annotations before committing them to the database. Remaining arguments allow the user to customize the audio file spectrogram they will see during the annotation process.
 
-The **AMMonitor** `annotateRecording()` function is an interactive function, defined this way in [R's documentation](https://stat.ethz.ch/R-manual/R-devel/library/base/html/interactive.html): "An interactive R session is one in which it is assumed that there is a human operator to interact with, so for example R can prompt for corrections to incorrect input or ask what to do next or if it is OK to move to the next plot."  
-
-We illustrate the general steps for annotating the file 'midEarth3_2016-03-12_07-00-00.wav' using screenshots. In practice, users interact with this function via keyboard strokes and mouse clicks in R. Below, the 'db.insert' argument is set to FALSE, and the 'token.path' argument is set to NULL because we are working with a local file. 
+The **AMMonitor** `annotateRecording()` function is an interactive function; it assumes there is a human operator present to interact with prompts given by the function. Because the function is interactive, we illustrate the general steps for annotating the file 'midEarth3_2016-03-12_07-00-00.wav' using screenshots. In practice, users interact with this function via keyboard strokes and mouse clicks in R. Below, the 'db.insert' argument is set to FALSE, and the 'token.path' argument is set to NULL because we are working with a local file. 
 ```{r, eval = FALSE}
 annos <- annotateRecording(db.path = db.path, 
                            recordingID = 'midEarth3_2016-03-12_07-00-00.wav',
@@ -176,7 +170,7 @@ knitr::include_graphics('Chap14_Figs/anno-1.png', dpi = 500)
 ```
 </kbd>
 
->*Figure 14.1.  Enter the number 1 in the console to identify yourself as Bilbo.*
+>*Figure 14.1. Enter the number 1 in the console to identify yourself as Bilbo.*
 
 Next, you will be prompted to declare the list for which you are annotating. Below, we select Bilbo's List (a list of species in which Bilbo has expertise) by entering the number 1 in the console, and then return. 
 
@@ -200,7 +194,7 @@ knitr::include_graphics('Chap14_Figs/anno-3.png', dpi = 500)
 
 </kbd>
 
->*Figure 14.3.  Use the keypad to  select an action.  Selecting the letter "a" will launch the annotations page.*
+>*Figure 14.3. Use the keypad to  select an action. Selecting the letter "a" will launch the annotations page.*
 
 You will be prompted to click on the spectrogram to annotate signals of interest. Create a box by clicking on the spectrogram to mark the upper left corner of the annotation, and clicking on the spectrogram again to mark the lower right corner of the annotation. Creating the box generates a list of library call options associated with the species in Bilbo's List. Below, we choose the option that best describes this annotation, which is 12 ("verd_3notes").
 
@@ -212,7 +206,7 @@ knitr::include_graphics('Chap14_Figs/anno-4.png', dpi = 500)
 
 </kbd>
 
->*Figure 14.4.  When a target signal is found, use the left click button to draw a box around the signal.*
+>*Figure 14.4. When a target signal is found, use the left click button to draw a box around the signal.*
 
 We can continue adding annotations until we are finished.
 
@@ -227,7 +221,7 @@ knitr::include_graphics('Chap14_Figs/anno-5.png', dpi = 500)
 >*Figure 14.5. Press the 'esc' button twice (RStudio) or once (R) to stop the annotations window.*
 
 
-To exit this screen, press 'esc' twice (RStudio) or right click twice (base R), and then press 'q' to quit the interactive mode. After quitting, `annotateRecording()` returns a data.table as below:
+To exit this screen, press 'esc' twice (if using RStudio) or right click twice (if using base R), and then press 'q' to quit the interactive mode. After quitting, `annotateRecording()` returns a data.table as below:
 
 ```{r, echo = F}
 data(annotations)
@@ -236,7 +230,7 @@ annos <- annotations
 
 ```{r,}
 # Look at the returned annotations
-subset(annos, select = -timestamp)
+annos
 ```
 
 Annotations are returned in a table formatted according to the **annotations** table of the database. These records could have been inserted directly into the **annotations** table if we had set argument 'db.insert' = TRUE. However, we recommend practicing with the function before inserting records.
@@ -247,7 +241,7 @@ It is important to note the following:
 
 2. Annotations stored in the database table **annotations** can be deleted at any time.
 
-3. A file may be re-visited at any time to add more annotations.
+3. A file may be re-visited at any time to add more annotations or delete/correct existing annotations. 
 
 4. A file may be annotated by multiple people. For instance, notice that Frodo searched for only those targets in Frodo's list. Bilbo may also annotate those same files and search for targets identified in Bilbo's list. In this way, different members of the monitoring team with different expertise can contribute to the annotation process. 
 
@@ -263,7 +257,7 @@ knitr::include_graphics('Chap14_Figs/anno-7.png', dpi = 500)
 
 </kbd>
 
->*Figure 14.6.  Entering a 'n' when annotating is used to declare that you have searched the file for target signals, and have found none.*
+>*Figure 14.6. Entering a 'n' when annotating is used to declare that you have searched the file for target signals, and have found none.*
 
 Lastly, note that collections of recording annotations may be plotted with `plotAnnotations()`. Below, we view the function arguments. 
 
@@ -302,19 +296,15 @@ In practice, photos are stored in the **photos** directory of the **AMMonitor** 
 # Load magick
 library(magick)
 
-# Grab some stock free images from web
+# Grab a stock free image from web
 coyote <- magick::image_read("https://images.stockfreeimages.com/11102/sfixl/111027410.jpg")
-
-kitfox <- magick::image_read("https://thumbs.dreamstime.com/t/red-fox-kit-sleeping-36129660.jpg")
-
-toad <- magick::image_read("https://thumbs.dreamstime.com/x/desert-dwelling-spadefoot-toad-and-flowers-21249004.jpg")
 
 # Return image info
 magick::image_info(coyote)
 
 ```
 
-We now imagine that these photo jpg files were collected by the Middle Earth monitoring team, and write them to our working directory with the name of a photoID already contained in our sample database. 
+We now imagine that this photo jpg files was collected by the Middle Earth monitoring team, and write it to our working directory with the name of a photoID already contained in our sample database. 
 
 ```{r}
 magick::image_write(coyote, 
@@ -351,10 +341,10 @@ knitr::include_graphics('Chap14_Figs/annotationsRecordings.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 14.7.  The annotations data are created in R.  They can be found with an associated Recording or Photo.*
+>*Figure 14.7. The annotations data are created in R. They can be found with an associated Recording or Photo.*
 
 
-Notice that there are four recordings in the sample database, and the recording "midEarth3_2016-03-12_07-00-00.wav" has been selected. The not-so-friendly 'Hands Off' note indicates that recordings and their annotations are logged by R. Here, we see that Bilbo has added seven annotations to this recordingID.
+Notice that there are four recordings in the sample database, and the recording "midEarth3_2016-03-12_07-00-00.wav" has been selected. The 'Hands Off' note indicates that recordings and their annotations are logged by R. Here, we see that Bilbo has added seven annotations to this recordingID.
 
 Recording annotations can also be accessed via the secondary tab called "Annotations", which are displayed in spreadsheet-type view with red font.
 
@@ -367,7 +357,7 @@ knitr::include_graphics('Chap14_Figs/annotationsRecordings2.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 14.8.  The full Annotations table can also be found in the left menu as a submenu under the Recordings or Photo tab.*
+>*Figure 14.8. The full Annotations table can also be found in the left menu as a submenu under the Recordings or Photo tab.*
 
 Notice that the "Filtered" button toward the bottom of the screen is highlighted. This alerts users that the annotations tables has been filtered here to display only those annotations associated with Recordings (as the Recordings primary tab has been selected).
 
@@ -382,12 +372,12 @@ knitr::include_graphics('Chap14_Figs/annotationsPhotos.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 14.9.  Photographic annotations appear the same way they do with recordings.*
+>*Figure 14.9. Photographic annotations appear the same way they do with recordings.*
 
 Notice that there are three photos in the sample database. As with recordings, these entries are logged by R. Photos can be annotated by members of the monitoring team, in which case a team member view each photo and identify target signals within it. Each photos's annotations are displayed (in this case, none). Photographic annotations can also be viewed by selected the secondary tab labeled "Annotations," in which case the annotations are displayed in spreadsheet like view and are filtered to show only annotations for photos.
 
 # Chapter Summary
 
-In this chapter, you learned  the **AMMonitor** approach for annotating recordings or photos.  Annotations are an essential component of a monitoring program.  They identify exactly where target signals occur in a file, which can aid the computer in locating true signals.  They also can be used to identify true absences, in which cases files are viewed by monitoring team members who confirm absence.  We will revisit these concepts in Chapter 17: Classifications.
+In this chapter, you learned  the **AMMonitor** approach for annotating recordings or photos. Annotations are an essential component of a monitoring program. They identify exactly where target signals occur in a file, which can aid the computer in locating true signals. They also can be used to identify true absences, in which cases files are viewed by monitoring team members who confirm absence. We will revisit these concepts in Chapter 17: Classifications.
 
 # Chapter References
