@@ -2,11 +2,12 @@
 title: "Chapter 13: The Soundscape Table"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---

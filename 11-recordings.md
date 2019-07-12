@@ -1,21 +1,20 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Recordings Table](#the-recordings-table)
--   [Getting an API token for
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Recordings Table](#the-recordings-table)
+  - [Getting an API token for
     Dropbox](#getting-an-api-token-for-dropbox)
--   [Functions that work with
+  - [Functions that work with
     Dropbox](#functions-that-work-with-dropbox)
--   [Downloading and viewing
+  - [Downloading and viewing
     recordings](#downloading-and-viewing-recordings)
--   [Assessing the performance of equipment at active monitoring
+  - [Assessing the performance of equipment at active monitoring
     locations](#assessing-the-performance-of-equipment-at-active-monitoring-locations)
--   [The Recordings Table in Access](#the-recordings-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [The Recordings Table in Access](#the-recordings-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 This chapter covers the **recordings** table of an **AMMonitor**
 database, which stores metadata about recordings. Physical recordings
@@ -191,8 +190,7 @@ the monitoring team. To move files from ‘recording\_drop’ to the
 ‘recordings’ directory (and simultaneously log new audio file metadata
 in the **recordings** table), we use the function `dropboxMoveBatch()`.
 
-The Recordings Table
-====================
+# The Recordings Table
 
 Before asking `dropboxMoveBatch()` to move our four wave files to the
 ‘recordings’ directory, we will view a summary of the **recordings**
@@ -244,8 +242,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "SELECT * FROM recordings;")
     ## [1] recordingID locationID  equipmentID startDate   startTime   filepath    tz          format      timestamp  
     ## <0 rows> (or 0-length row.names)
 
-Getting an API token for Dropbox
-================================
+# Getting an API token for Dropbox
 
 Now that we have new audio files in our ‘recording\_drop’ directory, we
 can use `dropboxMoveBatch()` to move the audio files from the
@@ -337,8 +334,7 @@ Note that this may not be the most secure way to interact with Dropbox.
 Take precautions not to share the **AMMonitor** token with anyone
 outside of your monitoring team.
 
-Functions that work with Dropbox
-================================
+# Functions that work with Dropbox
 
 Your token may now be used repeatedly to interact with Dropbox through
 R. We use the `readRDS()` function to read the token into R’s
@@ -466,9 +462,6 @@ dropboxMoveBatch(db.path = db.path,
 
     ## Move in progress, waiting 10 seconds for server to catch up...
 
-    ## ...Move still in progress, waiting 10 more seconds...
-    ## ...Move still in progress, waiting 10 more seconds...
-
     ## Move status: complete
 
     ## Added 4 new records to recordings table.
@@ -479,10 +472,10 @@ dropboxMoveBatch(db.path = db.path,
     ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##    format           timestamp
-    ## 1:    wav 2019-07-12 11:17:11
-    ## 2:    wav 2019-07-12 11:17:11
-    ## 3:    wav 2019-07-12 11:17:11
-    ## 4:    wav 2019-07-12 11:17:11
+    ## 1:    wav 2019-07-12 15:02:39
+    ## 2:    wav 2019-07-12 15:02:39
+    ## 3:    wav 2019-07-12 15:02:39
+    ## 4:    wav 2019-07-12 15:02:39
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -538,10 +531,10 @@ RSQLite::dbGetQuery(conx, 'SELECT * FROM recordings')
     ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##   format           timestamp
-    ## 1    wav 2019-07-12 11:17:11
-    ## 2    wav 2019-07-12 11:17:11
-    ## 3    wav 2019-07-12 11:17:11
-    ## 4    wav 2019-07-12 11:17:11
+    ## 1    wav 2019-07-12 15:02:39
+    ## 2    wav 2019-07-12 15:02:39
+    ## 3    wav 2019-07-12 15:02:39
+    ## 4    wav 2019-07-12 15:02:39
 
 The table contains four rows. Because we followed the instructions in
 the smartphone set-up guide in Donovan et al. in prep, *recordingID* is
@@ -551,8 +544,7 @@ date (*startDate*), recording time (*startTime*), and format (*format*).
 The *equipmentID*, *locationID*, *filepath*, and *tz* columns were also
 auto-populated.
 
-Downloading and viewing recordings
-==================================
+# Downloading and viewing recordings
 
 All recordings remain in Dropbox cloud storage until retrieved and
 called into R, which we can do using `dropboxGetOneFile()`. Below, we
@@ -598,8 +590,7 @@ wav1
 **wav1** is an S4 object created by **tuneR**. We will work with such
 objects in depth in Chapter 13: Soundscape.
 
-Assessing the performance of equipment at active monitoring locations
-=====================================================================
+# Assessing the performance of equipment at active monitoring locations
 
 If your monitoring program takes advantage of the **schedule** table,
 the function `recordingsCheck()` can be used to check the number of
@@ -690,8 +681,7 @@ may inspect smartphone logs (stored in the **logs** table and logs
 folder within the **AMMonitor** directory) to discover the causes of
 suboptimal equipment performance.
 
-The Recordings Table in Access
-==============================
+# The Recordings Table in Access
 
 The recordings table is a primary tab in the Access Navigation Form.
 
@@ -713,8 +703,7 @@ signals within it. Recording-specific annotations are displayed as a
 table beneath each record. We will illustrate how to annotate files in
 Chapter 14.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 In this chapter, you learned that the **AMMonitor** approach stores
 recordings in the **recording\_drop** folder in the cloud. The
@@ -727,14 +716,25 @@ If the **schedules** table is used to push recording schedules to each
 phone’s Google calendar, `recordingsCheck()` can be used to assess phone
 performance.
 
-Chapter References
-==================
+# Chapter References
 
-1. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
+<div id="refs" class="references">
+
+<div id="ref-tuneR">
+
+1\. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/tuneR/index.html>
 
-2. Ram K, Yochum C. Rdrop2: Programmatic interface to the ’dropbox’ api
+</div>
+
+<div id="ref-rdrop2">
+
+2\. Ram K, Yochum C. Rdrop2: Programmatic interface to the ’dropbox’ api
 (version 0.8.1.9999) \[Internet\]. Comprehensive R Archive Network;
 2017. Available:
 <https://cran.r-project.org/web/packages/rdrop2/index.html>
+
+</div>
+
+</div>

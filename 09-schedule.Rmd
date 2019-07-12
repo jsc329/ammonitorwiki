@@ -1,13 +1,13 @@
 ---
 title: 'Chapter 9: The Schedule Table'
 output:
-  html_document:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---

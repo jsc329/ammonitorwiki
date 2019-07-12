@@ -1,19 +1,18 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Photos Table](#the-photos-table)
-    -   [Functions that work with
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Photos Table](#the-photos-table)
+      - [Functions that work with
         Dropbox](#functions-that-work-with-dropbox)
--   [Downloading and looking at
+  - [Downloading and looking at
     photos](#downloading-and-looking-at-photos)
--   [Assessing the performance of equipment at active monitoring
+  - [Assessing the performance of equipment at active monitoring
     locations](#assessing-the-performance-of-equipment-at-active-monitoring-locations)
--   [The Photos Table in Access](#the-photos-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [The Photos Table in Access](#the-photos-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 This chapter covers the **photos** table of an **AMMonitor** database,
 which stores metadata about photos. Physical photos or motion captures
@@ -46,8 +45,8 @@ directory):
 > metadata into the database.*
 
 For this chapter, the directories (folders) of interest are the
-‘photo\_drop’, ‘photos’, ‘motion\_drop’, and ‘motion’ directories, which
-store photos for photo monitoring. Folders may end up storing many
+‘photo\_drop’, ‘photos’, ‘motion\_drop’, and ‘motion’ directories,
+which store photos for photo monitoring. Folders may end up storing many
 terabytes of data, and this content is best left in the cloud until
 needed. The ‘photo\_drop’ and ‘motion\_drop’ folders are landing folders
 for any new photo files collected by the monitoring team. These files
@@ -57,11 +56,11 @@ described in chapters 9 and 10; see also Donovan et al. in prep).
 
 Similar to Chapter 11 (Recordings), the primary function for this
 chapter is `dropboxMoveBatch()`, which searches the ‘photo\_drop’ or
-‘motion\_drop’ folders on Dropbox for new files. If new files are found,
-the function moves the files to the more permanent ‘photos’ or ‘motion’
-directories on Dropbox, and simultaneously records metadata about these
-files to the **photos** table of an **AMMonitor** database. We will
-describe `dropboxMoveBatch()` later in the chapter.
+‘motion\_drop’ folders on Dropbox for new files. If new files are
+found, the function moves the files to the more permanent ‘photos’ or
+‘motion’ directories on Dropbox, and simultaneously records metadata
+about these files to the **photos** table of an **AMMonitor** database.
+We will describe `dropboxMoveBatch()` later in the chapter.
 
 To illustrate this process, we will use the `dbCreateSample()` function
 to create a database called “Chap12.sqlite”, which will be stored in a
@@ -121,10 +120,10 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 As mentioned, we will assume that any new photos taken as a timed
 photograph will be placed in the ‘photo\_drop’ directory in the Dropbox
 cloud, while motion-triggered photographs are delivered to the
-‘motion\_drop’ directory. The process of working with photos is the same
-for timed and motion-triggered photos. Because of that, we will only
-focus our attention on the **photo\_drop** and **photos** directories to
-illustrate photographic monitoring with **AMMonitor**.
+‘motion\_drop’ directory. The process of working with photos is the
+same for timed and motion-triggered photos. Because of that, we will
+only focus our attention on the **photo\_drop** and **photos**
+directories to illustrate photographic monitoring with **AMMonitor**.
 
 To begin, our sample **photo\_drop** directory has no files in it. Just
 as we rely on the package, tuneR \[1\], to work with recordings, we rely
@@ -176,13 +175,14 @@ magick::image_write(toad, path = "photo_drop/midEarth5_2018-09-05_08-30-00.jpg",
 ```
 
 Notice that each file name is standardized as
-“accountID\_date\_time.jpg”, as described in \[Donovan et al. in prep\].
-If your monitoring program does not use smartphones, the equipmentID may
-be used instead of accountID. We have just simulated the process by
-which photos are populated into the ‘photo\_drop’ folder in your
-**AMMonitor** Dropbox directory. In practice, files may be collected by
-hand and manually placed in this folder, or files can be collected and
-sent via the cellular network as described in previous chapters.
+“accountID\_date\_time.jpg”, as described in \[Donovan et al. in
+prep\]. If your monitoring program does not use smartphones, the
+equipmentID may be used instead of accountID. We have just simulated the
+process by which photos are populated into the ‘photo\_drop’ folder in
+your **AMMonitor** Dropbox directory. In practice, files may be
+collected by hand and manually placed in this folder, or files can be
+collected and sent via the cellular network as described in previous
+chapters.
 
 The next step is to move these files out of the ‘photo\_drop’ directory
 to the more permanent ‘photos’ directory. During this process, we create
@@ -193,12 +193,11 @@ from ‘photo\_drop’ to the ‘photos’ directory (and simultaneously log new
 audio file metadata in the **photos** table), we use the function
 `dropboxMoveBatch()`.
 
-The Photos Table
-================
+# The Photos Table
 
 Before asking `dropboxMoveBatch()` to move our sample photos to the
-‘photos’ directory, we will view a summary of the **photos** table using
-`dbTables()`:
+‘photos’ directory, we will view a summary of the **photos** table
+using `dbTables()`:
 
 ``` r
 # Look at information about the photos table
@@ -396,8 +395,6 @@ dropboxMoveBatch(db.path = db.path,
 
     ## Move in progress, waiting 10 seconds for server to catch up...
 
-    ## ...Move still in progress, waiting 10 more seconds...
-
     ## Move status: complete
 
     ## Added 3 new records to photos table.
@@ -407,9 +404,9 @@ dropboxMoveBatch(db.path = db.path,
     ## 2: midEarth4_2018-09-02_22-30-00.jpg location@2     equip@4 2018-09-02  22:30:00 /photos/midEarth4_2018-09-02_22-30-00.jpg America/Los_Angeles    jpg
     ## 3: midEarth5_2018-09-05_08-30-00.jpg location@3     equip@5 2018-09-05  08:30:00 /photos/midEarth5_2018-09-05_08-30-00.jpg America/Los_Angeles    jpg
     ##              timestamp
-    ## 1: 2019-07-11 15:53:13
-    ## 2: 2019-07-11 15:53:13
-    ## 3: 2019-07-11 15:53:13
+    ## 1: 2019-07-12 15:06:14
+    ## 2: 2019-07-12 15:06:14
+    ## 3: 2019-07-12 15:06:14
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that files have been moved
@@ -454,8 +451,7 @@ can look at the **photos** table to see what was added:
 
 ``` r
 RSQLite::dbGetQuery(conn = conx, 
-                    statement = 'SELECT * 
-                                 FROM photos')
+                    statement = 'SELECT * FROM photos')
 ```
 
     ##                             photoID locationID equipmentID  startDate startTime                                  filepath                  tz format
@@ -463,9 +459,9 @@ RSQLite::dbGetQuery(conn = conx,
     ## 2 midEarth4_2018-09-02_22-30-00.jpg location@2     equip@4 2018-09-02  22:30:00 /photos/midEarth4_2018-09-02_22-30-00.jpg America/Los_Angeles    jpg
     ## 3 midEarth5_2018-09-05_08-30-00.jpg location@3     equip@5 2018-09-05  08:30:00 /photos/midEarth5_2018-09-05_08-30-00.jpg America/Los_Angeles    jpg
     ##             timestamp
-    ## 1 2019-07-11 15:53:13
-    ## 2 2019-07-11 15:53:13
-    ## 3 2019-07-11 15:53:13
+    ## 1 2019-07-12 15:06:14
+    ## 2 2019-07-12 15:06:14
+    ## 3 2019-07-12 15:06:14
 
 The example table contains three photos. Because we followed the
 instructions in the phone set-up guide in Donovan et al. in prep,
@@ -475,8 +471,7 @@ recording date (*startDate*), recording time (*startTime*), and format
 (*format*). The *equipmentID*, *locationID*, *filepath*, *tz*, and
 *timestamp* columns were also auto-populated.
 
-Downloading and looking at photos
-=================================
+# Downloading and looking at photos
 
 All of the photos remain in Dropbox cloud storage until retrieved and
 called into R. The function `dropboxGetOneFile()` can be used for this
@@ -515,8 +510,7 @@ magick::image_browse(img)
 
 The image should now be opened in a new window on your computer.
 
-Assessing the performance of equipment at active monitoring locations
-=====================================================================
+# Assessing the performance of equipment at active monitoring locations
 
 If your monitoring program takes advantage of the **schedule** table,
 the function `photosCheck()` can be used to check the number of photos
@@ -601,8 +595,7 @@ photos to be logged. However, if an animal repeatedly triggers a photo
 to be taken, multiple photographs may be received for one scheduled
 event.
 
-The Photos Table in Access
-==========================
+# The Photos Table in Access
 
 The photos table is a primary tab in the Access Navigation Form.
 
@@ -621,8 +614,7 @@ member views each photo and identifies target signals within it. Each
 photos’s annotations are displayed (in this case, none). We will
 illustrate how to annotate files in Chapter 14.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 In this chapter, you learned that the **AMMonitor** approach is to store
 photos in the **photo\_drop** folder or the **motion\_drop** folder in
@@ -634,18 +626,33 @@ monitoring team to track all photos within the database. If the
 phone’s Google calendar, `photosCheck()` can be used to assess phone
 performance.
 
-Chapter References
-==================
+# Chapter References
 
-1. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
+<div id="refs" class="references">
+
+<div id="ref-tuneR">
+
+1\. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/tuneR/index.html>
 
-2. Ooms J. Magick: Advanced graphics and image-processing in r (version
+</div>
+
+<div id="ref-magick">
+
+2\. Ooms J. Magick: Advanced graphics and image-processing in r (version
 2.0) \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/magick/>
 
-3. Ram K, Yochum C. Rdrop2: Programmatic interface to the ’dropbox’ api
+</div>
+
+<div id="ref-rdrop2">
+
+3\. Ram K, Yochum C. Rdrop2: Programmatic interface to the ’dropbox’ api
 (version 0.8.1.9999) \[Internet\]. Comprehensive R Archive Network;
 2017. Available:
 <https://cran.r-project.org/web/packages/rdrop2/index.html>
+
+</div>
+
+</div>

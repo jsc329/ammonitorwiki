@@ -1,15 +1,14 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Introduction](#introduction)
--   [Recordings](#recordings)
--   [The Soundscape Table](#the-soundscape-table)
--   [The soundscape() function](#the-soundscape-function)
--   [The Soundscape Table in Access](#the-soundscape-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Introduction](#introduction)
+  - [Recordings](#recordings)
+  - [The Soundscape Table](#the-soundscape-table)
+  - [The soundscape() function](#the-soundscape-function)
+  - [The Soundscape Table in Access](#the-soundscape-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Introduction
-============
+# Introduction
 
 An acoustic monitoring program can be used to monitor focal species of
 interest. However, it also can be used to monitor the ecosystem as a
@@ -93,8 +92,7 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-Recordings
-==========
+# Recordings
 
 The first step in a soundscape analysis is to collect recordings. As
 mentioned in previous chapters, we will assume that deployed equipment
@@ -125,8 +123,8 @@ slots) that we created with the package **tuneR** \[4\].
 
 We now pretend that these four files were collected by the Middle Earth
 monitoring team, and archived with `dropboxMoveBatch()` to the
-‘recordings’ folder in the cloud on Dropbox, which also logs metadata to
-the **recordings** table (see Chapter 11: Recordings).
+‘recordings’ folder in the cloud on Dropbox, which also logs metadata
+to the **recordings** table (see Chapter 11: Recordings).
 
 ``` r
 # Write these as wave files to the drop folder
@@ -143,6 +141,17 @@ tuneR::writeWave(object = sampleRecordings[[4]],
 RSQLite::dbGetQuery(conx, 'SELECT * FROM recordings')
 ```
 
+    ##                         recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
+    ## 1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
+    ## 2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
+    ## 3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
+    ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
+    ##   format           timestamp
+    ## 1    wav 2018-10-22 17:27:33
+    ## 2    wav 2018-10-22 17:27:33
+    ## 3    wav 2018-10-22 17:27:33
+    ## 4    wav 2018-10-22 17:27:33
+
 As shown, the metadata for the four recordings are stored in the
 **recordings** table. The actual files reside in the Dropbox
 **recordings** folder, and we can use `dropboxMetadata()` to confirm
@@ -155,6 +164,12 @@ recordings.meta <- dropboxMetadata(
   token.path = 'settings/dropbox-token.RDS')
 as.data.frame(recordings.meta[,'path_display'])
 ```
+
+    ##               recordings.meta[, "path_display"]
+    ## 1 /recordings/midEarth4_2016-03-26_07-00-00.wav
+    ## 2 /recordings/midEarth3_2016-03-12_07-00-00.wav
+    ## 3 /recordings/midEarth4_2016-03-04_06-00-00.wav
+    ## 4 /recordings/midEarth5_2016-03-21_07-30-00.wav
 
 As described in Chapter 11: Recordings, we can use the function
 `dropboxGetOneFile()` to copy a file to our working directory. Here, we
@@ -197,8 +212,7 @@ with 53.15 \* 44100 = \~ 2343936 number of samples. The file was
 recorded with a single channel microphone (mono). We’ll now analyze the
 soundscape of this file.
 
-The Soundscape Table
-====================
+# The Soundscape Table
 
 Before we begin our analysis, let’s view the schema of the
 **soundscape** table, which stores soundscape data for a recording:
@@ -231,44 +245,44 @@ package **soundecology** \[2\] or by the package **tuneR** \[4\]. The
 the results into the **soundscape** table. The columns are defined as
 follows (borrowing liberally from the package helpfiles):
 
--   aci = acoustic complexity index, calculated with **soundecology**’s
+  - aci = acoustic complexity index, calculated with **soundecology**’s
     \[2\] `acoustic_complexity()` function. The aci is based on the
     “observation that many biotic sounds, such as bird songs, are
     characterized by an intrinsic variability of intensities, while some
     types of human generated noise (such as car passing or airplane
     transit) present very constant intensity values”.
--   ndsi = normalized difference soundscape index, calculated with
+  - ndsi = normalized difference soundscape index, calculated with
     **soundecology**’s \[2\] `ndsi()` function. The ndsi seeks to
     “estimate the level of anthropogenic disturbance on the soundscape
     by computing the ratio of human-generated (anthrophony) to
     biological (biophony) acoustic components found in field collected
     sound samples” \[5\].
--   ndsi\_anthrophony = value for the anthrophony portion of the ndsi
+  - ndsi\_anthrophony = value for the anthrophony portion of the ndsi
     metric, calculated with **soundecology**’s \[2\] `ndsi()` function.
--   ndsi\_biophony = value for the biophony portion of the NDSI metric,
+  - ndsi\_biophony = value for the biophony portion of the NDSI metric,
     calculated with **soundecology**’s \[2\] `ndsi()` function.
--   bioindex = bioacoustic index, calculated with **soundecology**’s
+  - bioindex = bioacoustic index, calculated with **soundecology**’s
     \[2\] `bioacoustic_index()` function. The Bioacoustic Index is
     calculated as the “area under each curve included all frequency
     bands associated with the dB value that was greater than the minimum
     dB value for each curve. The area values are thus a function of both
     the sound level and the number of frequency bands used by the
     avifauna” \[6\].
--   adi = acoustic diversity index, calculated with **soundecology**’s
+  - adi = acoustic diversity index, calculated with **soundecology**’s
     \[2\] `acoustic_diversity()` function. The ADI is calculated by
     dividing the spectrogram into bins (default 10) and taking the
     proportion of the signals in each bin above a threshold (default -50
     dBFS). The ADI is the result of the Shannon index applied to these
     bins.
--   aei = acoustic eveness index, calculated with **soundecology**’s
+  - aei = acoustic eveness index, calculated with **soundecology**’s
     \[2\] `acoustic_evenness()` function. The AEI is calculated by
     dividing the spectrogram into bins (default 10) and taking the
     proportion of the signals in each bin above a threshold (default -50
     dBFS). The AEI is the result of the Gini index applied to these
     bins.
--   minFrq - the lowest registered frequency across the recording,
+  - minFrq - the lowest registered frequency across the recording,
     calculated with the package **tuneR**’s \_\_\_ function \[4\].
--   maxFrq - the highest registered frequency across the recording,
+  - maxFrq - the highest registered frequency across the recording,
     calculated with the package **tuneR**’s \_\_\_ function \[4\].
 
 Although users will not use **soundecology** \[2\] directly, it is
@@ -322,8 +336,7 @@ desirable for your monitoring program. If you would like to change these
 defaults, you may do so by running the `soundscape()` function as a
 script (Chapter 20).
 
-The soundscape() function
-=========================
+# The soundscape() function
 
 At last, we are able to illustrate **AMMonitor**’s `soundscape()`
 function. This function has three arguments, the first of which is the
@@ -385,6 +398,9 @@ results <- AMMonitor::soundscape(db.path = NULL,
 results
 ```
 
+    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
+
 It is useful to check the results of the function before inserting to
 the database to confirm that all is well. Once confirmed, users may
 regularly use this function to obtain soundscape metrics for recordings
@@ -440,10 +456,16 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##   Acoustic Evenness Index: 0.000869
 
+    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
+
 ``` r
 # Check database to ensure events were added:
 RSQLite::dbGetQuery(conx, "SELECT * FROM soundscape")
 ```
+
+    ##                         recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
+    ## 1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
 
 As shown, the results of the `soundscape()` function have been uploaded
 to the **soundscape** table.
@@ -458,8 +480,7 @@ that is related to soundscape condition, results of this table can be
 used to assess the current state of the ecosystem with respect to the
 stated objective. We discuss such “assessments” in Chapter 20.
 
-The Soundscape Table in Access
-==============================
+# The Soundscape Table in Access
 
 The soundscape table is a secondary tab in the Access Navigation Form,
 under the “Recordings” primary tab.
@@ -478,8 +499,7 @@ earlier in the chapter). The table is displayed in “datasheet” view,
 where entries are colored in red to remind users that the table is
 populated by R.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 In this chapter, you learned the **AMMonitor** approach to analyzing
 soundscapes and storing results in the **soundscape** database table.
@@ -490,30 +510,57 @@ function allows a seamless connection between the database recordingIDs,
 the actual recordings that are stored in the cloud, and the results that
 are added to the **soundscape** table.
 
-Chapter References
-==================
+# Chapter References
 
-1. Pijanowski B. C., Villanueva-Rivera L. J., Dumyahn S. L., Farina A.,
+<div id="refs" class="references">
+
+<div id="ref-Pijanowski2011">
+
+1\. Pijanowski B. C., Villanueva-Rivera L. J., Dumyahn S. L., Farina A.,
 Krause B. L., Napoletano et a B. M. Soundscape ecology: The science of
-sound in the landscape. BioScience. 2011;61: 203–216.
+sound in the landscape. BioScience. 2011;61: 203–216. 
 
-2. Villanueva-Rivera LJ, Pijanowski BC. Soundecology: Soundscape ecology
-\[Internet\]. 2018. Available:
+</div>
+
+<div id="ref-soundecology">
+
+2\. Villanueva-Rivera LJ, Pijanowski BC. Soundecology: Soundscape
+ecology \[Internet\]. 2018. Available:
 <https://CRAN.R-project.org/package=soundecology>
 
-3. Villanueva-Rivera L. J., B. C. Pijanowski, J. Doucette, Pekin B. A
+</div>
+
+<div id="ref-Villanueva2011">
+
+3\. Villanueva-Rivera L. J., B. C. Pijanowski, J. Doucette, Pekin B. A
 primer of acoustic analysis for landscape ecologists. Landscape Ecology.
 2011;26: 1233–1246.
 doi:[10.1007/s10980-011-9636-9](https://doi.org/10.1007/s10980-011-9636-9)
 
-4. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
+</div>
+
+<div id="ref-tuneR">
+
+4\. Ligges U. TuneR: Analysis of music and speech (version 1.3.3)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/tuneR/index.html>
 
-5. Kasten EP, Gage SH, Fox J, Joo W. The remote environmental assessment
-laboratory’s acoustic library: An archive for studying soundscape
-ecology. Ecological Informatics. 2012;12: 50–67.
+</div>
 
-6. NT B, GP A, PJ H, RE. M. Multi-trophic invasion resistance in hawaii:
-Bioacoustics, field surveys, and airborne remote sensing. Ecological
-Applications. 17: 2137–2144.
+<div id="ref-Kasten">
+
+5\. Kasten EP, Gage SH, Fox J, Joo W. The remote environmental
+assessment laboratory’s acoustic library: An archive for studying
+soundscape ecology. Ecological Informatics. 2012;12: 50–67. 
+
+</div>
+
+<div id="ref-Boelman">
+
+6\. NT B, GP A, PJ H, RE. M. Multi-trophic invasion resistance in
+hawaii: Bioacoustics, field surveys, and airborne remote sensing.
+Ecological Applications. 17: 2137–2144. 
+
+</div>
+
+</div>

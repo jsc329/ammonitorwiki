@@ -77,6 +77,8 @@ Below, we use `dbCreateSample()` to pre-populate several necessary
 tables. We will auto-populate additional tables using **AMMonitor**
 functions later on in the chapter:
 
+\<div class = ’admonition-wrapper note"\>
+
 ``` r
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap10.sqlite", 
@@ -93,6 +95,8 @@ dbCreateSample(db.name = "Chap10.sqlite",
     ## 
     ## Sample data have been generated for the following tables: 
     ## accounts, people, species, equipment, locations, deployment, priorities, temporals
+
+</div>
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we
@@ -347,18 +351,18 @@ RSQLite::dbGetQuery(conn = conx,
 ```
 
     ##    locationID speciesID       date pMax pCurrent weight init
-    ## 1  location@1      btgn 2019-07-11 0.95        0    0.2    1
-    ## 2  location@1      copo 2019-07-11 0.95        0    0.3    1
-    ## 3  location@1      leni 2019-07-11 0.95        0    0.3    1
-    ## 4  location@1      verd 2019-07-11 0.95        0    0.2    1
-    ## 5  location@2      btgn 2019-07-11 0.95        0    0.2    1
-    ## 6  location@2      copo 2019-07-11 0.95        0    0.3    1
-    ## 7  location@2      leni 2019-07-11 0.95        0    0.3    1
-    ## 8  location@2      verd 2019-07-11 0.95        0    0.2    1
-    ## 9  location@3      btgn 2019-07-11 0.95        0    0.2    1
-    ## 10 location@3      copo 2019-07-11 0.95        0    0.3    1
-    ## 11 location@3      leni 2019-07-11 0.95        0    0.3    1
-    ## 12 location@3      verd 2019-07-11 0.95        0    0.2    1
+    ## 1  location@1      btgn 2019-07-12 0.95        0    0.2    1
+    ## 2  location@1      copo 2019-07-12 0.95        0    0.3    1
+    ## 3  location@1      leni 2019-07-12 0.95        0    0.3    1
+    ## 4  location@1      verd 2019-07-12 0.95        0    0.2    1
+    ## 5  location@2      btgn 2019-07-12 0.95        0    0.2    1
+    ## 6  location@2      copo 2019-07-12 0.95        0    0.3    1
+    ## 7  location@2      leni 2019-07-12 0.95        0    0.3    1
+    ## 8  location@2      verd 2019-07-12 0.95        0    0.2    1
+    ## 9  location@3      btgn 2019-07-12 0.95        0    0.2    1
+    ## 10 location@3      copo 2019-07-12 0.95        0    0.3    1
+    ## 11 location@3      leni 2019-07-12 0.95        0    0.3    1
+    ## 12 location@3      verd 2019-07-12 0.95        0    0.2    1
 
 Note that `priorityInit()` has initialized monitoring with a total of 12
 rows, having repeated all four target species at each of our three
@@ -381,8 +385,7 @@ increase for species whose probability of capture remains inadequate.
 As a preview of the prioritization process, the figure below
 demonstrates how *pCurrent* and *weight* values change from the
 beginning (2016-03-01) to the end (2016-03-31) of a hypothetical
-monitoring scenario for location@1
-only:
+monitoring scenario for location@1 only:
 
 <kbd>
 
@@ -419,8 +422,7 @@ These covariates are stored in the **temporals** table of an
 **AMMonitor** database.
 
 Activity models will ultimately be stored in an AMModels library located
-in the **ammls** folder within the main **AMMonitor**
-directory.
+in the **ammls** folder within the main **AMMonitor** directory.
 
 <kbd>
 
@@ -663,8 +665,7 @@ coefficient values we want to use in our model. For example, in the
 coefficients are on the logit (log odds) scale to ensure that the final
 probability is constrained between 0 and 1. Take care to ensure that all
 covariate names match up correctly in order with the coefficient values
-you want to
-use.
+you want to use.
 
 ``` r
 # Example list of model equations for vocalization for each of four species
@@ -731,19 +732,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 12.2 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13.6 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8.1 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.5 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.5 % of the time.
+    ## Finished model 3. Model leni_vocals is active 2 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.3 % of the time.
+    ## Finished model 4. Model verd_vocals is active 18.4 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -776,8 +777,7 @@ The plot below gives the reader some sense of what the coefficients
 mean. Each of the four species is plotted in five panels, with the
 probability of vocalization per unit time on the y-axis. The x-axes vary
 across the five panels, and demonstrate the influence of several
-different covariates on vocalization probability by
-species.
+different covariates on vocalization probability by species.
 
 <kbd>
 
@@ -1085,19 +1085,19 @@ test_optim['prioritization']
 ```
 
     ## $prioritization
-    ##     locationID speciesID       date pMax  pCurrent weight init
-    ##  1: location@1      btgn 2019-07-12 0.95 0.1267393      1    0
-    ##  2: location@1      copo 2019-07-12 0.95 1.0000000      0    0
-    ##  3: location@1      leni 2019-07-12 0.95 1.0000000      0    0
-    ##  4: location@1      verd 2019-07-12 0.95 1.0000000      0    0
-    ##  5: location@2      btgn 2019-07-12 0.95 0.2732602      1    0
-    ##  6: location@2      copo 2019-07-12 0.95 1.0000000      0    0
-    ##  7: location@2      leni 2019-07-12 0.95 1.0000000      0    0
-    ##  8: location@2      verd 2019-07-12 0.95 1.0000000      0    0
-    ##  9: location@3      btgn 2019-07-12 0.95 0.1234334      1    0
-    ## 10: location@3      copo 2019-07-12 0.95 1.0000000      0    0
-    ## 11: location@3      leni 2019-07-12 0.95 1.0000000      0    0
-    ## 12: location@3      verd 2019-07-12 0.95 1.0000000      0    0
+    ##     locationID speciesID       date pMax     pCurrent    weight init
+    ##  1: location@1      btgn 2019-07-13 0.95 1.386605e-09 0.5013067    0
+    ##  2: location@1      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  3: location@1      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  4: location@1      verd 2019-07-13 0.95 4.952532e-03 0.4986933    0
+    ##  5: location@2      btgn 2019-07-13 0.95 1.675549e-09 0.5016590    0
+    ##  6: location@2      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  7: location@2      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  8: location@2      verd 2019-07-13 0.95 6.283254e-03 0.4983410    0
+    ##  9: location@3      btgn 2019-07-13 0.95 1.365305e-09 0.5012828    0
+    ## 10: location@3      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ## 11: location@3      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ## 12: location@3      verd 2019-07-13 0.95 4.862254e-03 0.4987172    0
 
 The prioritization table contains 12 rows; one row for each of the four
 target species at each of three active monitoring locations. Though the
@@ -1117,26 +1117,27 @@ weights go up.
 Next, we look at the schedule table:
 
 ``` r
-# Look at schedule table output, printed as a tibble
-test_optim$schedule
+# Look at schedule table output
+test_optim['schedule']
 ```
 
+    ## $schedule
     ##       Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
-    ##  1: Recording 2019-07-12   06:00:00 2019-07-12 06:01:00         False Optim Calendar location@1   False
-    ##  2: Recording 2019-07-12   06:12:00 2019-07-12 06:13:00         False Optim Calendar location@1   False
-    ##  3: Recording 2019-07-12   06:24:00 2019-07-12 06:25:00         False Optim Calendar location@1   False
-    ##  4: Recording 2019-07-12   06:36:00 2019-07-12 06:37:00         False Optim Calendar location@1   False
-    ##  5: Recording 2019-07-12   06:48:00 2019-07-12 06:49:00         False Optim Calendar location@1   False
-    ##  6: Recording 2019-07-12   05:00:00 2019-07-12 05:01:00         False Optim Calendar location@2   False
-    ##  7: Recording 2019-07-12   05:12:00 2019-07-12 05:13:00         False Optim Calendar location@2   False
-    ##  8: Recording 2019-07-12   05:24:00 2019-07-12 05:25:00         False Optim Calendar location@2   False
-    ##  9: Recording 2019-07-12   05:36:00 2019-07-12 05:37:00         False Optim Calendar location@2   False
-    ## 10: Recording 2019-07-12   05:48:00 2019-07-12 05:49:00         False Optim Calendar location@2   False
-    ## 11: Recording 2019-07-12   05:00:00 2019-07-12 05:01:00         False Optim Calendar location@3   False
-    ## 12: Recording 2019-07-12   05:12:00 2019-07-12 05:13:00         False Optim Calendar location@3   False
-    ## 13: Recording 2019-07-12   05:24:00 2019-07-12 05:25:00         False Optim Calendar location@3   False
-    ## 14: Recording 2019-07-12   05:36:00 2019-07-12 05:37:00         False Optim Calendar location@3   False
-    ## 15: Recording 2019-07-12   05:48:00 2019-07-12 05:49:00         False Optim Calendar location@3   False
+    ##  1: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@1   False
+    ##  2: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@1   False
+    ##  3: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@1   False
+    ##  4: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@1   False
+    ##  5: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@1   False
+    ##  6: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@2   False
+    ##  7: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@2   False
+    ##  8: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@2   False
+    ##  9: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@2   False
+    ## 10: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@2   False
+    ## 11: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@3   False
+    ## 12: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@3   False
+    ## 13: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@3   False
+    ## 14: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@3   False
+    ## 15: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@3   False
 
 This is the schedule that can be pushed to Google Calendar, if desired.
 Notice that the schedule has a total of 15 rows; five for each of three
@@ -1165,8 +1166,7 @@ dates and locations of interest, and stored in the **temporals** table.
 First, for the purposes of demonstration only, we carefully use
 `dbClearTables()` to clear the **prioritization** table and start over
 (this is a function that should only be used in the testing stages of
-setting up a monitoring
-database):
+setting up a monitoring database):
 
 ``` r
 dbClearTables(db.path = db.path, tables = c('schedule', 'prioritization'))
@@ -1237,15 +1237,15 @@ qryPrioritization(conn = conx)
     ##    locationID speciesID weight  pCurrent pMax       date init
     ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 3  location@1      leni      0 0.9995082 0.95 2016-03-31    0
+    ## 3  location@1      leni      0 0.9998102 0.95 2016-03-31    0
     ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
     ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 7  location@2      leni      0 0.9995868 0.95 2016-03-31    0
+    ## 7  location@2      leni      0 0.9998008 0.95 2016-03-31    0
     ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
     ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 11 location@3      leni      0 0.9995096 0.95 2016-03-31    0
+    ## 11 location@3      leni      0 0.9998105 0.95 2016-03-31    0
     ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0
 
 By default, `qryPrioritization()` will return records associated with
@@ -1275,8 +1275,7 @@ Scripts are described in detail in Chapter 19.
 
 Because monitoring priorities are established at the discretion of the
 monitoring team, they can be found under the “Objectives” primary tab of
-the Access Navigation
-Form.
+the Access Navigation Form.
 
 <kbd>
 
@@ -1297,8 +1296,7 @@ when a species can be dropped from monitoring consideration at a site.
 
 The prioritization table is also located under the “Objectives tab”. The
 data are colored red to remind us that they are automatically filled in
-by **AMMonitor** functions and are not to be edited by
-hand.
+by **AMMonitor** functions and are not to be edited by hand.
 
 <kbd>
 
@@ -1343,7 +1341,7 @@ employed in **AMMonitor** can be found in \[2\].
 
 <div id="ref-BalanticTemporal">
 
-2\. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
+2\. Balantic CM, Donovan TM. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution. 
 

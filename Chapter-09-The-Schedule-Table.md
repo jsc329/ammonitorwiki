@@ -1,24 +1,23 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [Introduction to the Schedule
+  - [Chapter Introduction](#chapter-introduction)
+  - [Introduction to the Schedule
     Table](#introduction-to-the-schedule-table)
--   [Setting a sun-based sampling schedule with
+  - [Setting a sun-based sampling schedule with
     scheduleSun()](#setting-a-sun-based-sampling-schedule-with-schedulesun)
--   [Setting a fixed sampling schedule with
+  - [Setting a fixed sampling schedule with
     scheduleFixed()](#setting-a-fixed-sampling-schedule-with-schedulefixed)
--   [Working with the Google Calendar
+  - [Working with the Google Calendar
     API](#working-with-the-google-calendar-api)
-    -   [Step 1: Setting up a Google API Service
+      - [Step 1: Setting up a Google API Service
         Account](#step-1-setting-up-a-google-api-service-account)
-    -   [Step 2: Sharing the Service Token with Monitoring
+      - [Step 2: Sharing the Service Token with Monitoring
         Equipment](#step-2-sharing-the-service-token-with-monitoring-equipment)
--   [The Schedule Table in Access](#the-schedule-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [The Schedule Table in Access](#the-schedule-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 The **schedule** table may be used by smartphone monitoring programs.
 This table links each piece of equipment (e.g., a smartphone with an
@@ -100,8 +99,7 @@ RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-Introduction to the Schedule Table
-==================================
+# Introduction to the Schedule Table
 
 The **schedule** table tracks monitoring events assigned to smartphone
 monitoring equipment. Scheduled events are synced to Google Calendar,
@@ -174,6 +172,13 @@ schedule <- RSQLite::dbGetQuery(conn = conx,
 schedule[, c(1:7, 10)]
 ```
 
+    ##   equipmentID locationID   subject  startDate startTime    endDate  endTime private
+    ## 1     equip@3 location@1 recording 2016-03-12  07:00:00 2016-03-12 07:01:00   False
+    ## 2     equip@3 location@1 recording 2016-03-13  07:00:00 2016-03-13 07:01:00   False
+    ## 3     equip@4 location@2 recording 2016-03-04  06:00:00 2016-03-04 06:01:00   False
+    ## 4     equip@4 location@2 recording 2016-03-26  07:00:00 2016-03-26 07:01:00   False
+    ## 5     equip@5 location@3 recording 2016-03-21  07:30:00 2016-03-21 07:31:00   False
+
 Observe that an *equipmentID* (which is linked to a specific Google
 account via the **accounts** table) is assigned to each record. The
 *locationID* is automatically populated based on the current deployment
@@ -189,12 +194,15 @@ as foreign keys, which we confirm with the following code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(schedule);")
 ```
 
+    ##   id seq     table        from          to on_update on_delete match
+    ## 1  0   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
+    ## 2  1   0 equipment equipmentID equipmentID   CASCADE NO ACTION  NONE
+
 Note that if the primary key entries in the **equipment** or
 **locations** tables are updated, changes will cascade to the
 **schedule** table as well.
 
-Setting a sun-based sampling schedule with scheduleSun()
-========================================================
+# Setting a sun-based sampling schedule with scheduleSun()
 
 Sun-based sampling allows us to schedule monitoring events that are
 automatically staggered around sunrise and/or sunset at actively
@@ -229,9 +237,9 @@ table. The third argument is ‘calendar.key’, where we can specify a
 Google API service token (discussed later). Below, we set ‘calendar.key’
 to NULL to start out by testing the function. In the ‘subject’ argument,
 we indicate that this scheduled event will be a “recording”. The
-‘start.date’ and ‘end.date’ arguments allow us to set the limits of the
-calendar (inclusive) and must be characters in YYYY-mm-dd format. The
-‘duration’ argument is a scalar integer for specifying the recording
+‘start.date’ and ‘end.date’ arguments allow us to set the limits of
+the calendar (inclusive) and must be characters in YYYY-mm-dd format.
+The ‘duration’ argument is a scalar integer for specifying the recording
 length in minutes; below, we set a ‘duration’ of 3 to indicate that each
 recording should be three minutes long. In ‘n.rise’, we specify the
 number of recording events that should be staggered around sunrise;
@@ -254,21 +262,41 @@ without pushing any events to Google Calendar:
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-sched <- scheduleSun(db.path = db.path,
-                     locationID = c('location@1', 'location@2'),
-                     calendar.key = NULL,
-                     subject = 'recording', 
-                     start.date = '2018-06-01',
-                     end.date = '2018-06-02',
-                     duration = 2,
-                     n.rise = 3,
-                     n.set = 2,
-                     spacing = 1,
-                     db.insert = FALSE,
-                     google.push = FALSE)
-
-sched
+scheduleSun(db.path = db.path,
+            locationID = c('location@1', 'location@2'),
+            calendar.key = NULL,
+            subject = 'recording', 
+            start.date = '2018-06-01',
+            end.date = '2018-06-02',
+            duration = 2,
+            n.rise = 3,
+            n.set = 2,
+            spacing = 1,
+            db.insert = FALSE,
+            google.push = FALSE)
 ```
+
+    ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent  description private                  tz
+    ##  1:     equip@3 location@1 recording 2018-06-01  05:27:00 2018-06-01 05:29:00       False Sun Calendar   False America/Los_Angeles
+    ##  2:     equip@3 location@1 recording 2018-06-01  05:30:00 2018-06-01 05:32:00       False Sun Calendar   False America/Los_Angeles
+    ##  3:     equip@3 location@1 recording 2018-06-01  05:33:00 2018-06-01 05:35:00       False Sun Calendar   False America/Los_Angeles
+    ##  4:     equip@3 location@1 recording 2018-06-01  19:43:00 2018-06-01 19:45:00       False Sun Calendar   False America/Los_Angeles
+    ##  5:     equip@3 location@1 recording 2018-06-01  19:46:00 2018-06-01 19:48:00       False Sun Calendar   False America/Los_Angeles
+    ##  6:     equip@3 location@1 recording 2018-06-02  05:27:00 2018-06-02 05:29:00       False Sun Calendar   False America/Los_Angeles
+    ##  7:     equip@3 location@1 recording 2018-06-02  05:30:00 2018-06-02 05:32:00       False Sun Calendar   False America/Los_Angeles
+    ##  8:     equip@3 location@1 recording 2018-06-02  05:33:00 2018-06-02 05:35:00       False Sun Calendar   False America/Los_Angeles
+    ##  9:     equip@3 location@1 recording 2018-06-02  19:44:00 2018-06-02 19:46:00       False Sun Calendar   False America/Los_Angeles
+    ## 10:     equip@3 location@1 recording 2018-06-02  19:47:00 2018-06-02 19:49:00       False Sun Calendar   False America/Los_Angeles
+    ## 11:     equip@4 location@2 recording 2018-06-01  05:26:00 2018-06-01 05:28:00       False Sun Calendar   False America/Los_Angeles
+    ## 12:     equip@4 location@2 recording 2018-06-01  05:29:00 2018-06-01 05:31:00       False Sun Calendar   False America/Los_Angeles
+    ## 13:     equip@4 location@2 recording 2018-06-01  05:32:00 2018-06-01 05:34:00       False Sun Calendar   False America/Los_Angeles
+    ## 14:     equip@4 location@2 recording 2018-06-01  19:42:00 2018-06-01 19:44:00       False Sun Calendar   False America/Los_Angeles
+    ## 15:     equip@4 location@2 recording 2018-06-01  19:45:00 2018-06-01 19:47:00       False Sun Calendar   False America/Los_Angeles
+    ## 16:     equip@4 location@2 recording 2018-06-02  05:26:00 2018-06-02 05:28:00       False Sun Calendar   False America/Los_Angeles
+    ## 17:     equip@4 location@2 recording 2018-06-02  05:29:00 2018-06-02 05:31:00       False Sun Calendar   False America/Los_Angeles
+    ## 18:     equip@4 location@2 recording 2018-06-02  05:32:00 2018-06-02 05:34:00       False Sun Calendar   False America/Los_Angeles
+    ## 19:     equip@4 location@2 recording 2018-06-02  19:43:00 2018-06-02 19:45:00       False Sun Calendar   False America/Los_Angeles
+    ## 20:     equip@4 location@2 recording 2018-06-02  19:46:00 2018-06-02 19:48:00       False Sun Calendar   False America/Los_Angeles
 
 In the output, we see that `scheduleSun()` has automatically populated
 the subject field with the word ‘recording’. It has tracked our start
@@ -292,20 +320,18 @@ file.path to the ‘calendar.key’, which we will discuss below.
 # A calendar.key is required.
 # ------------------------------------------------------------  
 
-sched <- scheduleSun(db.path = db.path,
-                     locationID = c('location@1', 'location@2'),
-                     calendar.key = 'settings/calendar-10b0fdaac306.json',
-                     subject = 'recording',
-                     start.date = '2018-06-01',
-                     end.date = '2018-06-02',
-                     duration = 2,
-                     n.rise = 3, 
-                     n.set = 2, 
-                     spacing = 1,
-                     db.insert = TRUE,
-                     google.push = TRUE)
-
-sched
+scheduleSun(db.path = db.path,
+            locationID = c('location@1', 'location@2'),
+            calendar.key = 'settings/calendar-10b0fdaac306.json',
+            subject = 'recording',
+            start.date = '2018-06-01',
+            end.date = '2018-06-02',
+            duration = 2,
+            n.rise = 3, 
+            n.set = 2, 
+            spacing = 1,
+            db.insert = TRUE,
+            google.push = TRUE)
 ```
 
 `scheduleSun()` returns status messages (not shown) informing us as to
@@ -337,8 +363,8 @@ One last option with the `scheduleSun()` function is the capacity to
 create a sun-based calendar without any database at all. In this case,
 users can set the ‘db.path’ argument to NULL. We pass our desired inputs
 to the ‘start.date’, ‘end.date’, ‘duration’, ‘n.rise’, ‘n.set’, and
-‘spacing’ arguments just as we did in the previous examples. However, if
-we aren’t using a database, we have to provide some location names of
+‘spacing’ arguments just as we did in the previous examples. However,
+if we aren’t using a database, we have to provide some location names of
 our choice in the ‘locationID’ argument (this input is required by
 Google Calendar), as well as latitude and longitude vectors of the same
 length as the ‘locationID’ vector. We also need to identify the
@@ -354,21 +380,33 @@ with a database.
 # using the optional lat, long, and timezone arguments.
 # ------------------------------------------------------------
 
-sched <- scheduleSun(locationID = c('one_place', 'another_place'),
-                     start.date = '2018-06-01',
-                     end.date = '2018-06-02',
-                     duration = 1,
-                     n.rise = 2,
-                     n.set = 1,
-                     spacing = 4,
-                     lat = c(44.475856, 43.234555),
-                     long = c(-73.195142, -72.103589), 
-                     timezone = 'America/New_york',
-                     db.insert = FALSE,
-                     google.push = FALSE)
-
-sched
+scheduleSun(locationID = c('one_place', 'another_place'),
+            start.date = '2018-06-01',
+            end.date = '2018-06-02',
+            duration = 1,
+            n.rise = 2,
+            n.set = 1,
+            spacing = 4,
+            lat = c(44.475856, 43.234555),
+            long = c(-73.195142, -72.103589), 
+            timezone = 'America/New_york',
+            db.insert = FALSE,
+            google.push = FALSE)
 ```
+
+    ##       Subject Start Date Start Time   End Date End Time All Day Event  Description      Location Private
+    ##  1: recording 2018-06-01   05:08:00 2018-06-01 05:09:00         False Sun Calendar     one_place   False
+    ##  2: recording 2018-06-01   05:13:00 2018-06-01 05:14:00         False Sun Calendar     one_place   False
+    ##  3: recording 2018-06-01   20:30:00 2018-06-01 20:31:00         False Sun Calendar     one_place   False
+    ##  4: recording 2018-06-02   05:08:00 2018-06-02 05:09:00         False Sun Calendar     one_place   False
+    ##  5: recording 2018-06-02   05:13:00 2018-06-02 05:14:00         False Sun Calendar     one_place   False
+    ##  6: recording 2018-06-02   20:31:00 2018-06-02 20:32:00         False Sun Calendar     one_place   False
+    ##  7: recording 2018-06-01   05:08:00 2018-06-01 05:09:00         False Sun Calendar another_place   False
+    ##  8: recording 2018-06-01   05:13:00 2018-06-01 05:14:00         False Sun Calendar another_place   False
+    ##  9: recording 2018-06-01   20:22:00 2018-06-01 20:23:00         False Sun Calendar another_place   False
+    ## 10: recording 2018-06-02   05:08:00 2018-06-02 05:09:00         False Sun Calendar another_place   False
+    ## 11: recording 2018-06-02   05:13:00 2018-06-02 05:14:00         False Sun Calendar another_place   False
+    ## 12: recording 2018-06-02   20:23:00 2018-06-02 20:24:00         False Sun Calendar another_place   False
 
 In the third example, the field names on the returned data.table object
 look slightly different from those returned by a call to `scheduleSun()`
@@ -380,8 +418,7 @@ column names are formatted for direct use with the Google Calendar API
 write it to a CSV, and manually load it into a Google Calendar ourselves
 (or apply it to other uses).
 
-Setting a fixed sampling schedule with scheduleFixed()
-======================================================
+# Setting a fixed sampling schedule with scheduleFixed()
 
 Fixed sampling allows us to schedule audio recording events at the
 precise times we want to sample. To set a fixed schedule, we use the
@@ -389,29 +426,29 @@ function `scheduleFixed()`.
 
 The arguments to `scheduleFixed()` are similar to `scheduleSun()`,
 except that the sun-based arguments disappear, and we instead have a
-‘sampling.times’ argument that we use to feed fixed sampling times into
-the function. As usual, the ‘db.path’ argument will take our **db.path**
-object, which has stored the full file path to our database. Next, the
-‘locationID’ argument allows us to input a string of locationIDs for
-which we want to generate fixed calendars. In this argument, since we
-are using the database, we need to make sure that the string of
-locationIDs we input actually matches locationIDs present in the
-**locations** table, and that these locations are currently being
+‘sampling.times’ argument that we use to feed fixed sampling times
+into the function. As usual, the ‘db.path’ argument will take our
+**db.path** object, which has stored the full file path to our database.
+Next, the ‘locationID’ argument allows us to input a string of
+locationIDs for which we want to generate fixed calendars. In this
+argument, since we are using the database, we need to make sure that the
+string of locationIDs we input actually matches locationIDs present in
+the **locations** table, and that these locations are currently being
 actively monitored with a piece of equipment in the **deployment**
 table. The third argument is ‘calendar.key’, where we can specify a
 Google API service token we generated (see below). For now, we set this
 argument to NULL since we begin with a test of the function. In the
-‘subject’ argument, we indicate that the event should be a “recording”.
-The ‘start.date’ and ‘end.date’ arguments allow us to set the limits of
-the calendar (inclusive) and must be characters in YYYY-mm-dd format.
-For the ‘sampling.times’ argument, our character vector of sampling
-times must be input in hh:mm:ss format using a 24-hour calendar (e.g.,
-we use 20:00:00 to indicate a sampling time at 8pm, rather than
-08:00:00, which would indicate a sampling time at 8am). The ‘duration’
-function again specifies how long the recording should be in minutes.
-Lastly, we set ‘db.insert’ and ‘google.push’ to FALSE to test out the
-function without adding the resulting schedule to the database, or
-pushing events to Google Calendar:
+‘subject’ argument, we indicate that the event should be a
+“recording”. The ‘start.date’ and ‘end.date’ arguments allow us to
+set the limits of the calendar (inclusive) and must be characters in
+YYYY-mm-dd format. For the ‘sampling.times’ argument, our character
+vector of sampling times must be input in hh:mm:ss format using a
+24-hour calendar (e.g., we use 20:00:00 to indicate a sampling time at
+8pm, rather than 08:00:00, which would indicate a sampling time at 8am).
+The ‘duration’ function again specifies how long the recording should be
+in minutes. Lastly, we set ‘db.insert’ and ‘google.push’ to FALSE to
+test out the function without adding the resulting schedule to the
+database, or pushing events to Google Calendar:
 
 ``` r
 # ------------------------------------------------------------
@@ -421,19 +458,31 @@ pushing events to Google Calendar:
 # is not pushed to Google Calendar. A calendar.key is not required.
 # ------------------------------------------------------------
 
-sched <- scheduleFixed(db.path = db.path,
-                       locationID = c('location@1', 'location@2'),
-                       calendar.key = NULL,
-                       subject = 'recording', 
-                       start.date = '2018-06-01',
-                       end.date = '2018-06-02',
-                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-                       duration = 1, 
-                       db.insert = FALSE,
-                       google.push = FALSE)
-
-sched
+scheduleFixed(db.path = db.path,
+              locationID = c('location@1', 'location@2'),
+              calendar.key = NULL,
+              subject = 'recording', 
+              start.date = '2018-06-01',
+              end.date = '2018-06-02',
+              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+              duration = 1, 
+              db.insert = FALSE,
+              google.push = FALSE)
 ```
+
+    ##     equipmentID locationID   subject  startDate startTime    endDate  endTime allDayEvent    description private                  tz
+    ##  1:     equip@3 location@1 recording 2018-06-01  06:00:00 2018-06-01 06:01:00       False Fixed Calendar   False America/Los_Angeles
+    ##  2:     equip@3 location@1 recording 2018-06-01  06:30:00 2018-06-01 06:31:00       False Fixed Calendar   False America/Los_Angeles
+    ##  3:     equip@3 location@1 recording 2018-06-01  20:00:00 2018-06-01 20:01:00       False Fixed Calendar   False America/Los_Angeles
+    ##  4:     equip@3 location@1 recording 2018-06-02  06:00:00 2018-06-02 06:01:00       False Fixed Calendar   False America/Los_Angeles
+    ##  5:     equip@3 location@1 recording 2018-06-02  06:30:00 2018-06-02 06:31:00       False Fixed Calendar   False America/Los_Angeles
+    ##  6:     equip@3 location@1 recording 2018-06-02  20:00:00 2018-06-02 20:01:00       False Fixed Calendar   False America/Los_Angeles
+    ##  7:     equip@4 location@2 recording 2018-06-01  06:00:00 2018-06-01 06:01:00       False Fixed Calendar   False America/Los_Angeles
+    ##  8:     equip@4 location@2 recording 2018-06-01  06:30:00 2018-06-01 06:31:00       False Fixed Calendar   False America/Los_Angeles
+    ##  9:     equip@4 location@2 recording 2018-06-01  20:00:00 2018-06-01 20:01:00       False Fixed Calendar   False America/Los_Angeles
+    ## 10:     equip@4 location@2 recording 2018-06-02  06:00:00 2018-06-02 06:01:00       False Fixed Calendar   False America/Los_Angeles
+    ## 11:     equip@4 location@2 recording 2018-06-02  06:30:00 2018-06-02 06:31:00       False Fixed Calendar   False America/Los_Angeles
+    ## 12:     equip@4 location@2 recording 2018-06-02  20:00:00 2018-06-02 20:01:00       False Fixed Calendar   False America/Los_Angeles
 
 As before, once we are satisfied with our tests of `scheduleFixed()`, we
 can set the arguments ‘db.insert’ and ‘google.push’ to TRUE to create
@@ -447,17 +496,16 @@ schedules, add them to the database, and push them to Google Calendar.
 # A calendar.key is required.
 # ------------------------------------------------------------           
 
-sched <- scheduleFixed(db.path = db.path,
-                       locationID = c('location@1', 'location@2'),
-                       calendar.key = 'settings/calendar-10b0fdaac306.json',
-                       subject = 'recording', 
-                       start.date = '2018-06-01',
-                       end.date = '2018-06-02',
-                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-                       duration = 1, 
-                       db.insert = TRUE,
-                       google.push = TRUE)
-sched
+scheduleFixed(db.path = db.path,
+              locationID = c('location@1', 'location@2'),
+              calendar.key = 'settings/calendar-10b0fdaac306.json',
+              subject = 'recording', 
+              start.date = '2018-06-01',
+              end.date = '2018-06-02',
+              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+              duration = 1, 
+              db.insert = TRUE,
+              google.push = TRUE)
 ```
 
 `scheduleFixed()` will provide status messages informing us whether
@@ -489,9 +537,10 @@ can ignore the ‘db.path’ argument. We pass our desired inputs to the
 ‘start.date’, ‘end.date’, ‘sampling.times’, and ‘duration’ arguments
 just as we did in the previous examples. However, since we aren’t using
 a database, we have to provide some location names of our choice in the
-‘locationID’ argument (required by Google Calendar), as well as latitude
-and longitude vectors of the same length as the ‘locationID’ vector. We
-also need to identify the ‘timezone’ as an [Olson names-formatted time
+‘locationID’ argument (required by Google Calendar), as well as
+latitude and longitude vectors of the same length as the ‘locationID’
+vector. We also need to identify the ‘timezone’ as an [Olson
+names-formatted time
 zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List).
 We set ‘db.insert’ and ‘google.push’ to FALSE since we aren’t working
 with a database.
@@ -503,19 +552,25 @@ with a database.
 # using the optional lat, long, and timezone arguments. 
 # ------------------------------------------------------------   
 
-sched <- scheduleFixed(locationID = 'mylocation', 
-                       start.date = '2018-06-01',
-                       end.date = '2018-06-02', 
-                       sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
-                       duration = 1, 
-                       lat = 33.6178, 
-                       long = -114.5883, 
-                       timezone = 'America/Los_angeles',
-                       db.insert = FALSE, 
-                       google.push = FALSE)
-
-sched
+scheduleFixed(locationID = 'mylocation', 
+              start.date = '2018-06-01',
+              end.date = '2018-06-02', 
+              sampling.times = c('06:00:00', '06:30:00', '20:00:00'),
+              duration = 1, 
+              lat = 33.6178, 
+              long = -114.5883, 
+              timezone = 'America/Los_angeles',
+              db.insert = FALSE, 
+              google.push = FALSE)
 ```
+
+    ##      Subject Start Date Start Time   End Date End Time All Day Event    Description   Location Private
+    ## 1: recording 2018-06-01   06:00:00 2018-06-01 06:01:00         False Fixed Calendar mylocation   False
+    ## 2: recording 2018-06-01   06:30:00 2018-06-01 06:31:00         False Fixed Calendar mylocation   False
+    ## 3: recording 2018-06-01   20:00:00 2018-06-01 20:01:00         False Fixed Calendar mylocation   False
+    ## 4: recording 2018-06-02   06:00:00 2018-06-02 06:01:00         False Fixed Calendar mylocation   False
+    ## 5: recording 2018-06-02   06:30:00 2018-06-02 06:31:00         False Fixed Calendar mylocation   False
+    ## 6: recording 2018-06-02   20:00:00 2018-06-02 20:01:00         False Fixed Calendar mylocation   False
 
 Once again, the field names on the returned data.table object look
 slightly different from those returned by a call to `scheduleFixed()`
@@ -527,8 +582,7 @@ column names are formatted for direct use with the Google Calendar API
 write it to a CSV, and manually load it into a Google Calendar ourselves
 (or apply it to other uses).
 
-Working with the Google Calendar API
-====================================
+# Working with the Google Calendar API
 
 As mentioned in Chapter 7, you should have one primary Google account
 which is not connected to a piece of monitoring equipment, through which
@@ -551,6 +605,18 @@ accounts <- RSQLite::dbGetQuery(conn = conx,
 accounts[1:10, c(1:4,8)]
 ```
 
+    ##      accountID    type primaryAccount login                 email
+    ## 1  midEarthMgt  Google              1  <NA> midEarthMgt@gmail.com
+    ## 2      dropbox Dropbox              0  <NA>                  <NA>
+    ## 3      darksky Darksky              0  <NA>                  <NA>
+    ## 4    midEarth1  Google              0  <NA>   midEarth1@gmail.com
+    ## 5    midEarth2  Google              0  <NA>   midEarth2@gmail.com
+    ## 6    midEarth3  Google              0  <NA>   midEarth3@gmail.com
+    ## 7    midEarth4  Google              0  <NA>   midEarth4@gmail.com
+    ## 8    midEarth5  Google              0  <NA>   midEarth5@gmail.com
+    ## 9    midEarth6  Google              0  <NA>   midEarth6@gmail.com
+    ## 10   midEarth7  Google              0  <NA>   midEarth7@gmail.com
+
 Notice that several Google accounts have been created for
 smartphone-based monitoring, and one Google account, “midEarthMgt”, is
 designated as the primary Account (‘primaryAccount’ = 1). The remaining
@@ -568,8 +634,7 @@ link will take you to any Google account you are currently logged into,
 **so make sure you are logged into the primary Google account connected
 to a smartphone used in your monitoring program.**
 
-Step 1: Setting up a Google API Service Account
------------------------------------------------
+## Step 1: Setting up a Google API Service Account
 
 1.  Once you have logged into your principal smartphone monitoring
     account and opened
@@ -587,7 +652,7 @@ Step 1: Setting up a Google API Service Account
 > *Figure 9.2. Log into your main Google account, and then enable the
 > calendar API.*
 
-1.  On the left-hand tab, select “Credentials”, and then “Create”.
+2.  On the left-hand tab, select “Credentials”, and then “Create”.
 
 <kbd>
 
@@ -597,7 +662,7 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.3. Create credentials.*
 
-1.  You will arrive at a new project landing page that looks like the
+3.  You will arrive at a new project landing page that looks like the
     one below. Choose a project name, then click “Create”.
 
 <kbd>
@@ -608,7 +673,7 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.4. Give your project name something meaningful.*
 
-1.  Click the blue “Create credentials” button, which will bring up a
+4.  Click the blue “Create credentials” button, which will bring up a
     drop-down menu of options as shown below. Select the “Service
     Account Key” option.
 
@@ -620,7 +685,7 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.5. Select the “Service account key” option.*
 
-1.  Finally, you will arrive at the page that allows you to create a
+5.  Finally, you will arrive at the page that allows you to create a
     service account key. Under “Service account”, select the “New
     service account” option. Create a name of your choosing in the
     “Service account name” field (this will also auto-populate the
@@ -629,8 +694,8 @@ Step 1: Setting up a Google API Service Account
     ‘AMMonitor@complete-sprite-213216.iam.gserviceaccount.com’. (COPY
     THIS SERVICE ACCOUNT NAME onto a Sticky Note or notebook for
     safekeeping – you will need it later on in Step 2.) In the “Role”
-    dropdown menu, choose Project &gt; Owner. Lastly, for “Key type”,
-    make sure that the JSON option is selected. Your screen should look
+    dropdown menu, choose Project \> Owner. Lastly, for “Key type”, make
+    sure that the JSON option is selected. Your screen should look
     something like the one below (though be sure to choose a Service
     account name meaningful to you). When finished, click “Create”.
 
@@ -642,7 +707,7 @@ Step 1: Setting up a Google API Service Account
 
 > *Figure 9.6. Finalize your service account.*
 
-1.  A new dialogue box will prompt an automatic download of the JSON
+6.  A new dialogue box will prompt an automatic download of the JSON
     key. On a PC running Windows 10, you will experience a download of
     the JSON file and a pop up prompting you to store the file in a
     folder of your choosing. You should navigate to the **settings**
@@ -660,7 +725,7 @@ Step 1: Setting up a Google API Service Account
 > *Figure 9.7. Store the json file somewhere logical. We store ours in
 > the “settings” directory with other API settings.*
 
-1.  Finally, you will recieve a message notifying you that the private
+7.  Finally, you will recieve a message notifying you that the private
     key has been saved to your computer.
 
 <kbd>
@@ -669,7 +734,7 @@ Step 1: Setting up a Google API Service Account
 
 </kbd>
 
-> *Figure 9.8. You’re done!*
+> *Figure 9.8. You’re done\!*
 
 Incidentally, [JSON](https://en.wikipedia.org/wiki/JSON) is a data
 format commonly exchanged by internet servers such as Google. You can
@@ -677,8 +742,7 @@ use a text editor to view the file, where you will see several sets of
 key-value entries that allow **AMMonitor** functions to connect to the
 Google accounts of each smartphone.
 
-Step 2: Sharing the Service Token with Monitoring Equipment
------------------------------------------------------------
+## Step 2: Sharing the Service Token with Monitoring Equipment
 
 The service account key generated in Step 1 should be associated with
 your primary Google management account (in our example, the primary
@@ -711,7 +775,7 @@ log into that account and navigate to the following web address:
 > device, you will need to share each unique account with the main
 > account to allow R to communicate with each piece of equipment.*
 
-1.  In the left-hand panel, select “Share with specific people”. Then,
+2.  In the left-hand panel, select “Share with specific people”. Then,
     click “Add people”, and paste in the name of the Service Account ID
     you generated in Step 1.5. Below, our demonstration service account
     is named ‘AMMonitor@complete-sprite-213216.iam.gserviceaccount.com’.
@@ -726,7 +790,7 @@ log into that account and navigate to the following web address:
 
 > *Figure 9.10. Share the account with specific ‘people’.*
 
-1.  The settings for your monitoring smartphone’s calendar should now
+3.  The settings for your monitoring smartphone’s calendar should now
     look something like the image below. The settings page should
     contain the device’s Google account name (in this example,
     “midEarth4@gmail.com (Owner)”, followed by the Service Account ID
@@ -769,8 +833,7 @@ When finished with the day’s work, we disconnect from the database.
 RSQLite::dbDisconnect(conx)
 ```
 
-The Schedule Table in Access
-============================
+# The Schedule Table in Access
 
 The schedule form can be accessed in a few different ways. Under the
 Locations primary tab, the **schedule** table is located as a secondary
@@ -789,8 +852,7 @@ tab.
 The data are displayed in red to remind users that schedules are
 generated in R, and should not edited directly.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter covered the **schedule** table, with which users interact
 via the `scheduleFixed()` or `scheduleSun()` functions, which can be
@@ -803,9 +865,16 @@ function, `scheduleOptim()`, which can be used to set schedules that
 have been optimized according to the weather forecast and target species
 activity models.
 
-Chapter References
-==================
+# Chapter References
 
-1. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
+<div id="refs" class="references">
+
+<div id="ref-BalanticTemporal">
+
+1\. Balantic CM, Donovan TM. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
-Evolution.
+Evolution. 
+
+</div>
+
+</div>

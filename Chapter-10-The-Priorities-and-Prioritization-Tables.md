@@ -732,35 +732,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-<<<<<<< HEAD
-    ## Finished model 1. Model btgn_vocals is active 13.1 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13.6 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8.8 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8.5 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.8 % of the time.
+    ## Finished model 3. Model leni_vocals is active 2 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.4 % of the time.
-=======
-    ## Finished model 1. Model btgn_vocals is active 13.4 % of the time.
-
-    ## Working on model 2 (copo_vocals)...
-
-    ## Finished model 2. Model copo_vocals is active 7.6 % of the time.
-
-    ## Working on model 3 (leni_vocals)...
-
-    ## Finished model 3. Model leni_vocals is active 1.5 % of the time.
-
-    ## Working on model 4 (verd_vocals)...
-
-    ## Finished model 4. Model verd_vocals is active 16.1 % of the time.
->>>>>>> 0b4f752e2fbd65722ccd3d376fa79e67ff28bac6
+    ## Finished model 4. Model verd_vocals is active 18.4 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -1102,18 +1086,18 @@ test_optim['prioritization']
 
     ## $prioritization
     ##     locationID speciesID       date pMax     pCurrent    weight init
-    ##  1: location@1      btgn 2019-07-13 0.95 2.274160e-05 0.2909363    0
+    ##  1: location@1      btgn 2019-07-13 0.95 1.386605e-09 0.5013067    0
     ##  2: location@1      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
-    ##  3: location@1      leni 2019-07-13 0.95 1.110223e-15 0.4364149    0
-    ##  4: location@1      verd 2019-07-13 0.95 5.973596e-02 0.2726488    0
-    ##  5: location@2      btgn 2019-07-13 0.95 3.764271e-05 0.2927325    0
+    ##  3: location@1      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  4: location@1      verd 2019-07-13 0.95 4.952532e-03 0.4986933    0
+    ##  5: location@2      btgn 2019-07-13 0.95 1.675549e-09 0.5016590    0
     ##  6: location@2      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
-    ##  7: location@2      leni 2019-07-13 0.95 1.110223e-15 0.4391162    0
-    ##  8: location@2      verd 2019-07-13 0.95 7.980749e-02 0.2681513    0
-    ##  9: location@3      btgn 2019-07-13 0.95 2.270111e-05 0.2909448    0
+    ##  7: location@2      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ##  8: location@2      verd 2019-07-13 0.95 6.283254e-03 0.4983410    0
+    ##  9: location@3      btgn 2019-07-13 0.95 1.365305e-09 0.5012828    0
     ## 10: location@3      copo 2019-07-13 0.95 1.000000e+00 0.0000000    0
-    ## 11: location@3      leni 2019-07-13 0.95 1.110223e-15 0.4364276    0
-    ## 12: location@3      verd 2019-07-13 0.95 5.983123e-02 0.2726275    0
+    ## 11: location@3      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+    ## 12: location@3      verd 2019-07-13 0.95 4.862254e-03 0.4987172    0
 
 The prioritization table contains 12 rows; one row for each of the four
 target species at each of three active monitoring locations. Though the
@@ -1253,15 +1237,15 @@ qryPrioritization(conn = conx)
     ##    locationID speciesID weight  pCurrent pMax       date init
     ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 3  location@1      leni      0 0.9990774 0.95 2016-03-31    0
+    ## 3  location@1      leni      0 0.9998102 0.95 2016-03-31    0
     ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
     ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 7  location@2      leni      0 0.9988592 0.95 2016-03-31    0
+    ## 7  location@2      leni      0 0.9998008 0.95 2016-03-31    0
     ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
     ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
     ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-    ## 11 location@3      leni      0 0.9990813 0.95 2016-03-31    0
+    ## 11 location@3      leni      0 0.9998105 0.95 2016-03-31    0
     ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0
 
 By default, `qryPrioritization()` will return records associated with

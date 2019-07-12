@@ -1,19 +1,18 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Temporals Table](#the-temporals-table)
--   [The Dark Sky API](#the-dark-sky-api)
--   [Gathering forecast data for
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Temporals Table](#the-temporals-table)
+  - [The Dark Sky API](#the-dark-sky-api)
+  - [Gathering forecast data for
     tomorrow](#gathering-forecast-data-for-tomorrow)
--   [Gathering historical data](#gathering-historical-data)
--   [Querying the temporals table](#querying-the-temporals-table)
--   [Running temporalsGet() in a
+  - [Gathering historical data](#gathering-historical-data)
+  - [Querying the temporals table](#querying-the-temporals-table)
+  - [Running temporalsGet() in a
     script](#running-temporalsget-in-a-script)
--   [The Temporals Table in Access](#the-temporals-table-in-access)
--   [Chapter Summary](#chapter-summary)
+  - [The Temporals Table in Access](#the-temporals-table-in-access)
+  - [Chapter Summary](#chapter-summary)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 The **temporals** table tracks temporal information – such as weather
 conditions and sunrise times – at monitoring locations. Temporal
@@ -106,8 +105,7 @@ This action returns a ‘47’ to indicate that 47 records have applied the
 action of setting *dateRetrieved* equal to ‘2016-01-20’. Next, we will
 gather temporal data for the three active stations that remain.
 
-The Temporals Table
-===================
+# The Temporals Table
 
 The **temporals** table tracks temporal data at monitoring locations.
 **AMMonitor** collects weather data via the [Dark Sky
@@ -200,8 +198,7 @@ the **temporals** table the way we have with previously introduced
 tables. Instead, we use the **AMMonitor** function `temporalsGet()` to
 acquire data and auto-populate this table.
 
-The Dark Sky API
-================
+# The Dark Sky API
 
 The function `temporalsGet()` uses the [Dark Sky
 API](https://darksky.net/) to collect weather data. Read more about Dark
@@ -213,9 +210,9 @@ sources, aggregating them to provide forecasts for selected locations.
 Their data sources include the USA NCEP’s Canadian Meteorological Center
 ensemble model (‘cmc’), the Environment and Climate Change Canada’s
 Public Alert System (‘ecpa’), U.S. NOAA’s Global Forecast System
-(‘gfs’), U.S. NOAA’s High-Resolution Rapid Refresh Model (‘hrrr’), the
-German Meteorological Office’s icosahedral nonhydrostatic (‘icon’), U.S.
-NOAA’s Integrated Surface Database (‘isd’), U.S. NOAA/ESRL’s
+(‘gfs’), U.S. NOAA’s High-Resolution Rapid Refresh Model (‘hrrr’),
+the German Meteorological Office’s icosahedral nonhydrostatic (‘icon’),
+U.S. NOAA’s Integrated Surface Database (‘isd’), U.S. NOAA/ESRL’s
 Meteorological Assimilation Data Ingest System (‘madis’), U.S. NOAA’s
 North American Mesoscale Model (‘nam’), U.S. NOAA’s Public Alert System
 (‘nwspa’), and U.S. NOAA/NCEP’s Short-Range Ensemble Forecast (‘sref’),
@@ -244,9 +241,9 @@ browseURL("https://darksky.net/dev/docs")
 
 After providing an email address and a password, you will receive a Dark
 Sky key, which is a character string along the lines of
-‘d8db31f709f973f61x4d29afe0b67e93’ (merely an example; it is not a real
-key). You should store this string in the **settings folder** as an RDS
-file with a name of your choice.
+‘d8db31f709f973f61x4d29afe0b67e93’ (merely an example; it is not a
+real key). You should store this string in the **settings folder** as an
+RDS file with a name of your choice.
 
 <kbd>
 
@@ -271,8 +268,7 @@ are gathering forecasts for fewer than 1000 monitoring sites per day,
 you will pay nothing. If you wish to gather large amounts of historical
 data in one day, you will pay a fee.
 
-Gathering forecast data for tomorrow
-====================================
+# Gathering forecast data for tomorrow
 
 The first way to use `temporalsGet()` is to acquire 24-hour forecast
 data for tomorrow, which we demonstrate below. The function will output
@@ -348,17 +344,17 @@ str(test_temporals$data.sources)
     ## List of 3
     ##  $ location@1:List of 4
     ##   ..$ sources        : chr [1:10] "cmc" "gfs" "hrrr" "icon" ...
-    ##   ..$ date           : chr "2019-07-06"
+    ##   ..$ date           : chr "2019-07-13"
     ##   ..$ nearest.station: num 3.83
     ##   ..$ units          : chr "us"
     ##  $ location@2:List of 4
     ##   ..$ sources        : chr [1:10] "cmc" "gfs" "hrrr" "icon" ...
-    ##   ..$ date           : chr "2019-07-06"
+    ##   ..$ date           : chr "2019-07-13"
     ##   ..$ nearest.station: num 7.41
     ##   ..$ units          : chr "us"
     ##  $ location@3:List of 4
     ##   ..$ sources        : chr [1:10] "cmc" "gfs" "hrrr" "icon" ...
-    ##   ..$ date           : chr "2019-07-06"
+    ##   ..$ date           : chr "2019-07-13"
     ##   ..$ nearest.station: num 7.52
     ##   ..$ units          : chr "us"
 
@@ -386,16 +382,16 @@ test_temporals$temporal.data[1:10, 1:5]
 ```
 
     ##     locationID     type       date                    time hour
-    ##  1: location@1 forecast 2019-07-06 2019-07-06 00:00:00 PDT    0
-    ##  2: location@1 forecast 2019-07-06 2019-07-06 01:00:00 PDT    1
-    ##  3: location@1 forecast 2019-07-06 2019-07-06 02:00:00 PDT    2
-    ##  4: location@1 forecast 2019-07-06 2019-07-06 03:00:00 PDT    3
-    ##  5: location@1 forecast 2019-07-06 2019-07-06 04:00:00 PDT    4
-    ##  6: location@1 forecast 2019-07-06 2019-07-06 05:00:00 PDT    5
-    ##  7: location@1 forecast 2019-07-06 2019-07-06 06:00:00 PDT    6
-    ##  8: location@1 forecast 2019-07-06 2019-07-06 07:00:00 PDT    7
-    ##  9: location@1 forecast 2019-07-06 2019-07-06 08:00:00 PDT    8
-    ## 10: location@1 forecast 2019-07-06 2019-07-06 09:00:00 PDT    9
+    ##  1: location@1 forecast 2019-07-13 2019-07-13 00:00:00 PDT    0
+    ##  2: location@1 forecast 2019-07-13 2019-07-13 01:00:00 PDT    1
+    ##  3: location@1 forecast 2019-07-13 2019-07-13 02:00:00 PDT    2
+    ##  4: location@1 forecast 2019-07-13 2019-07-13 03:00:00 PDT    3
+    ##  5: location@1 forecast 2019-07-13 2019-07-13 04:00:00 PDT    4
+    ##  6: location@1 forecast 2019-07-13 2019-07-13 05:00:00 PDT    5
+    ##  7: location@1 forecast 2019-07-13 2019-07-13 06:00:00 PDT    6
+    ##  8: location@1 forecast 2019-07-13 2019-07-13 07:00:00 PDT    7
+    ##  9: location@1 forecast 2019-07-13 2019-07-13 08:00:00 PDT    8
+    ## 10: location@1 forecast 2019-07-13 2019-07-13 09:00:00 PDT    9
 
 With three active monitoring stations, this example returns 3 locations
 \* 24 hours = 72 records and 25 columns, confirmed with `dim()`.
@@ -421,16 +417,16 @@ test_temporals$temporal.data[1:10, 7:12]
 ```
 
     ##                  sunsetTime precipIntensity precipProbability precipType temperature dewPoint
-    ##  1: 2019-07-06 19:55:33 PDT               0                 0         NA       89.40    40.90
-    ##  2: 2019-07-06 19:55:33 PDT               0                 0         NA       86.25    40.87
-    ##  3: 2019-07-06 19:55:33 PDT               0                 0         NA       83.12    40.79
-    ##  4: 2019-07-06 19:55:33 PDT               0                 0         NA       80.23    40.72
-    ##  5: 2019-07-06 19:55:33 PDT               0                 0         NA       77.35    40.58
-    ##  6: 2019-07-06 19:55:33 PDT               0                 0         NA       75.49    40.49
-    ##  7: 2019-07-06 19:55:33 PDT               0                 0         NA       75.92    40.48
-    ##  8: 2019-07-06 19:55:33 PDT               0                 0         NA       79.50    40.54
-    ##  9: 2019-07-06 19:55:33 PDT               0                 0         NA       83.79    40.46
-    ## 10: 2019-07-06 19:55:33 PDT               0                 0         NA       88.85    40.28
+    ##  1: 2019-07-13 19:53:39 PDT           0.001              0.01       rain      101.26    43.54
+    ##  2: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       96.12    45.43
+    ##  3: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       94.32    45.53
+    ##  4: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       91.58    45.28
+    ##  5: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       89.22    44.84
+    ##  6: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       87.62    44.50
+    ##  7: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       88.05    44.36
+    ##  8: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       91.04    44.33
+    ##  9: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>       95.34    44.59
+    ## 10: 2019-07-13 19:53:39 PDT           0.000              0.00       <NA>      100.27    45.36
 
 Sun activity is logged in the *sunriseTime* and *sunsetTime* columns. If
 *precipIntensity* and *precipProbability* are 0, then *precipType* will
@@ -491,19 +487,18 @@ RSQLite::dbGetQuery(conn = conx,
 ```
 
     ##    locationID     type       date                    time dewPoint pressure moonPhase
-    ## 1  location@1 forecast 2019-07-06 2019-07-06 00:00:00 PDT    40.90  1010.84      0.17
-    ## 2  location@1 forecast 2019-07-06 2019-07-06 01:00:00 PDT    40.87  1010.81      0.17
-    ## 3  location@1 forecast 2019-07-06 2019-07-06 02:00:00 PDT    40.79  1010.83      0.17
-    ## 4  location@1 forecast 2019-07-06 2019-07-06 03:00:00 PDT    40.72  1010.97      0.17
-    ## 5  location@1 forecast 2019-07-06 2019-07-06 04:00:00 PDT    40.58  1011.15      0.17
-    ## 6  location@1 forecast 2019-07-06 2019-07-06 05:00:00 PDT    40.49  1011.44      0.17
-    ## 7  location@1 forecast 2019-07-06 2019-07-06 06:00:00 PDT    40.48  1011.92      0.17
-    ## 8  location@1 forecast 2019-07-06 2019-07-06 07:00:00 PDT    40.54  1012.51      0.17
-    ## 9  location@1 forecast 2019-07-06 2019-07-06 08:00:00 PDT    40.46  1012.88      0.17
-    ## 10 location@1 forecast 2019-07-06 2019-07-06 09:00:00 PDT    40.28  1012.94      0.17
+    ## 1  location@1 forecast 2019-07-13 2019-07-13 00:00:00 PDT    43.54  1005.17      0.41
+    ## 2  location@1 forecast 2019-07-13 2019-07-13 01:00:00 PDT    45.43  1005.59      0.41
+    ## 3  location@1 forecast 2019-07-13 2019-07-13 02:00:00 PDT    45.53  1005.68      0.41
+    ## 4  location@1 forecast 2019-07-13 2019-07-13 03:00:00 PDT    45.28  1005.74      0.41
+    ## 5  location@1 forecast 2019-07-13 2019-07-13 04:00:00 PDT    44.84  1005.79      0.41
+    ## 6  location@1 forecast 2019-07-13 2019-07-13 05:00:00 PDT    44.50  1006.03      0.41
+    ## 7  location@1 forecast 2019-07-13 2019-07-13 06:00:00 PDT    44.36  1006.64      0.41
+    ## 8  location@1 forecast 2019-07-13 2019-07-13 07:00:00 PDT    44.33  1007.43      0.41
+    ## 9  location@1 forecast 2019-07-13 2019-07-13 08:00:00 PDT    44.59  1007.98      0.41
+    ## 10 location@1 forecast 2019-07-13 2019-07-13 09:00:00 PDT    45.36  1008.11      0.41
 
-Gathering historical data
-=========================
+# Gathering historical data
 
 The second way to use `temporalsGet()` is to gather historical data.
 This time, instead of setting the ‘dates’ argument to NULL, we input a
@@ -566,8 +561,7 @@ temporals <- temporalsGet(db.path = db.path,
                           db.insert = TRUE)
 ```
 
-Querying the temporals table
-============================
+# Querying the temporals table
 
 Briefly, the **AMMonitor** function `qryTemporals()` is a simple
 convenience function that returns all data from the most recent date
@@ -586,16 +580,16 @@ latest_temporals[1:10,1:6]
 ```
 
     ##    locationID     type       date                    time hour             sunriseTime
-    ## 1  location@1 forecast 2019-07-06 2019-07-06 00:00:00 PDT    0 2019-07-06 05:37:34 PDT
-    ## 2  location@1 forecast 2019-07-06 2019-07-06 01:00:00 PDT    1 2019-07-06 05:37:34 PDT
-    ## 3  location@1 forecast 2019-07-06 2019-07-06 02:00:00 PDT    2 2019-07-06 05:37:34 PDT
-    ## 4  location@1 forecast 2019-07-06 2019-07-06 03:00:00 PDT    3 2019-07-06 05:37:34 PDT
-    ## 5  location@1 forecast 2019-07-06 2019-07-06 04:00:00 PDT    4 2019-07-06 05:37:34 PDT
-    ## 6  location@1 forecast 2019-07-06 2019-07-06 05:00:00 PDT    5 2019-07-06 05:37:34 PDT
-    ## 7  location@1 forecast 2019-07-06 2019-07-06 06:00:00 PDT    6 2019-07-06 05:37:34 PDT
-    ## 8  location@1 forecast 2019-07-06 2019-07-06 07:00:00 PDT    7 2019-07-06 05:37:34 PDT
-    ## 9  location@1 forecast 2019-07-06 2019-07-06 08:00:00 PDT    8 2019-07-06 05:37:34 PDT
-    ## 10 location@1 forecast 2019-07-06 2019-07-06 09:00:00 PDT    9 2019-07-06 05:37:34 PDT
+    ## 1  location@1 forecast 2019-07-13 2019-07-13 00:00:00 PDT    0 2019-07-13 05:41:23 PDT
+    ## 2  location@1 forecast 2019-07-13 2019-07-13 01:00:00 PDT    1 2019-07-13 05:41:23 PDT
+    ## 3  location@1 forecast 2019-07-13 2019-07-13 02:00:00 PDT    2 2019-07-13 05:41:23 PDT
+    ## 4  location@1 forecast 2019-07-13 2019-07-13 03:00:00 PDT    3 2019-07-13 05:41:23 PDT
+    ## 5  location@1 forecast 2019-07-13 2019-07-13 04:00:00 PDT    4 2019-07-13 05:41:23 PDT
+    ## 6  location@1 forecast 2019-07-13 2019-07-13 05:00:00 PDT    5 2019-07-13 05:41:23 PDT
+    ## 7  location@1 forecast 2019-07-13 2019-07-13 06:00:00 PDT    6 2019-07-13 05:41:23 PDT
+    ## 8  location@1 forecast 2019-07-13 2019-07-13 07:00:00 PDT    7 2019-07-13 05:41:23 PDT
+    ## 9  location@1 forecast 2019-07-13 2019-07-13 08:00:00 PDT    8 2019-07-13 05:41:23 PDT
+    ## 10 location@1 forecast 2019-07-13 2019-07-13 09:00:00 PDT    9 2019-07-13 05:41:23 PDT
 
 In future chapters, the **temporals** data plays a role in optimizing
 the recordings and photo schedules, and can also be used in downstream
@@ -609,8 +603,7 @@ function.
 RSQLite::dbDisconnect(conx)
 ```
 
-Running temporalsGet() in a script
-==================================
+# Running temporalsGet() in a script
 
 While the `temporalsGet()` function can be used to gather historical
 temporal data associated with monitoring sites, it may be employed on a
@@ -620,12 +613,11 @@ this function each day, a monitoring team may automatically retrieve
 temporal data via a “script” sourced each morning. Scripts are described
 in detail in Chapter 19: Scripts.
 
-The Temporals Table in Access
-=============================
+# The Temporals Table in Access
 
 The temporals form in the Microsoft Access front end can be accessed as
 a secondary tab under the Locations tab. This is the first look at a
-“Hands Off!” form in Access. The **temporals** table is entirely
+“Hands Off\!” form in Access. The **temporals** table is entirely
 populated by the `temporalsGet()` function, so it should not be edited
 by hand.
 
@@ -638,8 +630,7 @@ by hand.
 > *Figure 8.3. The temporals table is displayed in form view here. It is
 > located under the primary tab, Locations.*
 
-Chapter Summary
-===============
+# Chapter Summary
 
 In this chapter, we reviewed how to use the **AMMonitor**
 `temporalsGet()` function to gather temporal and weather data for active
