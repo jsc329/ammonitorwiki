@@ -312,11 +312,6 @@ code:
 RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(deployment);")
 ```
 
-    ##   id seq     table        from          to on_update on_delete match
-    ## 1  0   0    people    personID    personID   CASCADE NO ACTION  NONE
-    ## 2  1   0 locations  locationID  locationID   CASCADE NO ACTION  NONE
-    ## 3  2   0 equipment equipmentID equipmentID   CASCADE NO ACTION  NONE
-
 Here, we use the `dbGetQuery()` function to send a SQLite query to the
 database (i.e., we are asking for something from the database). We
 provide the database connection, and then pass the SQLite query in the
@@ -356,10 +351,6 @@ get.people <- RSQLite::dbReadTable(conn = conx, name = "people")
 # Look at the entire table (printed as a tibble)
 get.people
 ```
-
-    ##   personID firstName lastName          projectRole                    email        phone
-    ## 1 bbaggins     Bilbo  Baggins  Lead Ring Monitor I ringmaster2001@shire.net         none
-    ## 2 fbaggins     Frodo  Baggins Lead Ring Monitor II       fbaggins@shire.net 888-ONE-RING
 
 As shown, the sample **people** table has two records. There are four
 primary ways to work with records: Create, Read, Update, or Delete

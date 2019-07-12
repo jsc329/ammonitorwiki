@@ -479,10 +479,10 @@ dropboxMoveBatch(db.path = db.path,
     ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##    format           timestamp
-    ## 1:    wav 2019-07-11 15:18:10
-    ## 2:    wav 2019-07-11 15:18:10
-    ## 3:    wav 2019-07-11 15:18:10
-    ## 4:    wav 2019-07-11 15:18:10
+    ## 1:    wav 2019-07-12 11:17:11
+    ## 2:    wav 2019-07-12 11:17:11
+    ## 3:    wav 2019-07-12 11:17:11
+    ## 4:    wav 2019-07-12 11:17:11
 
 The function provides feedback on the success of the move. If you like,
 you can log in to Dropbox to verify that the files have been moved
@@ -529,8 +529,7 @@ In addition to moving files, `dropboxMoveBatch()` logs metadata in the
 metadata have been added for the four wave files:
 
 ``` r
-RSQLite::dbGetQuery(conx, 'SELECT * 
-                           FROM recordings')
+RSQLite::dbGetQuery(conx, 'SELECT * FROM recordings')
 ```
 
     ##                         recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
@@ -539,10 +538,10 @@ RSQLite::dbGetQuery(conx, 'SELECT *
     ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##   format           timestamp
-    ## 1    wav 2019-07-11 15:18:10
-    ## 2    wav 2019-07-11 15:18:10
-    ## 3    wav 2019-07-11 15:18:10
-    ## 4    wav 2019-07-11 15:18:10
+    ## 1    wav 2019-07-12 11:17:11
+    ## 2    wav 2019-07-12 11:17:11
+    ## 3    wav 2019-07-12 11:17:11
+    ## 4    wav 2019-07-12 11:17:11
 
 The table contains four rows. Because we followed the instructions in
 the smartphone set-up guide in Donovan et al. in prep, *recordingID* is
