@@ -345,8 +345,7 @@ increase for species whose probability of capture remains inadequate.
 As a preview of the prioritization process, the figure below
 demonstrates how *pCurrent* and *weight* values change from the
 beginning (2016-03-01) to the end (2016-03-31) of a hypothetical
-monitoring scenario for location@1
-only:
+monitoring scenario for location@1 only:
 
 <kbd>
 
@@ -383,8 +382,7 @@ These covariates are stored in the **temporals** table of an
 **AMMonitor** database.
 
 Activity models will ultimately be stored in an AMModels library located
-in the **ammls** folder within the main **AMMonitor**
-directory.
+in the **ammls** folder within the main **AMMonitor** directory.
 
 <kbd>
 
@@ -554,8 +552,7 @@ coefficient values we want to use in our model. For example, in the
 coefficients are on the logit (log odds) scale to ensure that the final
 probability is constrained between 0 and 1. Take care to ensure that all
 covariate names match up correctly in order with the coefficient values
-you want to
-use.
+you want to use.
 
 ``` r
 # Example list of model equations for vocalization for each of four species
@@ -622,19 +619,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 12.6 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13.2 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 7.5 % of the time.
+    ## Finished model 2. Model copo_vocals is active 7.9 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.9 % of the time.
+    ## Finished model 3. Model leni_vocals is active 1.7 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.4 % of the time.
+    ## Finished model 4. Model verd_vocals is active 17.3 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
@@ -667,8 +664,7 @@ The plot below gives the reader some sense of what the coefficients
 mean. Each of the four species is plotted in five panels, with the
 probability of vocalization per unit time on the y-axis. The x-axes vary
 across the five panels, and demonstrate the influence of several
-different covariates on vocalization probability by
-species.
+different covariates on vocalization probability by species.
 
 <kbd>
 
@@ -990,9 +986,11 @@ weights go up.
 Next, we look at the schedule table:
 
 ``` r
-# Look at schedule table output, printed as a tibble
-test_optim$schedule
+# Look at schedule table output
+test_optim['schedule']
 ```
+
+    ## $schedule
 
 This is the schedule that can be pushed to Google Calendar, if desired.
 Notice that the schedule has a total of 15 rows; five for each of three
@@ -1021,8 +1019,7 @@ dates and locations of interest, and stored in the **temporals** table.
 First, for the purposes of demonstration only, we carefully use
 `dbClearTables()` to clear the **prioritization** table and start over
 (this is a function that should only be used in the testing stages of
-setting up a monitoring
-database):
+setting up a monitoring database):
 
 ``` r
 dbClearTables(db.path = db.path, tables = c('schedule', 'prioritization'))
@@ -1117,8 +1114,7 @@ Scripts are described in detail in Chapter 19.
 
 Because monitoring priorities are established at the discretion of the
 monitoring team, they can be found under the “Objectives” primary tab of
-the Access Navigation
-Form.
+the Access Navigation Form.
 
 <kbd>
 
@@ -1139,8 +1135,7 @@ when a species can be dropped from monitoring consideration at a site.
 
 The prioritization table is also located under the “Objectives tab”. The
 data are colored red to remind us that they are automatically filled in
-by **AMMonitor** functions and are not to be edited by
-hand.
+by **AMMonitor** functions and are not to be edited by hand.
 
 <kbd>
 
@@ -1185,7 +1180,7 @@ employed in **AMMonitor** can be found in \[2\].
 
 <div id="ref-BalanticTemporal">
 
-2\. Balantic C, Donovan T. Temporally adaptive acoustic sampling to
+2\. Balantic CM, Donovan TM. Temporally adaptive acoustic sampling to
 maximize detection across a suite of focal wildlife species. Ecology and
 Evolution. 
 
