@@ -77,6 +77,8 @@ Below, we use `dbCreateSample()` to pre-populate several necessary
 tables. We will auto-populate additional tables using **AMMonitor**
 functions later on in the chapter:
 
+\<div class = ’admonition-wrapper note"\>
+
 ``` r
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap10.sqlite", 
@@ -93,6 +95,8 @@ dbCreateSample(db.name = "Chap10.sqlite",
     ## 
     ## Sample data have been generated for the following tables: 
     ## accounts, people, species, equipment, locations, deployment, priorities, temporals
+
+</div>
 
 Now, we connect to the database. First, we initialize a character
 object, **db.path**, that holds the database’s full file path. Then, we
@@ -619,19 +623,19 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 13 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13.4 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 8 % of the time.
+    ## Finished model 2. Model copo_vocals is active 7.6 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
-    ## Finished model 3. Model leni_vocals is active 1.7 % of the time.
+    ## Finished model 3. Model leni_vocals is active 1.5 % of the time.
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 16.5 % of the time.
+    ## Finished model 4. Model verd_vocals is active 16.1 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
