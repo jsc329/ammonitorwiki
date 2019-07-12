@@ -196,7 +196,7 @@ knitr::include_graphics('Chap14_Figs/anno-3.png', dpi = 500)
 
 >*Figure 14.3. Use the keypad to  select an action. Selecting the letter "a" will launch the annotations page.*
 
-You will be prompted to click on the spectrogram to annotate signals of interest. Create a box by clicking on the spectrogram to mark the upper left corner of the annotation, and clicking on the spectrogram again to mark the lower right corner of the annotation. Creating the box generates a list of library call options associated with the species in Bilbo's List. Below, we choose the option that best describes this annotation, which is 12 ("verd_3notes").
+You will be prompted to click on the spectrogram to annotate signals of interest. Create a box by clicking on the spectrogram to mark the upper left corner of the annotation, and clicking on the spectrogram again to mark the lower right corner of the annotation. Creating the box generates a list of library call options associated with the species in Bilbo's List. Below, we choose the option that best describes this annotation, which is 8 ("verd_3notes").
 
 <kbd>
 
@@ -221,7 +221,7 @@ knitr::include_graphics('Chap14_Figs/anno-5.png', dpi = 500)
 >*Figure 14.5. Press the 'esc' button twice (RStudio) or once (R) to stop the annotations window.*
 
 
-To exit this screen, press 'esc' twice (if using RStudio) or right click twice (if using base R), and then press 'q' to quit the interactive mode. After quitting, `annotateRecording()` returns a data.table as below:
+To exit this screen, press 'esc' twice (if using RStudio) or right click twice (if using base R), and then press 'q' to quit the interactive mode. After quitting, `annotateRecording()` returns a data.table similar to the one below (if you have been following along in your own RStudio console, note that your outputs may be different due to the interactivity of the function):
 
 ```{r, echo = F}
 data(annotations)
@@ -229,8 +229,8 @@ annos <- annotations
 ```
 
 ```{r,}
-# Look at the returned annotations
-annos
+# Look at an example of annotations
+annos[1:3,]
 ```
 
 Annotations are returned in a table formatted according to the **annotations** table of the database. These records could have been inserted directly into the **annotations** table if we had set argument 'db.insert' = TRUE. However, we recommend practicing with the function before inserting records.

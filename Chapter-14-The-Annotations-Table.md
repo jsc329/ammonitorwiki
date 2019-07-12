@@ -391,7 +391,7 @@ left corner of the annotation, and clicking on the spectrogram again to
 mark the lower right corner of the annotation. Creating the box
 generates a list of library call options associated with the species in
 Bilbo’s List. Below, we choose the option that best describes this
-annotation, which is 12 (“verd\_3notes”).
+annotation, which is 8 (“verd\_3notes”).
 
 <kbd>
 
@@ -415,46 +415,24 @@ We can continue adding annotations until we are finished.
 
 To exit this screen, press ‘esc’ twice (if using RStudio) or right click
 twice (if using base R), and then press ‘q’ to quit the interactive
-mode. After quitting, `annotateRecording()` returns a data.table as
-below:
+mode. After quitting, `annotateRecording()` returns a data.table similar
+to the one below (if you have been following along in your own RStudio
+console, note that your outputs may be different due to the
+interactivity of the function):
 
 ``` r
-# Look at the returned annotations
-annos
+# Look at an example of annotations
+annos[1:3,]
 ```
 
-    ##     annotationID                       recordingID photoID               listID speciesID      libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn
-    ##  1:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 13.056 14.680 3.6422 5.7594 512    0 hanning
-    ##  2:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 16.487 18.365 3.6951 5.4947 512    0 hanning
-    ##  3:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 19.633 21.155 3.9598 5.0713 512    0 hanning
-    ##  4:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 23.287 24.606 4.0127 5.1242 512    0 hanning
-    ##  5:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 27.853 29.223 3.8010 5.5476 512    0 hanning
-    ##  6:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 32.553 33.821 3.9069 5.2301 512    0 hanning
-    ##  7:           NA midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 36.866 38.337 3.6951 5.1771 512    0 hanning
-    ##  8:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes  3.813  4.777 3.7481 4.9125 512    0 hanning
-    ##  9:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 24.033 25.047 3.5364 4.7537 512    0 hanning
-    ## 10:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 28.669 29.354 3.5364 4.5420 512    0 hanning
-    ## 11:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 31.914 32.674 3.4305 4.5949 512    0 hanning
-    ## 12:           NA midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 35.307 36.296 3.4834 4.5420 512    0 hanning
-    ## 13:           NA midEarth4_2016-03-26_07-00-00.wav    <NA> Middle Earth Mammals    coyote coyote_general  2.767 18.502 1.4721 3.0600 512    0 hanning
-    ## 14:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other  2.564 10.584 3.5364 6.4474 512    0 hanning
-    ## 15:           NA midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other 23.769 41.187 3.1129 5.7594 512    0 hanning
-    ##                annotation personID           timestamp
-    ##  1: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:23
-    ##  2: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:39
-    ##  3: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:59
-    ##  4: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:05
-    ##  5: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:10
-    ##  6: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:24
-    ##  7: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:03:29
-    ##  8: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:04:27
-    ##  9: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:04:52
-    ## 10: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:06
-    ## 11: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:12
-    ## 12: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:05:24
-    ## 13: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:10:49
-    ## 14: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:11:40
-    ## 15: 58,0a,00,00,00,03,... fbaggins 2018-10-27 15:11:57
+    ##    annotationID                       recordingID photoID       listID speciesID   libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn
+    ## 1:           NA midEarth3_2016-03-12_07-00-00.wav    <NA> Bilbo's List      verd verd_3notes 13.056 14.680 3.6422 5.7594 512    0 hanning
+    ## 2:           NA midEarth3_2016-03-12_07-00-00.wav    <NA> Bilbo's List      verd verd_3notes 16.487 18.365 3.6951 5.4947 512    0 hanning
+    ## 3:           NA midEarth3_2016-03-12_07-00-00.wav    <NA> Bilbo's List      verd verd_2notes 19.633 21.155 3.9598 5.0713 512    0 hanning
+    ##               annotation personID           timestamp
+    ## 1: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:23
+    ## 2: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:39
+    ## 3: 58,0a,00,00,00,03,... bbaggins 2018-10-27 15:02:59
 
 Annotations are returned in a table formatted according to the
 **annotations** table of the database. These records could have been
