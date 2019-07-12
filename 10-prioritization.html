@@ -701,13 +701,13 @@ models &lt;- simGlm(equation = equations,
                  model.family = &#39;binomial&#39;,
                  data = temporal.data)</code></pre>
 <pre><code>## Working on model 1 (btgn_vocals)...</code></pre>
-<pre><code>## Finished model 1. Model btgn_vocals is active 13.8 % of the time.</code></pre>
+<pre><code>## Finished model 1. Model btgn_vocals is active 12.9 % of the time.</code></pre>
 <pre><code>## Working on model 2 (copo_vocals)...</code></pre>
-<pre><code>## Finished model 2. Model copo_vocals is active 8.5 % of the time.</code></pre>
+<pre><code>## Finished model 2. Model copo_vocals is active 9 % of the time.</code></pre>
 <pre><code>## Working on model 3 (leni_vocals)...</code></pre>
-<pre><code>## Finished model 3. Model leni_vocals is active 1.7 % of the time.</code></pre>
+<pre><code>## Finished model 3. Model leni_vocals is active 1.5 % of the time.</code></pre>
 <pre><code>## Working on model 4 (verd_vocals)...</code></pre>
-<pre><code>## Finished model 4. Model verd_vocals is active 16.3 % of the time.</code></pre>
+<pre><code>## Finished model 4. Model verd_vocals is active 18.3 % of the time.</code></pre>
 <p>Each of these models is stored in a list (in this case a list of four, one for each species). The class of each model is <strong>glm</strong> (generalized linear model) and <strong>lm</strong> (linear model) generated from R’s base package, and each object contains a bevy of information about the model fitting process.</p>
 <pre class="r"><code># Look at the class of each model
 lapply(X = models, FUN = class)</code></pre>
@@ -866,18 +866,18 @@ str(object = test_optim, max.level = 1)</code></pre>
 test_optim[&#39;prioritization&#39;]</code></pre>
 <pre><code>## $prioritization
 ##     locationID speciesID       date pMax     pCurrent    weight init
-##  1: location@1      btgn 2019-07-13 0.95 7.748727e-05 0.1999951    0
-##  2: location@1      copo 2019-07-13 0.95 1.110223e-15 0.3000172    0
-##  3: location@1      leni 2019-07-13 0.95 1.110223e-15 0.3000172    0
-##  4: location@1      verd 2019-07-13 0.95 1.943125e-04 0.1999705    0
-##  5: location@2      btgn 2019-07-13 0.95 1.914710e-04 0.1999794    0
-##  6: location@2      copo 2019-07-13 0.95 1.110223e-15 0.3000295    0
-##  7: location@2      leni 2019-07-13 0.95 1.110223e-15 0.3000295    0
-##  8: location@2      verd 2019-07-13 0.95 2.758276e-04 0.1999616    0
-##  9: location@3      btgn 2019-07-13 0.95 7.431398e-05 0.1999955    0
-## 10: location@3      copo 2019-07-13 0.95 1.110223e-15 0.3000167    0
-## 11: location@3      leni 2019-07-13 0.95 1.110223e-15 0.3000167    0
-## 12: location@3      verd 2019-07-13 0.95 1.902387e-04 0.1999711    0</code></pre>
+##  1: location@1      btgn 2019-07-13 0.95 8.029745e-05 0.4160354    0
+##  2: location@1      copo 2019-07-13 0.95 6.110202e-02 0.5839646    0
+##  3: location@1      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+##  4: location@1      verd 2019-07-13 0.95 1.000000e+00 0.0000000    0
+##  5: location@2      btgn 2019-07-13 0.95 1.399611e-04 0.4188704    0
+##  6: location@2      copo 2019-07-13 0.95 7.145956e-02 0.5811296    0
+##  7: location@2      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+##  8: location@2      verd 2019-07-13 0.95 1.000000e+00 0.0000000    0
+##  9: location@3      btgn 2019-07-13 0.95 7.975386e-05 0.4160666    0
+## 10: location@3      copo 2019-07-13 0.95 6.121564e-02 0.5839334    0
+## 11: location@3      leni 2019-07-13 0.95 1.000000e+00 0.0000000    0
+## 12: location@3      verd 2019-07-13 0.95 1.000000e+00 0.0000000    0</code></pre>
 <p>The prioritization table contains 12 rows; one row for each of the four target species at each of three active monitoring locations. Though the <em>locationID</em>, <em>speciesID</em>, and <em>pMax</em> columns should look the same as the first day, the <em>weight</em>, <em>pCurrent</em>, <em>date</em>, and <em>init</em> columns look different.</p>
 <p>Firstly, the <em>date</em> should change, and <em>init</em> will now hold values of 0 because the optimization routine was not initialized on this day.</p>
 <p>Secondly, the <em>weight</em> values should change as a function of <em>pCurrent</em>. Species whose probability of acoustic capture (<em>pCurrent</em>) went up dramatically may see their monitoring weights go down, while species whose <em>pCurrent</em> did not rise as rapidly may see their monitoring weights go up.</p>
@@ -891,11 +891,11 @@ test_optim[&#39;schedule&#39;]</code></pre>
 ##  3: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@1   False
 ##  4: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@1   False
 ##  5: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@1   False
-##  6: Recording 2019-07-13   05:00:00 2019-07-13 05:01:00         False Optim Calendar location@2   False
-##  7: Recording 2019-07-13   05:12:00 2019-07-13 05:13:00         False Optim Calendar location@2   False
-##  8: Recording 2019-07-13   05:24:00 2019-07-13 05:25:00         False Optim Calendar location@2   False
-##  9: Recording 2019-07-13   05:36:00 2019-07-13 05:37:00         False Optim Calendar location@2   False
-## 10: Recording 2019-07-13   05:48:00 2019-07-13 05:49:00         False Optim Calendar location@2   False
+##  6: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@2   False
+##  7: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@2   False
+##  8: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@2   False
+##  9: Recording 2019-07-13   06:36:00 2019-07-13 06:37:00         False Optim Calendar location@2   False
+## 10: Recording 2019-07-13   06:48:00 2019-07-13 06:49:00         False Optim Calendar location@2   False
 ## 11: Recording 2019-07-13   06:00:00 2019-07-13 06:01:00         False Optim Calendar location@3   False
 ## 12: Recording 2019-07-13   06:12:00 2019-07-13 06:13:00         False Optim Calendar location@3   False
 ## 13: Recording 2019-07-13   06:24:00 2019-07-13 06:25:00         False Optim Calendar location@3   False
@@ -940,15 +940,15 @@ qryPrioritization(conn = conx)</code></pre>
 <pre><code>##    locationID speciesID weight  pCurrent pMax       date init
 ## 1  location@1      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 2  location@1      copo      0 1.0000000 0.95 2016-03-31    0
-## 3  location@1      leni      0 0.9925851 0.95 2016-03-31    0
+## 3  location@1      leni      0 0.9941301 0.95 2016-03-31    0
 ## 4  location@1      verd      0 1.0000000 0.95 2016-03-31    0
 ## 5  location@2      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 6  location@2      copo      0 1.0000000 0.95 2016-03-31    0
-## 7  location@2      leni      0 0.9926180 0.95 2016-03-31    0
+## 7  location@2      leni      0 0.9940779 0.95 2016-03-31    0
 ## 8  location@2      verd      0 1.0000000 0.95 2016-03-31    0
 ## 9  location@3      btgn      0 1.0000000 0.95 2016-03-31    0
 ## 10 location@3      copo      0 1.0000000 0.95 2016-03-31    0
-## 11 location@3      leni      0 0.9925913 0.95 2016-03-31    0
+## 11 location@3      leni      0 0.9941393 0.95 2016-03-31    0
 ## 12 location@3      verd      0 1.0000000 0.95 2016-03-31    0</code></pre>
 <p>By default, <code>qryPrioritization()</code> will return records associated with the most recent day in monitoring period (in this case, 2016-03-31). When a species’ <em>pCurrent</em> equals or exceeds <em>pMax</em>, that species’ weight becomes 0, allowing monitoring resources to focus on species that have not yet attained <em>pMax</em>.</p>
 <p>As usual, when finished working with an <strong>AMMonitor</strong> database, we use the <code>dbDisconnect()</code> function:</p>

@@ -619,11 +619,11 @@ models <- simGlm(equation = equations,
 
     ## Working on model 1 (btgn_vocals)...
 
-    ## Finished model 1. Model btgn_vocals is active 13.2 % of the time.
+    ## Finished model 1. Model btgn_vocals is active 13 % of the time.
 
     ## Working on model 2 (copo_vocals)...
 
-    ## Finished model 2. Model copo_vocals is active 7.9 % of the time.
+    ## Finished model 2. Model copo_vocals is active 8 % of the time.
 
     ## Working on model 3 (leni_vocals)...
 
@@ -631,7 +631,7 @@ models <- simGlm(equation = equations,
 
     ## Working on model 4 (verd_vocals)...
 
-    ## Finished model 4. Model verd_vocals is active 17.3 % of the time.
+    ## Finished model 4. Model verd_vocals is active 16.5 % of the time.
 
 Each of these models is stored in a list (in this case a list of four,
 one for each species). The class of each model is **glm** (generalized
