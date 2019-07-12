@@ -1,6 +1,7 @@
 ---
 title: "Chapter 7: The Accounts, Equipment, Deployment, and Log Tables"
 output:
+  html_document:
   md_document:
     variant: markdown_github
     toc: true

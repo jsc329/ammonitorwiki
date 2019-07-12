@@ -1,6 +1,7 @@
 ---
 title: "Chapter 5: The Objectives Table"
 output:
+  html_document:
   md_document:
     variant: markdown_github
     toc: true
