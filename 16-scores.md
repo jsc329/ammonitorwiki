@@ -402,12 +402,12 @@ RSQLite::dbGetQuery(conn = conx,
     ## 5       5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                    NA                    NA blob[37.23 kB]
     ## 6       6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                    NA                    NA blob[37.23 kB]
     ##             timestamp
-    ## 1 2019-07-15 11:48:22
-    ## 2 2019-07-15 11:48:22
-    ## 3 2019-07-15 11:48:22
-    ## 4 2019-07-15 11:48:22
-    ## 5 2019-07-15 11:48:22
-    ## 6 2019-07-15 11:48:22
+    ## 1 2019-07-15 14:17:23
+    ## 2 2019-07-15 14:17:23
+    ## 3 2019-07-15 14:17:23
+    ## 4 2019-07-15 14:17:23
+    ## 5 2019-07-15 14:17:23
+    ## 6 2019-07-15 14:17:23
 
 Notice that the first detected event in the recording
 midEarth3\_2016-03-12\_07-00-00.wav was produced by the template
@@ -448,7 +448,7 @@ str(scores)
     ##  $ features             :List of 1
     ##   ..$ : raw  58 0a 00 00 ...
     ##   ..- attr(*, "class")= chr "blob"
-    ##  $ timestamp            : chr "2019-07-15 11:48:22"
+    ##  $ timestamp            : chr "2019-07-15 14:17:23"
 
 Here, we confirm the returned object is a data.frame. *Features* of each
 event are returned as a list of 1, and are of serialized “raw” data
@@ -513,8 +513,8 @@ contour is considered as a probability mass function (PMF) and
 transformed into a cumulated distribution function (CDF).”
 
 The number of **tc** values is equal to the number of time bins in the
-template. Each **tc** value is the amplitude probability mass function
-for that time bin:
+template. Each **tc** value is the amplitude probability mass for that
+time bin:
 
 ``` r
 # Extract row 1, columns 1076:1085 from this features dataframe
