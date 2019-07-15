@@ -1,30 +1,29 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [The Classifications Table](#the-classifications-table)
--   [Verifying detections with
+  - [Chapter Introduction](#chapter-introduction)
+  - [The Classifications Table](#the-classifications-table)
+  - [Verifying detections with
     scoresVerify()](#verifying-detections-with-scoresverify)
--   [Training and testing classifiers using
+  - [Training and testing classifiers using
     classifierModels()](#training-and-testing-classifiers-using-classifiermodels)
--   [Making predictions on new data using
+  - [Making predictions on new data using
     classifierPredict()](#making-predictions-on-new-data-using-classifierpredict)
--   [Creating Ensemble Predictions](#creating-ensemble-predictions)
--   [The Classifications Table in
+  - [Creating Ensemble Predictions](#creating-ensemble-predictions)
+  - [The Classifications Table in
     Access](#the-classifications-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
-The previous chapter (Scores) illustrated how to use templates to search
-recordings for target signals, which produces detected events that
-exceed a user-chosen score threshold. Detected events are tracked in the
-database’s **scores** table. For each detected event, the **AMMonitor**
-system will also extract associated acoustic features. Some of the
-detected events may be target signals issued from a focal species, and
-others may be false alarms that were acoustically similar enough to the
-template to produce a detection.
+The previous chapter (16: The Scores Table) illustrated how to use
+templates to search recordings for target signals, which produces
+detected events that exceed a user-chosen score threshold. Detected
+events are tracked in the database **scores** table. For each detected
+event, the **AMMonitor** system will also extract associated acoustic
+features. Some of the detected events may be target signals issued from
+a focal species, and others may be false alarms that were acoustically
+similar enough to the template to produce a detection.
 
 This chapter demonstrates how acoustic features stored in the **scores**
 table can be used to create classification models that are able to
@@ -35,11 +34,11 @@ against new recordings, the classification models take the raw scores
 generated from `scoresDetect()` and return the probability that each
 detected event is a target signal. These probabilities are stored in the
 **classifications** database table, which can be used in downstream
-analyses such as an occupancy analysis (Chapter 18).
+analyses such as an occupancy analysis (Chapter 18: Analyses).
 
 To illustrate the process of generating **classifications**, we will use
 `dbCreateSample()` to create a database called “Chap17.sqlite”, which
-will be stored in a folder (directory) called “database” within the
+will be stored in a folder (directory) called **database** within the
 **AMMonitor** main directory, which should be your working directory in
 R. Recall that `dbCreateSample()` generates all tables of an
 **AMMonitor** database, and then pre-populates sample data into tables
@@ -55,12 +54,9 @@ chapter:
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap17.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('accounts', 'lists', 
-                          'people', 'species', 
-                          'equipment', 'locations', 
-                          'library', 'listItems',
-                          'recordings', 'templates', 
-                          'scores', 'classifications'))
+               tables = c('accounts', 'lists', 'people', 'species', 
+                          'equipment', 'locations', 'library', 'listItems',
+                          'recordings', 'templates', 'scores', 'classifications'))
 ```
 
     ## An AMMonitor database has been created with the name Chap17.sqlite which consists of the following tables:
@@ -90,8 +86,7 @@ constraints.
 
 ``` r
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, 
-                     statement = "PRAGMA foreign_keys = ON;" )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 ```
 
     ## <SQLiteResult>
@@ -99,8 +94,7 @@ RSQLite::dbSendQuery(conn = conx,
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-The Classifications Table
-=========================
+# The Classifications Table
 
 We begin by looking at the **classifications** table, the subject of
 this chapter. We can use the `dbTables()` function to look at the
@@ -180,7 +174,7 @@ classifications
 
 The five records returned show predictions for *scoreID* number 1. The
 type of *classifier* in **AMMonitor** is currently limited to ‘glmnet’,
-‘svmradial’, ‘svmlinear’, ‘rf’, and ‘kknn’, which we define later. The
+‘svmRadial’, ‘svmLinear’, ‘rf’, and ‘kknn’, which we define later. The
 *modelName* describes the name of the classifier model stored in an
 AMModel library (*amml*) called “classifiers”. Here, you can see five
 different classification models have been used to obtain the probability
@@ -283,8 +277,7 @@ Below, we detail all three steps using **AMMonitor** functions and
 illustrate how the sample database **classifications** records were
 created for scores associated with the template ‘verd1’.
 
-Verifying detections with scoresVerify()
-========================================
+# Verifying detections with scoresVerify()
 
 The first step toward creating classifiers that assign a target signal
 probability to each detected event is to verify some of the detections
@@ -327,7 +320,7 @@ associated with each scoreID are stored as a serialized “blob” within
 the database, and play a vital role in this chapter.
 
 With scores in hand, the next step is verification, which may be done at
-signal level (*manualVerifyLibraryID*) or species level
+the signal level (*manualVerifyLibraryID*) or the species level
 (*manualVerifySpeciesID*). For example, if we verify at the level of the
 **speciesID**, any detected sound produced by the species should be
 labeled as a target signal. If we verify at the level of the
@@ -457,58 +450,36 @@ alarms; 1s are target signals.
 
 ``` r
 RSQLite::dbGetQuery(conn = conx, 
-                    statement = 'SELECT * 
+                    statement = 'SELECT scoreID, recordingID, templateID, time,
+                                        scoreThreshold, score, manualVerifyLibraryID
                                  FROM scores 
                                  WHERE scoreID = $scoreID',
                     param = list(scoreID = scoreIDs))
 ```
 
-    ##    scoreID                       recordingID templateID      time scoreThreshold     score manualVerifyLibraryID manualVerifySpeciesID       features
-    ## 1        1 midEarth3_2016-03-12_07-00-00.wav      verd1  0.499229            0.2 0.2669258                     0                    NA blob[37.22 kB]
-    ## 2        2 midEarth3_2016-03-12_07-00-00.wav      verd1  2.066576            0.2 0.2529111                     0                    NA blob[37.22 kB]
-    ## 3        3 midEarth3_2016-03-12_07-00-00.wav      verd1  3.308844            0.2 0.2538855                     0                    NA blob[37.22 kB]
-    ## 4        4 midEarth3_2016-03-12_07-00-00.wav      verd1  8.695873            0.2 0.2049214                     0                    NA blob[37.22 kB]
-    ## 5        5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                     0                    NA blob[37.22 kB]
-    ## 6        6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                     1                    NA blob[37.22 kB]
-    ## 7        7 midEarth3_2016-03-12_07-00-00.wav      verd1 16.997007            0.2 0.2270237                     0                    NA blob[37.22 kB]
-    ## 8        8 midEarth3_2016-03-12_07-00-00.wav      verd1 17.507846            0.2 0.3892711                     1                    NA blob[37.22 kB]
-    ## 9        9 midEarth3_2016-03-12_07-00-00.wav      verd1 20.456780            0.2 0.2547122                     1                    NA blob[37.22 kB]
-    ## 10      10 midEarth3_2016-03-12_07-00-00.wav      verd1 23.754014            0.2 0.3679291                     1                    NA blob[37.22 kB]
-    ## 11      11 midEarth3_2016-03-12_07-00-00.wav      verd1 24.299683            0.2 0.2448099                     0                    NA blob[37.22 kB]
-    ## 12      12 midEarth3_2016-03-12_07-00-00.wav      verd1 28.699864            0.2 0.4061488                     1                    NA blob[37.22 kB]
-    ## 13      13 midEarth3_2016-03-12_07-00-00.wav      verd1 33.053605            0.2 0.2851608                     0                    NA blob[37.22 kB]
-    ## 14      14 midEarth3_2016-03-12_07-00-00.wav      verd1 33.297415            0.2 0.2988873                     1                    NA blob[37.22 kB]
-    ## 15      15 midEarth3_2016-03-12_07-00-00.wav      verd1 37.256417            0.2 0.3101349                     0                    NA blob[37.22 kB]
-    ## 16      33 midEarth5_2016-03-21_07-30-00.wav      verd1  4.678821            0.2 0.8053458                     1                    NA blob[37.22 kB]
-    ## 17      34 midEarth5_2016-03-21_07-30-00.wav      verd1  9.032562            0.2 0.5522207                     1                    NA blob[37.22 kB]
-    ## 18      35 midEarth5_2016-03-21_07-30-00.wav      verd1 25.298141            0.2 0.5519680                     1                    NA blob[37.22 kB]
-    ## 19      36 midEarth5_2016-03-21_07-30-00.wav      verd1 30.220771            0.2 0.4854510                     1                    NA blob[37.22 kB]
-    ## 20      37 midEarth5_2016-03-21_07-30-00.wav      verd1 35.143401            0.2 0.4820545                     1                    NA blob[37.22 kB]
-    ## 21      38 midEarth5_2016-03-21_07-30-00.wav      verd1 39.671293            0.2 0.6246624                     1                    NA blob[37.22 kB]
-    ## 22      39 midEarth5_2016-03-21_07-30-00.wav      verd1 49.400454            0.2 0.3033135                     1                    NA blob[37.22 kB]
-    ##              timestamp
-    ## 1  2019-01-26 16:27:00
-    ## 2  2019-01-26 16:27:00
-    ## 3  2019-01-26 16:27:00
-    ## 4  2019-01-26 16:27:00
-    ## 5  2019-01-26 16:27:00
-    ## 6  2019-01-26 16:27:00
-    ## 7  2019-01-26 16:27:00
-    ## 8  2019-01-26 16:27:00
-    ## 9  2019-01-26 16:27:00
-    ## 10 2019-01-26 16:27:00
-    ## 11 2019-01-26 16:27:00
-    ## 12 2019-01-26 16:27:00
-    ## 13 2019-01-26 16:27:00
-    ## 14 2019-01-26 16:27:00
-    ## 15 2019-01-26 16:27:00
-    ## 16 2019-01-26 16:27:07
-    ## 17 2019-01-26 16:27:07
-    ## 18 2019-01-26 16:27:07
-    ## 19 2019-01-26 16:27:07
-    ## 20 2019-01-26 16:27:07
-    ## 21 2019-01-26 16:27:07
-    ## 22 2019-01-26 16:27:07
+    ##    scoreID                       recordingID templateID      time scoreThreshold     score manualVerifyLibraryID
+    ## 1        1 midEarth3_2016-03-12_07-00-00.wav      verd1  0.499229            0.2 0.2669258                     0
+    ## 2        2 midEarth3_2016-03-12_07-00-00.wav      verd1  2.066576            0.2 0.2529111                     0
+    ## 3        3 midEarth3_2016-03-12_07-00-00.wav      verd1  3.308844            0.2 0.2538855                     0
+    ## 4        4 midEarth3_2016-03-12_07-00-00.wav      verd1  8.695873            0.2 0.2049214                     0
+    ## 5        5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                     0
+    ## 6        6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                     1
+    ## 7        7 midEarth3_2016-03-12_07-00-00.wav      verd1 16.997007            0.2 0.2270237                     0
+    ## 8        8 midEarth3_2016-03-12_07-00-00.wav      verd1 17.507846            0.2 0.3892711                     1
+    ## 9        9 midEarth3_2016-03-12_07-00-00.wav      verd1 20.456780            0.2 0.2547122                     1
+    ## 10      10 midEarth3_2016-03-12_07-00-00.wav      verd1 23.754014            0.2 0.3679291                     1
+    ## 11      11 midEarth3_2016-03-12_07-00-00.wav      verd1 24.299683            0.2 0.2448099                     0
+    ## 12      12 midEarth3_2016-03-12_07-00-00.wav      verd1 28.699864            0.2 0.4061488                     1
+    ## 13      13 midEarth3_2016-03-12_07-00-00.wav      verd1 33.053605            0.2 0.2851608                     0
+    ## 14      14 midEarth3_2016-03-12_07-00-00.wav      verd1 33.297415            0.2 0.2988873                     1
+    ## 15      15 midEarth3_2016-03-12_07-00-00.wav      verd1 37.256417            0.2 0.3101349                     0
+    ## 16      33 midEarth5_2016-03-21_07-30-00.wav      verd1  4.678821            0.2 0.8053458                     1
+    ## 17      34 midEarth5_2016-03-21_07-30-00.wav      verd1  9.032562            0.2 0.5522207                     1
+    ## 18      35 midEarth5_2016-03-21_07-30-00.wav      verd1 25.298141            0.2 0.5519680                     1
+    ## 19      36 midEarth5_2016-03-21_07-30-00.wav      verd1 30.220771            0.2 0.4854510                     1
+    ## 20      37 midEarth5_2016-03-21_07-30-00.wav      verd1 35.143401            0.2 0.4820545                     1
+    ## 21      38 midEarth5_2016-03-21_07-30-00.wav      verd1 39.671293            0.2 0.6246624                     1
+    ## 22      39 midEarth5_2016-03-21_07-30-00.wav      verd1 49.400454            0.2 0.3033135                     1
 
 Here, for scoreID = 1, the *manualVerifyLibraryID* column indicates this
 event was labeled a false alarm: it is not a two-note Verdin call.
@@ -564,16 +535,15 @@ plotVerificationsAvg(db.path = db.path,
 
 <img src="Chap17_Figs/unnamed-chunk-18-1.png" style="display: block; margin: auto auto auto 0;" />
 
-Training and testing classifiers using classifierModels()
-=========================================================
+# Training and testing classifiers using classifierModels()
 
 Next, we use verified events to create classification models
 (classifiers), finalized versions of which should be stored in an
 **AMModels** library for future re-use. Recall that we created several
 AMModel libraries in Chapter 1, one of which is dedicted to storing
-classifier models (classifiers.RDS). Remember that all **AMModel**
-libraries should be stored in a directory called “ammls”, located within
-the main **AMMonitor** directory. We view this model library below using
+classifier models (classifiers.RDS). Remember that all AMModel libraries
+should be stored in a directory called “ammls”, located within the main
+**AMMonitor** directory. We view this model library below using
 `readRDS()`. It does not yet contain any models.
 
 ``` r
@@ -623,17 +593,17 @@ args(classifierModels)
 Given a ‘db.path’, a ‘templateID’, and a ‘label.type’,
 `classifierModels()` will internally split verified records from the
 **scores** table into training and testing datasets according to the
-‘split.proportion’ argument. Users should identify which classifiers to
-create in the ‘classifiers’ argument. The input to the ‘score.threshold’
-argument should match a score.threshold used for this template in
-`scoresDetect()` to populate the **scores** table (note that this
-argument has nothing to do with classifying an event as a target signal
-or false alarm; it merely provides users with a means to specify which
-score threshold to use for classifier training, in case users have
-generated scores with the same template at multiple template score
-thresholds). Users can input a ‘seed’ to ensure reproducible results if
-desired. Remaining arguments, which are defaults not discussed here, are
-sent to **caret** functions that create the models.
+‘split.proportion’ argument. Users should identify which classifiers
+to create in the ‘classifiers’ argument. The input to the
+‘score.threshold’ argument should match a score.threshold used for
+this template in `scoresDetect()` to populate the **scores** table (note
+that this argument has nothing to do with classifying an event as a
+target signal or false alarm; it merely provides users with a means to
+specify which score threshold to use for classifier training, in case
+users have generated scores with the same template at multiple template
+score thresholds). Users can input a ‘seed’ to encourage reproducible
+results if desired. Remaining arguments, which are defaults not
+discussed here, are sent to **caret** functions that create the models.
 
 The output of the `classifierModels()` function is a list of models,
 where each model itself is a list. Once calibrated, finalized models can
@@ -722,7 +692,7 @@ list object from above. We use the ‘model.names’ argument to specify
 which model performance to view.
 
 ``` r
-# Assess performance of the glmnet classifier model in the model.list
+# Assess performance of classifier models in the model.list
 performance.glmnet <- classifierPerformance(amml = NULL,
                                             model.list = classifier_practice,
                                             model.names = 'verd1_0.2_libraryID_glmnet')
@@ -846,8 +816,8 @@ on the test data, which plot the true positive rate (sensitivity)
 against the false positive rate (1 – specificity). In addition to the
 ‘db.path’, `plotRoc()` takes either an ‘amml’ or a ‘model.list’ object
 output from `classifierModels()`, as well as ‘model.names’. In the
-‘curve.type’ argument, we specify ‘roc’. In the ‘data.type’ argument, we
-specify whether we would like to create ROC curves of the training or
+‘curve.type’ argument, we specify ‘roc’. In the ‘data.type’ argument,
+we specify whether we would like to create ROC curves of the training or
 testing data (we have input ‘test’, but we could have chosen to plot the
 training data by inputting ‘train’). Below, our ROC curves will look
 rather blocky due to the low sample size of test data in the example.
@@ -875,7 +845,7 @@ classifier may predict the majority class for most or all observations
 in the test set and still attain a high accuracy score, which is why
 measures beyond accuracy are necessary \[3\].
 
-Thus, **AMMonitor** also offer the chance to construct Precision-Recall
+Thus, **AMMonitor** also offers the chance to construct Precision-Recall
 Curves, which plot precision (a.k.a. positive predictive value) against
 sensitivity (a.k.a. recall) \[4\]. Like ROC curves, AUC values closest
 to 1 are best. This time, we set ‘curve.type’ equal to ‘pr’ to generate
@@ -931,13 +901,13 @@ target signals, and three were false alarms. Thus, the prevalence of
 target signals in this population is 3/6, or 0.5, which is why the
 dotted horizontal line starts at 0.5 on the y-axis of the
 Precision-Recall curve. Note that an even class split like this is often
-not the case.
+not the case, which is why Precision-Recall curves are useful.
 
 A user might calibrate a model by experimenting with the
-‘split.proportion’ argument until satisfied with classifier performance
-metric outcomes. A user may also return to `scoresVerify()` to label
-additional scores, increasing the amount of training data available to
-the classifier models.
+‘split.proportion’ argument until satisfied with classifier
+performance metric outcomes. A user may also return to `scoresVerify()`
+to label additional scores, increasing the amount of training data
+available to the classifier models.
 
 Calibrated models can be added directly to an AMModel library, where
 they can be called for future use. Here, we return to our empty library
@@ -950,7 +920,7 @@ that each classifier retains its auto-generated name
 (e.g. ‘verd1\_0.2\_libraryID\_glmnet’).
 
 ``` r
-# Name all of these by hand as ammodel objects first:
+# Turn each classifier model into an ammodel object:
 mods <- list()
 for (i in seq_along(classifier_practice)) {
   mods[[i]] <- AMModels::amModel(model = classifier_practice[[i]], comment = '')
@@ -962,18 +932,16 @@ names(mods) <- names(classifier_practice)
 # Insert into amml:
 classifiers <- AMModels::insertAMModelLib(models = mods, 
                                           amml = classifiers)
-
 # Save to amml folder:
 saveRDS(classifiers, 'ammls/classifiers.RDS')
 ```
 
 Now stored in the ‘classifiers’ model library, these models can be
 accessed again at any time and used to make predictions on **new** data.
-Note that in practice, we would not want to store a classifier that
-performed as poorly as the svmRadial classifier did here.
+Note that in practice, we would likely not want to store a classifier
+that performed as poorly as the svmRadial classifier did here.
 
-Making predictions on new data using classifierPredict()
-========================================================
+# Making predictions on new data using classifierPredict()
 
 Once classification models have been trained and tuned, we can use them
 to make predictions on new incoming data with `classifierPredict()`.
@@ -985,9 +953,9 @@ predictions.
 
 This function returns a data.table of classifications, which can be
 automatically added to the database’s **classifications** table if
-‘db.insert’ is set to TRUE. If so, `classifierPredict()` will check the
-**classifications** table for predictions that were made according to
-each combination of scoreID, templateID, label.type, score.threshold,
+‘db.insert’ is set to TRUE. If so, `classifierPredict()` will check
+the **classifications** table for predictions that were made according
+to each combination of scoreID, templateID, label.type, score.threshold,
 and classifiers, and will only add predictions for new combinations.
 
 ``` r
@@ -1013,10 +981,10 @@ new.classifs[which(new.classifs$scoreID == 1),]
 ```
 
     ##    scoreID        amml classifier                     modelName modelProbability           timestamp
-    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-05 12:13:00
-    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-05 12:13:00
-    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-05 12:13:00
-    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-05 12:13:01
+    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-15 16:41:20
+    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-15 16:41:20
+    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-15 16:41:20
+    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-15 16:41:20
 
 Note that these data are identical to those we examined at the start of
 this chapter. We store the *scoreID* and the *amml* name associated with
@@ -1025,10 +993,9 @@ with this prediction. Next, *modelProbability* signifies the probability
 that a detected event is a target signal. Finally, we track the
 *timestamp* at which the prediction was entered into the database.
 
-Creating Ensemble Predictions
-=============================
+# Creating Ensemble Predictions
 
-In Chapter 18: Occupancy, we illustrate how to combine predictions from
+In Chapter 18: Analyses, we illustrate how to combine predictions from
 the five classifiers into a basic “ensemble” classifier that aggregates
 the predictions of multiple classifiers.
 
@@ -1037,8 +1004,8 @@ predictions from multiple classifiers by using the
 `classifierEnsemble()` function. `classifierEnsemble()` takes the
 predictions from several classifiers and generates a data.table of
 ‘ensemble’ classifications averaged across multiple classifiers. This
-‘ensemble’ is a weighted average that may be computed according to each
-classifier’s performance on accuracy, sensitivity, specificity,
+‘ensemble’ is a weighted average that may be computed according to
+each classifier’s performance on accuracy, sensitivity, specificity,
 precision, F1 score, or a simple average across all classifiers.
 
 To illustrate the concept of a precision-weighted ‘ensemble’, we will
@@ -1048,8 +1015,8 @@ recall that the glmnet, svmLinear, and kknn classifiers performed best
 on the precision metric, each scoring a 1. If we use a
 precision-weighted average ensemble in `classifierEnsemble()`, this
 means the glmnet, svmLinear, and kknn classifiers have the highest
-“weight” in the weighted average. Meanwhile, svmRadial performs worst on
-precision, with a score of 0.5; it will have the lowest weight in the
+“weight” in the weighted average. Meanwhile, svmRadial performs worst
+on precision, with a score of 0.5; it will have the lowest weight in the
 precision-weighted average.
 
 ``` r
@@ -1131,6 +1098,7 @@ caret::confusionMatrix(data = ens$predicted, reference = ens$class)
     ##     P-Value [Acc > NIR] : 0.1094          
     ##                                           
     ##                   Kappa : 0.6667          
+    ##                                           
     ##  Mcnemar's Test P-Value : 1.0000          
     ##                                           
     ##             Sensitivity : 0.6667          
@@ -1149,12 +1117,11 @@ Note that `classifierEnsemble()` does not have options for adding
 ensemble results to the classifications database. It merely provides a
 way to view ensemble predictions, which can then be assessed with the
 **caret** `confusionMatrix()` function. Looking forward, functions in
-Chapter 18 (Occupancy) can optionally run `classifierEnsemble()` to
+Chapter 18 (Analyses) can optionally run `classifierEnsemble()` to
 generate encounter histories from an ensemble rather than from a single
 classifier.
 
-The Classifications Table in Access
-===================================
+# The Classifications Table in Access
 
 The classifications table is located under the “Scores” secondary tab,
 within the “Recordings” primary tab in the Access Navigation Form.
@@ -1172,22 +1139,21 @@ within the “Recordings” primary tab in the Access Navigation Form.
 Here, we view the first record of the **scores** table, and note that
 there are 52 records in this table. This record was registered by
 pitting templateID “verd1” against the recordingID
-“midEarth3\_2016-03-12\_07-00-00.wav”. This score has a value of 0.2669,
-and is logged in the scores table because it exceeded the user-supplied
-threshold of 0.2, which was input by the user to `scoresDetect()`. Five
-different models have been created to assess the “verd1” template, with
-model names that were automatically generated and that provide the
-templateID, score threshold, classifier type, and whether scores were
-verified at the libraryID level or the speciesID level. Each of the five
-**AMMonitor** classifiers evaluated scoreID 1, and produced a
-probability that the signal was a target signal (1 minus this value
-provides the probability that the signal is a false alarm).
+“midEarth3\_2016-03-12\_07-00-00.wav”. This score has a value of
+0.2669, and is logged in the scores table because it exceeded the
+user-supplied threshold of 0.2, which was input by the user to
+`scoresDetect()`. Five different models have been created to assess the
+“verd1” template, with model names that were automatically generated
+and that provide the templateID, score threshold, classifier type, and
+whether scores were verified at the libraryID level or the speciesID
+level. Each of the five **AMMonitor** classifiers evaluated scoreID 1,
+and produced a probability that the signal was a target signal (1 minus
+this value provides the probability that the signal is a false alarm).
 
 Note that the **scores** and **classifications** tables are filled in by
 **AMMonitor** functions, and are not intended to be entered manually.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter covered the **classifications** table, which stores the
 probability that a template-detected event is a target signal. To fill
@@ -1197,29 +1163,47 @@ and check their verifications using `plotVerifications()` and
 suite of five classifier models using `classifierModels()`. Model
 performance can be assessed with `classifierPerformance()` and
 `plotROC()`. Sufficient models may be stored in the
-‘ammls/classifiers.RDS’ AMModels library and called into action to make
-predictions on incoming detections via `classifierPredict()`. This
+‘ammls/classifiers.RDS’ AMModels library and called into action to
+make predictions on incoming detections via `classifierPredict()`. This
 function populates the **classifications** table with records if
 specified. In short, the **classifications** approach takes a single
 event, and uses one or more machine learning approaches to return the
 probability that it is a target signal. This approach has many benefits,
 as described in the next chapter.
 
-Chapter References
-==================
+# Chapter References
 
-1. Balantic CM, Donovan TM. Statistical learning mitigation of false
+<div id="refs" class="references">
+
+<div id="ref-BalanticStatistical">
+
+1\. Balantic CM, Donovan TM. Statistical learning mitigation of false
 positives from template-detected data in automated acoustic wildlife
-monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
+monitoring. Bioacoustics. 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
 
-2. Kuhn M. Caret: Classification and regression training (version 6.0)
+</div>
+
+<div id="ref-caret">
+
+2\. Kuhn M. Caret: Classification and regression training (version 6.0)
 \[Internet\]. Comprehensive R Archive Network; 2018. Available:
 <https://cran.r-project.org/web/packages/caret/index.html>
 
-3. Zhu X., Davidson I. Knowledge discovery and data mining. IGI Global;
-2007;
+</div>
 
-4. Davis J., Goadrich M. The relationship between precision-recall and
+<div id="ref-Zhu2007">
+
+3\. Zhu X., Davidson I. Knowledge discovery and data mining. 2007; 
+
+</div>
+
+<div id="ref-Davis2006">
+
+4\. Davis J., Goadrich M. The relationship between precision-recall and
 roc curves. Proceedings of the 23rd international conference on Machine
-Learning. 2006; 233–240.
+Learning. 2006; 233–240. 
+
+</div>
+
+</div>
