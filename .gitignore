@@ -4,4 +4,6 @@
 .Ruserdata
 *.Rproj
 *.sqlite
-database/Chap2.sqlite
+database
+recordings
+ammls
