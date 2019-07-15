@@ -2,11 +2,12 @@
 title: "Chapter 16: The Scores Table"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -40,7 +41,7 @@ The premise of automated acoustic monitoring is that a research team can efficie
 
 If a score exceeds some user-chosen score threshold, it is a "detected event". A detected event is a signal with some chance of being a target signal. Some detected events may be target signals issued from a focal species (true positives), and others may be false alarms (false positives). 
 
-The graph below conveys the idea of pitting a recording against a template (here, the 'verd1' template). The lower panel shows the match between the template and the audio file (~24 - 51 seconds). Four detected events exceed a user-defined threshold of 0.2. Each detected event is highlighted in the upper panel, and these signals can be true target signals or false alarms. 
+The figure below conveys the idea of pitting a recording against a template (here, the 'verd1' template). Each detected event is highlighted in the upper panel, and these signals can be true target signals or false alarms. The bottom panel shows the match between the template and the audio file (~24 - 51 seconds). Four detected events exceed a user-defined threshold of 0.2.
 ```{r, echo = F, include = TRUE, message=F, eval = F}
 
 survey.fp <- 'midEarth3_2016-03-12_07-00-00.wav'
@@ -62,18 +63,17 @@ knitr::include_graphics('Chap16_Figs/detection-pic.png', dpi = 500)
 knitr::include_graphics('Chap16_Figs/detection-pic.jpg', dpi = 500)
 ```
 
-Given a recording and a template, this chapter highlights how to use **AMMonitor** to obtain scores and simultaneously extract each detected event's acoustic *features*. Each detected event (and accompanying acoustic features) is stored in the **scores** table, and the acoustic features can later be used to distinguish true target signals from false alarms (covered in Chapter 17: Classifications). 
+Given a recording and a template, this chapter highlights how to use **AMMonitor** to obtain scores and simultaneously extract each detected event's acoustic *features*. Each detected event (and its accompanying acoustic features) is stored in the **scores** table, and the acoustic features can later be used to distinguish true target signals from false alarms (covered in Chapter 17: The Classifications Table). 
 
-To illustrate the **scores** table, we will use `dbCreateSample()` to create a database called "Chap16.sqlite", to be stored in a folder called "database" within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+To illustrate the **scores** table, we will use `dbCreateSample()` to create a database called "Chap16.sqlite", to be stored in a folder called **database** within the **AMMonitor** main directory (which should be your working directory in R). Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Below, we use `dbCreateSample()`to create sample data for necessary tables. We will populate the **scores** table using **AMMonitor** functions later on in the chapter. 
 ```{r}
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap16.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('people', 'species','library', 
-                          'locations','equipment', 
-                          'accounts', 'templates', 
+               tables = c('people', 'species','library', 'locations',
+                          'equipment', 'accounts', 'templates', 
                           'recordings', 'lists', 'listItems')
               )
 ```
@@ -112,7 +112,7 @@ RSQLite::dbGetQuery(conn = conx, statement = "PRAGMA foreign_key_list(scores);")
 
 In all cases, *on_update* is set to CASCADE, meaning that if a key in a primary table is updated (e.g., a templateID is updated), the changes trickle down to the **scores** table. Notice also that *on_delete* is set to NO ACTION, so if a key in a primary table is deleted (e.g., a template is deleted from the **templates** table), the change does not affect the **scores** table. Users can choose to manually delete affected records in the **scores** table if desired. 
 
-The **scores** table stores additional information for each detected event from a given recording and template. The *scoreThreshold* provides the user-defined threshold used for detecting events. The *time* field indicates the time (in seconds) when the event was detected on the recording. The *manualVerifyLibraryID* and *manualVerifySpeciesID* columns will be covered in the next chapter (Classifications). The *features* field contains acoustic summary features associated with each detected event. Features are stored as a "blob" data type because SQlite does not accommodate lists or S4 objects (instead, the features have been serialized for compatibility with SQLite). Finally, the *timestamp* field records the system date and time at which the detection was logged. 
+The **scores** table stores additional information for each detected event from a given recording and template. The *scoreThreshold* provides the user-defined threshold used for detecting events. The *time* field indicates the time (in seconds) when the event was detected on the recording. The *manualVerifyLibraryID* and *manualVerifySpeciesID* columns will be covered in the next chapter (Classifications). The *features* field contains acoustic summary features associated with each detected event. Features are stored as a "blob" data type because SQlite does not accommodate lists or S4 objects; instead, the features have been serialized for compatibility with SQLite. Finally, the *timestamp* field records the system date and time at which the detection was logged. 
 
 
 # Acquiring automatic detections with scoresDetect()
@@ -192,7 +192,7 @@ Thus, an **AMMonitor list** can be passed to `scoresDetect()` function in lieu o
 
 Finally, there are alternative approaches for specifying the score thresholds to be used by the `scoresDetect()` function. First, the user can pass in a vector of score thresholds used. In this case, the threshold values should be ordered by the template order. Second, if the user provides no threshold values, `scoresDetect()` will utilize the score threshold value stored with the template directly via monitoR functions (see Chapter 15); **be aware that monitoR uses default values for score thresholds if you do not provide them yourself when creating the template**.
 
-We illustrate some alternative approaches in the three code blocks below. In all cases, we are pitting templates against the recordings 'midEarth3_2016-03-12_07-00-00', 'midEarth4_2016-03-04_06-00-00', 'midEarth4_2016-03-26_07-00-00', and 'midEarth5_2016-03-21_07-30-00' (located in the working directory). Here, the Chap16 database is identified in the *db.path* argument, and the recordings are located in our working directory. For the 'score.thresholds' argument, we specify a numeric vector of score thresholds to use for each template; any signal above this threshold will be registered as a detected event. Lastly, we indicate whether we want to insert the scores directly into the database (db.insert = TRUE) or merely test the function while learning how to use it (db.insert = FALSE). 
+We illustrate some alternative approaches in the three code blocks below. In all cases, we are pitting templates against the recordings 'midEarth3_2016-03-12_07-00-00', 'midEarth4_2016-03-04_06-00-00', 'midEarth4_2016-03-26_07-00-00', and 'midEarth5_2016-03-21_07-30-00' (located in the working directory). Here, the Chap16.sqlite database is identified in the *db.path* argument, and the recordings are located in our working directory. For the 'score.thresholds' argument, we specify a numeric vector of score thresholds to use for each template; any signal above this threshold will be registered as a detected event. Lastly, we indicate whether we want to insert the scores directly into the database (db.insert = TRUE) or merely test the function while learning how to use it (db.insert = FALSE). 
 
 ```{r, eval = F}
 # Run scoresDetect using recordingID = 'all' and a vector of templateIDs
@@ -249,14 +249,14 @@ RSQLite::dbGetQuery(conn = conx,
 
 Notice that the first detected event in the recording midEarth3_2016-03-12_07-00-00.wav was produced by the template "verd1". This signal was detected at time 0.499 seconds, and had a score of 0.267. This score was added to the results because it exceeded the threshold of 0.2, which is also stored in the database.
 
-The columns *manualVerifyLibraryID* and *manualVerifySpeciesID* will be filled in later (See Chapter 17: Classifications). The features of each event are stored in the database as a "blob" datatype, which is displaying as "raw 37.41 kB".
+The columns *manualVerifyLibraryID* and *manualVerifySpeciesID* are currently NA and will be filled in later (see Chapter 17). The features of each event are stored in the database as a "blob" datatype, which is displaying as "raw 37.23 kB".
 
 # Event Features
 
 To explore detected event features in greater depth, we query the database and extract the first record from the **scores** table:  
 
 ```{r}
-# Retrieve a scores from the 'verd1' template
+# Retrieve one score (detected event) from the 'verd1' template
 scores <- RSQLite::dbGetQuery(conn = conx, 
                               statement = "SELECT * 
                                            FROM scores 
@@ -283,7 +283,7 @@ class(unserialized.features[[1]])
 dim(unserialized.features[[1]])
 ```
 
-The **unserialized.features** object contains a wealth of data about the detected event, stored as a single row with 1204 columns. `scoresDetect()` depends heavily on the sound analysis R package **seewave** [@seewave] to acquire these acoustic features. We will use this collection of numbers in the next chapter to train models that fine-tune the automated detection system, distinguishing target signals from false alarms.
+The **unserialized.features** object contains a wealth of data about the detected event, stored as a single row with 1205 columns. `scoresDetect()` depends heavily on the sound analysis R package **seewave** [@seewave] to acquire these acoustic features. We will use this collection of numbers in the next chapter to train models that fine-tune the automated detection system, distinguishing target signals from false alarms.
 
 Below, we view features 1 through 10 of this event to get an idea of what they are:
 ```{r, eval = T}
@@ -332,13 +332,13 @@ Features with the prefix **sp** were calculated via the **seewave** `specprop()`
 unserialized.features[[1]][1, grep(pattern = 'sp', names(unserialized.features[[1]]))]
 ```
 
-Finally, features preceded by **zc** were acquired via **seewave**'s `zcr()` function, and reflect zero-crossing rates. A zero-crossing rate is the average number that the sign of a time wave changes within a given time bin. Because the template associated with these features has 42 time bins, there are 42 zero-crossing rate values: 
+Finally, features preceded by **zc** were acquired via **seewave**'s `zcr()` function, and reflect zero-crossing rates. A zero-crossing rate is the average number that the sign of a time wave changes within a given time bin. Because the template associated with these features has 42 time bins, there are 42 zero-crossing rate values, though we only display 10 of them below: 
 ```{r, eval = T}
 # Extract row 1, columns 1163:1172 from this features dataframe
 unserialized.features[[1]][1, 1163:1172]
 ```
 
-As previously noted, the features for each detected event will be used in our next chapter, 17: Classifications, where they can be used to separate true positive events from false alarms.
+In the next chapter, we will use the features for each detected event to separate target signals from false alarms.
 
 # The Scores Table in Access
 
@@ -366,12 +366,12 @@ knitr::include_graphics('Chap16_Figs/scores.PNG', dpi = 500)
 
 </kbd>
 
->*Figure 16.2. Each score is an event that was detected by AMMonitor. This event is identified with a particular recordingID and timestamp.   The registered event may be a true positive event, in which the signal is the signal you seek, or it may be a false alarm, in which it is not the signal you seek.  Each score can be assigned a probability that it is the signal you seek, as described in Chapter 17*. 
+>*Figure 16.2. Each score is an event that was detected by AMMonitor. This event is identified with a particular recordingID and timestamp.  The registered event may be a true positive event, in which the signal is the signal you seek, or it may be a false alarm, in which it is not the signal you seek. Each score can be assigned a probability that it is the signal you seek, as described in Chapter 17*. 
 
-Each score is listed individually (here, we are viewing the first of 52 scores in the database). The "Hands Off!" message reiterates that these entries are filled in automatically by the `scoresDetect()` function, not entered manually. Each score can be manually verified, and additionally run through sets of statistical learning classifiers that return the probability that the signal is a target signal. These topics are covered in the Classifications chapter (next). 
+Each score is listed individually (here, we are viewing the first of 52 scores in the database). The "Hands Off!" message reiterates that these entries are filled in automatically by the `scoresDetect()` function, not entered manually. Each score can be manually verified, and additionally run through sets of statistical learning classifiers that return the probability that the signal is a target signal. These topics are covered in the next chapter. 
 
 # Chapter Summary
 
-This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain a rich amount of information about each detected signal, which can be used to help the computer separate target signals from false alarms. 
+This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain information about each detected signal, which can be used to help train the system to better distinguish between target signals and false alarms. 
 
 # Chapter References
