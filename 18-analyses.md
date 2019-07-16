@@ -1,54 +1,51 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [Dynamic Occupancy Models](#dynamic-occupancy-models)
--   [RPresence](#rpresence)
--   [shapeOccupancy()](#shapeoccupancy)
--   [Ensemble Classifications](#ensemble-classifications)
--   [Generating encounter histories from the scores
+  - [Chapter Introduction](#chapter-introduction)
+  - [Dynamic Occupancy Models](#dynamic-occupancy-models)
+  - [RPresence](#rpresence)
+  - [shapeOccupancy()](#shapeoccupancy)
+  - [Ensemble Classifications](#ensemble-classifications)
+  - [Generating encounter histories from the scores
     table](#generating-encounter-histories-from-the-scores-table)
--   [Running RPresence for Miller model
+  - [Running RPresence for Miller model
     analysis](#running-rpresence-for-miller-model-analysis)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
-The previous chapter, Classifications, explained how each detected event
-from an acoustic recording or photograph is assigned a probability that
-it is the target signal you seek. This table provides the raw material
-for a wide range of ecological analyses. For example, you may be
-interested in:
+The previous chapter (The Classifications Table), explained how each
+detected event from an acoustic recording or photograph is assigned a
+probability of being a target signal. This table provides the raw
+material for a wide range of ecological analyses. For example, you may
+be interested in:
 
--   analyzing the rate at which certain signals are issued by a target
+  - analyzing the rate at which certain signals are issued by a target
     species through both time and space;
--   determining the community composition, such as species richness or
+  - determining the community composition, such as species richness or
     diversity, across target species;
--   exploring species interactions;
--   mapping distribution patterns;
--   assessing a population trend through time across locations.
+  - exploring species interactions;
+  - mapping distribution patterns;
+  - assessing a population trend through time across locations.
 
-In other words, there are many, many ways to analyze data stored in the
-classifications tabl. In this chapter, we illustrate how data stored in
-the **classifications** table can be analyzed to assess species trends
+There are many ways to analyze data stored in the classifications table.
+In this chapter, we illustrate how data stored in the
+**classifications** table can be analyzed to assess species trends
 through time.
 
-Dynamic Occupancy Models
-========================
+# Dynamic Occupancy Models
 
 One way to monitor changes in species distribution patterns over time is
 to use a dynamic occupancy model, also known as a multi-season occupancy
-model. Occupancy models were largely developed by researchers at the
-Patuxent Wildlife Research Center, and now play a central role in
-monitoring species worldwide. The data input to the original dynamic
-occupancy model \[1\] are a log of the presence or absence of a target
-species across both space and time. The main outputs are a current
-estimate of occupancy rate, along with information about factors that
-influence **changes** in occupancy through time. To illustrate an input,
-suppose a single study site was searched for a target species three
-times each summer for four years. The “encounter history” for this site
-might look like the following:
+model. Occupancy models play a central role in monitoring species
+worldwide. The data input to the classic dynamic occupancy model \[1\]
+are a log of the presence or absence of a target species across both
+space and time. The main outputs are a current estimate of occupancy
+rate, along with information about factors that influence **changes** in
+occupancy through time. To illustrate an input, suppose a single study
+site was searched for a target species three times each summer for four
+years. The “encounter history” for this site might look like the
+following:
 
 101 000 100 000
 
@@ -82,8 +79,8 @@ assumptions of the original dynamic occupancy model:
     detected. Failure to detect a present species is an example of a
     false-negative detection at the survey level.
 
-4.  Though false negative detections are possible in the standard
-    occupancy model, most frameworks assume false positives are not
+4.  Though false *negative* detections are possible in the standard
+    occupancy model, most frameworks assume false *positives* are not
     possible. Thus, if a detection does occur, we accept that the
     species is present.
 
@@ -97,34 +94,33 @@ covariates, are inputs to the dynamic occupancy model. For outputs, the
 model returns estimates of the following parameters (along with
 estimates of the influence of covariates on these parameters):
 
--   psi (*ψ*): the probability a site is occupied.
--   p: the probability a species will be detected during a survey, given
-    presence.
--   epsilon (*ϵ*): the probability an occupied site will go locally
-    extinct in the next primary period.
--   gamma (*γ*): the probability an unoccupied site will be locally
-    colonized in the next primary period.
+  - psi (\(\psi\)): the probability a site is occupied.
+  - \(p\): the probability a species will be detected during a survey,
+    given presence.
+  - epsilon (\(\epsilon\)): the probability an occupied site will go
+    locally extinct in the next primary period.
+  - gamma (\(\gamma\)): the probability an unoccupied site will be
+    locally colonized in the next primary period.
 
 Thus, the dynamic occupancy framework is an ideal framework for testing
-metapopulation theory. Now that’s cool! :sunglasses:
+metapopulation theory. Now that’s cool\! :sunglasses:
 
-In 2013, David Miller and colleagues contributed an important paper
-entitled [Determining Occurrence Dynamics when False Positives Occur:
-Estimating the Range Dynamics of Wolves from Public Survey
+In 2013, Miller et al. extended the dynamic model to include the
+possibility that some detections may be false positives, wherein a
+species is detected even though it is not present: [Determining
+Occurrence Dynamics when False Positives Occur: Estimating the Range
+Dynamics of Wolves from Public Survey
 Data](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0065808)
-\[2\]. In this paper, the authors extended the dynamic model to include
-the possibility that some detections may be false positives, wherein a
-species is detected even though it is not present (hereafter, the
-“Miller model”). For example, the third primary period in the above
-encounter history was recorded as 100. The species was recorded as
-present, but if we relax the standard occupancy assumption that no false
-positives are possible, we now consider that this detection occurred in
-error. To accommodate the possibility of false positives, the Miller
-model requires a subset of detections to be verified by a second
-methodology in which false positives are not possible. If the
-alternative methodology confirms that the target species is indeed
-present, the survey is logged with a ‘2’ instead of a ‘1’. For example,
-the encounter history above,
+\[2\] (hereafter, the “Miller model”). For example, the third primary
+period in the above encounter history was recorded as 100. The species
+was recorded as present, but if we relax the standard occupancy
+assumption that no false positives are possible, we now consider that
+this detection occurred in error. To accommodate the possibility of
+false positives, the Miller model requires that a subset of detections
+be verified by a second methodology in which false positives are not
+possible. If the alternative methodology confirms that the target
+species is indeed present, the survey is logged with a ‘2’ instead of a
+‘1’. For example, the encounter history above,
 
 101 000 100 000
 
@@ -136,14 +132,14 @@ In this example, we confirmed the presence of the target species in the
 third survey within the first period by a different survey method, which
 is indicated by the number 2. Such confirmation can improve model
 performance, leading to improved parameter estimates, and ultimately,
-better-informed resource management \[3\].
+better-informed resource management.
 
 In addition to the four parameters listed above (psi, p, epsilon,
 gamma), the Miller model uses maximum likelihood methods to estimate:
 
--   p\_{10}: the probability of a false positive detection at an
+  - \(p_{10}\): the probability of a false positive detection at an
     unoccupied site.
--   b: the probability the detection will be certain, conditional on
+  - \(b\): the probability the detection will be certain, conditional on
     detecting the species at an occupied site.
 
 Our goal for this chapter is to illustrate a Miller model analysis
@@ -153,36 +149,36 @@ binary portion of the encounter history (0s and 1s), while annotations
 and verifications, stored in the **annotations** and **scores** tables,
 respectively, are used to “confirm” surveys (signified by 2s in the
 encounter history). From these data, we create Miller-type occupancy
-encounter histories for each site, and then send the data to the
-program, PRESENCE \[4\], for analysis. The outputs of this model provide
-not only site-occupancy estimates, but also may identify covariates that
-can be managed to influence the system toward a desired occupancy level
-(a topic we will visit in the next chapter). We tested the bias and
-precision of the Miller model in automated acoustic monitoring, and
-found that the model performed well under a variety of conditions \[3\].
+encounter histories for each site, and then send the data to the program
+[PRESENCE](https://www.mbr-pwrc.usgs.gov/software/presence.html) \[3\]
+for analysis. The outputs of this model provide not only site-occupancy
+estimates, but also may identify covariates that can be managed to
+influence the system toward a desired occupancy level (a topic we will
+visit in the next chapter). We tested the bias and precision of the
+Miller model in automated acoustic monitoring, and found that the model
+performed well under a variety of conditions \[4\].
 
 Our target species for this chapter is the Verdin (*Auriparus
 flaviceps*), a small songbird found in the southwestern United States.
 
-RPresence
-=========
+# RPresence
 
 The Miller model can be run in R via the package RPresence \[5\]. To use
 RPresence, you will need to download both PRESENCE and RPresence from
-<a href="https://www.mbr-pwrc.usgs.gov/software/presence.html" class="uri">https://www.mbr-pwrc.usgs.gov/software/presence.html</a>.
-PRESENCE software can be installed to your machine; the RPresence
-package comes as a zipped folder, and you will need to unzip it and add
-it to your site library. Recall that base R packages (the ones that come
-when you download R) are typically maintained in your Programs directory
-of your computer, while “add-on” packages (such as RPresence) are
-typically stored in your “site library”. To find your own library
-locations, use the `.libPaths()` function.
+<https://www.mbr-pwrc.usgs.gov/software/presence.html>. PRESENCE
+software can be installed to your machine; the RPresence package comes
+as a zipped folder, and you will need to unzip it and add it to your
+site library. Recall that base R packages (the ones that come when you
+download R) are typically maintained in your Programs directory of your
+computer, while “add-on” packages (such as RPresence) are typically
+stored in your “site library”. To find your own library locations, use
+the `.libPaths()` function.
 
 ``` r
 .libPaths()
 ```
 
-    ## [1] "C:/RSiteLibrary"                    "C:/Program Files/R/R-3.6.0/library"
+    ## [1] "C:/Users/Cathleen/Documents/R/win-library/3.6" "C:/Program Files/R/R-3.6.1/library"
 
 Here, our main R installation is stored in the Program Files directory
 on our C drive, while “add-on” packages are stored in a directory called
@@ -193,7 +189,7 @@ site library.
 To illustrate the process of creating dynamic occupancy models from
 automated detection data, we will use the `dbCreateSample()` function to
 create a database called “Chap18.sqlite”, which will be stored in a
-folder (directory) called “database” within the **AMMonitor** main
+folder (directory) called **database** within the **AMMonitor** main
 directory, which should be your working directory in R. Recall that
 `dbCreateSample()` generates all tables of an **AMMonitor** database,
 and then pre-populates sample data into tables specified by the user.
@@ -205,14 +201,10 @@ necessary tables using the `dbCreateSample()` function below.
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap18.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('templates', 'recordings',
-                          'equipment', 'locations',
-                          'accounts', 'library',
-                          'species', 'people', 
-                          'lists', 'listItems',
-                          'scores','classifications', 
-                           'annotations', 'objectives',
-                          'temporals', 'spatials'))
+               tables = c('templates', 'recordings', 'equipment', 'locations',
+                          'accounts', 'library', 'species', 'people', 
+                          'lists', 'listItems','scores','classifications', 
+                           'annotations', 'objectives', 'temporals', 'spatials'))
 ```
 
     ## An AMMonitor database has been created with the name Chap18.sqlite which consists of the following tables:
@@ -255,128 +247,37 @@ which contains scores associated produced by templates ‘verd1’, ‘verd2’,
 and ‘verd3’, all of which were created to find Verdin vocalizations:
 
 ``` r
-# Retrieve the sample scores
-scores <- dbGetQuery(conn = conx, statement = "SELECT * FROM scores")
+# Retrieve a few columns from the sample scores table
+scores <- dbGetQuery(conn = conx, 
+                     statement = "SELECT scoreID, recordingID, templateID, 
+                                         time, scoreThreshold, score, 
+                                         manualVerifyLibraryID, manualVerifySpeciesID
+                                  FROM scores")
 
 # Return the scores
-scores
+scores[1:10, ]
 ```
 
-    ##    scoreID                       recordingID templateID      time scoreThreshold      score manualVerifyLibraryID manualVerifySpeciesID
-    ## 1        1 midEarth3_2016-03-12_07-00-00.wav      verd1  0.499229            0.2  0.2669258                    NA                    NA
-    ## 2        2 midEarth3_2016-03-12_07-00-00.wav      verd1  2.066576            0.2  0.2529111                    NA                    NA
-    ## 3        3 midEarth3_2016-03-12_07-00-00.wav      verd1  3.308844            0.2  0.2538855                    NA                    NA
-    ## 4        4 midEarth3_2016-03-12_07-00-00.wav      verd1  8.695873            0.2  0.2049214                    NA                    NA
-    ## 5        5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2  0.2506303                    NA                    NA
-    ## 6        6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2  0.3788103                    NA                    NA
-    ## 7        7 midEarth3_2016-03-12_07-00-00.wav      verd1 16.997007            0.2  0.2270237                    NA                    NA
-    ## 8        8 midEarth3_2016-03-12_07-00-00.wav      verd1 17.507846            0.2  0.3892711                    NA                    NA
-    ## 9        9 midEarth3_2016-03-12_07-00-00.wav      verd1 20.456780            0.2  0.2547122                    NA                    NA
-    ## 10      10 midEarth3_2016-03-12_07-00-00.wav      verd1 23.754014            0.2  0.3679291                    NA                    NA
-    ## 11      11 midEarth3_2016-03-12_07-00-00.wav      verd1 24.299683            0.2  0.2448099                    NA                    NA
-    ## 12      12 midEarth3_2016-03-12_07-00-00.wav      verd1 28.699864            0.2  0.4061488                    NA                    NA
-    ## 13      13 midEarth3_2016-03-12_07-00-00.wav      verd1 33.053605            0.2  0.2851608                    NA                    NA
-    ## 14      14 midEarth3_2016-03-12_07-00-00.wav      verd1 33.297415            0.2  0.2988873                    NA                    NA
-    ## 15      15 midEarth3_2016-03-12_07-00-00.wav      verd1 37.256417            0.2  0.3101349                    NA                    NA
-    ## 16      16 midEarth3_2016-03-12_07-00-00.wav      verd2  0.522449            0.2  0.2324151                    NA                    NA
-    ## 17      17 midEarth3_2016-03-12_07-00-00.wav      verd2  2.066576            0.2  0.2511249                    NA                    NA
-    ## 18      18 midEarth3_2016-03-12_07-00-00.wav      verd2  3.332063            0.2  0.2185431                    NA                    NA
-    ## 19      19 midEarth3_2016-03-12_07-00-00.wav      verd2  8.719093            0.2  0.2051415                    NA                    NA
-    ## 20      20 midEarth3_2016-03-12_07-00-00.wav      verd2 10.727619            0.2  0.2211102                    NA                    NA
-    ## 21      21 midEarth3_2016-03-12_07-00-00.wav      verd2 13.943583            0.2  0.2266084                    NA                    NA
-    ## 22      22 midEarth3_2016-03-12_07-00-00.wav      verd2 16.997007            0.2  0.2737623                    NA                    NA
-    ## 23      23 midEarth3_2016-03-12_07-00-00.wav      verd2 17.519456            0.2  0.2976211                    NA                    NA
-    ## 24      24 midEarth3_2016-03-12_07-00-00.wav      verd2 20.247800            0.2  0.2271106                    NA                    NA
-    ## 25      25 midEarth3_2016-03-12_07-00-00.wav      verd2 23.754014            0.2  0.2272191                    NA                    NA
-    ## 26      26 midEarth3_2016-03-12_07-00-00.wav      verd2 24.044263            0.2  0.2040542                    NA                    NA
-    ## 27      27 midEarth3_2016-03-12_07-00-00.wav      verd2 24.299683            0.2  0.2103535                    NA                    NA
-    ## 28      28 midEarth3_2016-03-12_07-00-00.wav      verd2 28.189025            0.2  0.2167333                    NA                    NA
-    ## 29      29 midEarth3_2016-03-12_07-00-00.wav      verd2 28.699864            0.2  0.3197995                    NA                    NA
-    ## 30      30 midEarth3_2016-03-12_07-00-00.wav      verd2 33.065215            0.2  0.2349998                    NA                    NA
-    ## 31      31 midEarth3_2016-03-12_07-00-00.wav      verd2 34.353923            0.2  0.2097564                    NA                    NA
-    ## 32      32 midEarth3_2016-03-12_07-00-00.wav      verd2 37.256417            0.2  0.3569648                    NA                    NA
-    ## 33      33 midEarth5_2016-03-21_07-30-00.wav      verd1  4.678821            0.2  0.8053458                    NA                    NA
-    ## 34      34 midEarth5_2016-03-21_07-30-00.wav      verd1  9.032562            0.2  0.5522207                    NA                    NA
-    ## 35      35 midEarth5_2016-03-21_07-30-00.wav      verd1 25.298141            0.2  0.5519680                    NA                    NA
-    ## 36      36 midEarth5_2016-03-21_07-30-00.wav      verd1 30.220771            0.2  0.4854510                    NA                    NA
-    ## 37      37 midEarth5_2016-03-21_07-30-00.wav      verd1 35.143401            0.2  0.4820545                    NA                    NA
-    ## 38      38 midEarth5_2016-03-21_07-30-00.wav      verd1 39.671293            0.2  0.6246624                    NA                    NA
-    ## 39      39 midEarth5_2016-03-21_07-30-00.wav      verd1 49.400454            0.2  0.3033135                    NA                    NA
-    ## 40      40 midEarth5_2016-03-21_07-30-00.wav      verd2  4.678821            0.2  0.5208158                    NA                    NA
-    ## 41      41 midEarth5_2016-03-21_07-30-00.wav      verd2  9.044172            0.2  0.9861451                    NA                    NA
-    ## 42      42 midEarth5_2016-03-21_07-30-00.wav      verd2 25.309751            0.2  0.5015457                    NA                    NA
-    ## 43      43 midEarth5_2016-03-21_07-30-00.wav      verd2 30.232381            0.2  0.4601560                    NA                    NA
-    ## 44      44 midEarth5_2016-03-21_07-30-00.wav      verd2 35.143401            0.2  0.5188807                    NA                    NA
-    ## 45      45 midEarth5_2016-03-21_07-30-00.wav      verd2 39.682902            0.2  0.5024478                    NA                    NA
-    ## 46      46 midEarth5_2016-03-21_07-30-00.wav      verd2 49.412063            0.2  0.2669704                    NA                    NA
-    ## 47      47 midEarth5_2016-03-21_07-30-00.wav      verd3  4.690431           13.0 17.4513917                    NA                    NA
-    ## 48      48 midEarth5_2016-03-21_07-30-00.wav      verd3  9.044172           13.0 27.3304927                    NA                    NA
-    ## 49      49 midEarth5_2016-03-21_07-30-00.wav      verd3 25.309751           13.0 14.3483504                    NA                    NA
-    ## 50      50 midEarth5_2016-03-21_07-30-00.wav      verd3 30.220771           13.0 13.7519059                    NA                    NA
-    ## 51      51 midEarth5_2016-03-21_07-30-00.wav      verd3 35.155011           13.0 15.9197512                    NA                    NA
-    ## 52      52 midEarth5_2016-03-21_07-30-00.wav      verd3 39.682902           13.0 15.6923562                    NA                    NA
-    ##          features           timestamp
-    ## 1  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 2  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 3  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 4  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 5  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 6  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 7  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 8  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 9  blob[37.22 kB] 2019-01-26 16:27:00
-    ## 10 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 11 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 12 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 13 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 14 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 15 blob[37.22 kB] 2019-01-26 16:27:00
-    ## 16 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 17 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 18 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 19 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 20 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 21 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 22 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 23 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 24 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 25 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 26 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 27 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 28 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 29 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 30 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 31 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 32 blob[38.08 kB] 2019-01-26 16:27:02
-    ## 33 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 34 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 35 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 36 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 37 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 38 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 39 blob[37.22 kB] 2019-01-26 16:27:07
-    ## 40 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 41 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 42 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 43 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 44 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 45 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 46 blob[38.08 kB] 2019-01-26 16:27:08
-    ## 47 blob[38.08 kB] 2019-01-26 16:27:09
-    ## 48 blob[38.08 kB] 2019-01-26 16:27:09
-    ## 49 blob[38.08 kB] 2019-01-26 16:27:09
-    ## 50 blob[38.08 kB] 2019-01-26 16:27:09
-    ## 51 blob[38.08 kB] 2019-01-26 16:27:09
-    ## 52 blob[38.08 kB] 2019-01-26 16:27:09
+    ##    scoreID                       recordingID templateID      time scoreThreshold     score manualVerifyLibraryID manualVerifySpeciesID
+    ## 1        1 midEarth3_2016-03-12_07-00-00.wav      verd1  0.499229            0.2 0.2669258                    NA                    NA
+    ## 2        2 midEarth3_2016-03-12_07-00-00.wav      verd1  2.066576            0.2 0.2529111                    NA                    NA
+    ## 3        3 midEarth3_2016-03-12_07-00-00.wav      verd1  3.308844            0.2 0.2538855                    NA                    NA
+    ## 4        4 midEarth3_2016-03-12_07-00-00.wav      verd1  8.695873            0.2 0.2049214                    NA                    NA
+    ## 5        5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                    NA                    NA
+    ## 6        6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                    NA                    NA
+    ## 7        7 midEarth3_2016-03-12_07-00-00.wav      verd1 16.997007            0.2 0.2270237                    NA                    NA
+    ## 8        8 midEarth3_2016-03-12_07-00-00.wav      verd1 17.507846            0.2 0.3892711                    NA                    NA
+    ## 9        9 midEarth3_2016-03-12_07-00-00.wav      verd1 20.456780            0.2 0.2547122                    NA                    NA
+    ## 10      10 midEarth3_2016-03-12_07-00-00.wav      verd1 23.754014            0.2 0.3679291                    NA                    NA
 
 Here, we view the first 10 of 52 scores. These 10 scores were generated
 by running the “verd1” template against the recording
 “midEarth3\_2016-03-12\_07-00”. Notice that the columns
 *manualVerifyLibraryID* and *manualVerifySpeciesID* are NA. In a
-previous chapter (Scores), we illustrated how to use the interactive
-function `scoresVerify()` to verify these scores, wherein a “1” signals
-that the score was in fact the target signal from a target species, and
-a “0” indicates a false alarm.
+previous chapter (16: The Scores Table), we illustrated how to use the
+interactive function `scoresVerify()` to verify these scores, wherein a
+“1” indicates that the score was in fact the target signal from a
+target species, and a “0” indicates a false alarm.
 
 For demonstration purposes, instead of running `scoresVerify()`, we will
 manually add *manualVerifyLibraryID* and *manualVerifySpeciesID*
@@ -436,8 +337,7 @@ As shown, 22 records (scores) were updated for events detected by
 Our next task is to combine verifications, annotations, and scores into
 encounter histories that can be passed to the Miller model.
 
-shapeOccupancy()
-================
+# shapeOccupancy()
 
 The `shapeOccupancy()` function converts detection data into an
 encounter history for the Miller model. This encounter history will be
@@ -447,10 +347,10 @@ is equal to the combined total number of surveys taken across all
 sampling seasons.
 
 The encounter history matrix itself is composed of zeroes (0 - uncertain
-absence), ones (1 - unconfirmed presence), and twos (2 - confirmed
-presence). `shapeOccupancy()` uses either detection data directly from
-the **scores** table or from the **classifications** table (recommended)
-to generate 1s, and uses both **annotations** and verification data
+nondetection), ones (1 - unconfirmed detection), and twos (2 - confirmed
+detection). `shapeOccupancy()` uses either detection data directly from
+the **scores** table or from the **classifications** table to generate
+1s, and uses both **annotations** and verification data
 (*manualVerifySpeciesID* and *manualVerifyLibraryID* columns in the
 **scores** table) to produce 2s.
 
@@ -471,10 +371,10 @@ args(shapeOccupancy)
 As usual, we input the **db.path** object to the ‘db.path’ argument. In
 the ‘table’ argument, we specify whether we would like our encounter
 history to be generated from the classifications table
-(‘classifications’) or the scores table (‘scores’). the defaul,
+(‘classifications’) or the scores table (‘scores’). the default,
 “classifications”, is recommended because it may reduce false positive
 detections by utilizing classifications made by one or more statistical
-learning models. In ‘locationID’, we must explicitly state which
+learning models \[6\]. In ‘locationID’, we must explicitly state which
 locationIDs should be used to generate the encounter history – this is
 intended to give the user greater ownership over which locations are
 meaningful for the encounter history during the seasonal monitoring
@@ -493,9 +393,9 @@ and the second season ranging from ‘2016-03-16’ to ‘2016-03-31’
 (inclusive). We chose these seasons merely for demonstration within a
 small dataset; they are not meaningful for Verdin life history patterns.
 By specifying these dates, we assume that a site’s occupancy status will
-not change within the first and second portions of March. However,
-*between* the first and second portion of March, occupancy status may
-change.
+not change *within* either the first or second portions of March.
+However, *between* the first and second portion of March, occupancy
+status may change.
 
 Next, because we have set table = ‘classifications’, we must now
 construct an input to the ‘model.list’ argument. The ‘model.list’ is
@@ -505,22 +405,22 @@ to a templateID that exists in the database, and where each list element
 contains three elements, named ‘models’, ‘ensemble’, and ‘threshold’.
 The models element should contain a character vector of statistical
 learning classifier model name(s) present in your ammls/classifier.RDS
-amml. Recall from the Classifications chapter that these model names
-automatically encode the templateID, raw template score.threshold,
-label.type, and classifier type (e.g., ‘verd1\_0.2\_libraryID\_glmnet’)
-– if multiple model names are input to the ‘models’ element of
-model.list, model names must match on every characteristic except
-classifier. By inputting multiple classifiers, the user is indicating
-that they want to aggregate those classifiers in a weighted average
-ensemble method. In the ‘ensemble’ element, the user should specify a
-single character string of which type of ensemble to create an encounter
-history from, if using multiple models. Ensemble options are ‘accuracy’,
-‘sensitivity’, ‘specificity’, ‘f1’, ‘precision’, or ‘simple’ (or NULL if
-only inputting one classifier). In the example below, we will input only
-a single list element, named ‘verd1’ after the verd1 template, which
-contains a single model name, models = ‘verd1\_0.2\_libraryID\_glmnet’.
-We will set ensemble = NULL. Thus, we are limiting observations from the
-verd1 template to only classifications from the glmnet classifier.
+amml. Recall from Chapter 17 that these model names automatically encode
+the templateID, raw template score.threshold, label.type, and classifier
+type (e.g., ‘verd1\_0.2\_libraryID\_glmnet’) – if multiple model names
+are input to the ‘models’ element of model.list, model names must match
+on every characteristic except classifier. By inputting multiple
+classifiers, the user is indicating that they want to aggregate those
+classifiers in a weighted average ensemble method. In the ‘ensemble’
+element, the user should specify a single character string of which type
+of ensemble to create an encounter history from, if using multiple
+models. Ensemble options are ‘accuracy’, ‘sensitivity’, ‘specificity’,
+‘f1’, ‘precision’, or ‘simple’ (or NULL if only inputting one
+classifier). In the example below, we will input only a single list
+element, named ‘verd1’ after the verd1 template, which contains a single
+model name, models = ‘verd1\_0.2\_libraryID\_glmnet’. We will set
+ensemble = NULL. Thus, we are limiting observations from the verd1
+template to only classifications from the glmnet classifier.
 
 Finally, in the ‘threshold’ element, the user must specify the
 survey-level detection threshold above which an automatic ‘1’ will be
@@ -532,7 +432,7 @@ bound between 0 and 1. When using table = ‘classifications’,
 one* true target signal detected during the survey period \[6\]. A
 threshold value of 0.95, as chosen below, indicates that we want a
 probability of at least 0.95 that there is at least one target signal
-within the survey to log a 1 in the encounter history.
+within the survey, which allows us to log a 1 in the encounter history.
 
 ``` r
 # Generate a model list object, where each list element is named after a valid templateID, 
@@ -556,8 +456,8 @@ alarms (FA) from the dataset in that case, and they will not be used in
 the probability aggregation scheme to compute whether our survey.level
 detection threshold exceeds 0.95. For now, we will set this to FALSE.
 With this information, a Miller-type encounter history will be produced.
-(Warning: this table will produce a table with just a few 0’s and 2’s,
-and a lot of NAs!)
+(Warning: the following example produces a table with just a few 0s and
+2s, and a lot of NAs.)
 
 ``` r
 # Read in our classifiers amml
@@ -675,19 +575,17 @@ Next, why are there so many NAs in this encounter history? We revisit
 the sample data in the **recordings** table for a clue:
 
 ``` r
-dbGetQuery(conn = conx, 'SELECT * FROM recordings')
+dbGetQuery(conn = conx, 
+           statement = 'SELECT recordingID, locationID, equipmentID, 
+                               startDate, startTime
+                        FROM recordings')
 ```
 
-    ##                         recordingID locationID equipmentID  startDate startTime                                      filepath                  tz
-    ## 1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00 /recordings/midEarth3_2016-03-12_07-00-00.wav America/Los_Angeles
-    ## 2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
-    ## 3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00 /recordings/midEarth4_2016-03-26_07-00-00.wav America/Los_Angeles
-    ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
-    ##   format           timestamp
-    ## 1    wav 2018-10-22 17:27:33
-    ## 2    wav 2018-10-22 17:27:33
-    ## 3    wav 2018-10-22 17:27:33
-    ## 4    wav 2018-10-22 17:27:33
+    ##                         recordingID locationID equipmentID  startDate startTime
+    ## 1 midEarth3_2016-03-12_07-00-00.wav location@1     equip@3 2016-03-12  07:00:00
+    ## 2 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00
+    ## 3 midEarth4_2016-03-26_07-00-00.wav location@2     equip@4 2016-03-26  07:00:00
+    ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00
 
 Recall that we only have four recordings in the sample database. We have
 one recording taken at location@1, two recordings at location@2, and one
@@ -707,41 +605,28 @@ However, why is this survey a 2 instead of a 0 or a 1? We view the
 and Frodo have annotated all four of these recording files manually.
 
 ``` r
-dbGetQuery(conn = conx, statement = 'SELECT * FROM annotations')
+dbGetQuery(conn = conx, 
+           statement = 'SELECT annotationID, recordingID, listID, speciesID, 
+                               libraryID, annotation, personID
+                        FROM annotations')
 ```
 
-    ##    annotationID                       recordingID photoID               listID speciesID      libraryID   xMin   xMax   yMin   yMax  wl ovlp      wn
-    ## 1             1 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 13.056 14.680 3.6422 5.7594 512    0 hanning
-    ## 2             2 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 16.487 18.365 3.6951 5.4947 512    0 hanning
-    ## 3             3 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 19.633 21.155 3.9598 5.0713 512    0 hanning
-    ## 4             4 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 23.287 24.606 4.0127 5.1242 512    0 hanning
-    ## 5             5 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 27.853 29.223 3.8010 5.5476 512    0 hanning
-    ## 6             6 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 32.553 33.821 3.9069 5.2301 512    0 hanning
-    ## 7             7 midEarth3_2016-03-12_07-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 36.866 38.337 3.6951 5.1771 512    0 hanning
-    ## 8             8 midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes  3.813  4.777 3.7481 4.9125 512    0 hanning
-    ## 9             9 midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 24.033 25.047 3.5364 4.7537 512    0 hanning
-    ## 10           10 midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 28.669 29.354 3.5364 4.5420 512    0 hanning
-    ## 11           11 midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_2notes 31.914 32.674 3.4305 4.5949 512    0 hanning
-    ## 12           12 midEarth4_2016-03-04_06-00-00.wav    <NA>         Bilbo's List      verd    verd_3notes 35.307 36.296 3.4834 4.5420 512    0 hanning
-    ## 13           13 midEarth4_2016-03-26_07-00-00.wav    <NA> Middle Earth Mammals    coyote coyote_general  2.767 18.502 1.4721 3.0600 512    0 hanning
-    ## 14           14 midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other  2.564 10.584 3.5364 6.4474 512    0 hanning
-    ## 15           15 midEarth5_2016-03-21_07-30-00.wav    <NA>         Frodo's List      verd     verd_other 23.769 41.187 3.1129 5.7594 512    0 hanning
-    ##         annotation personID           timestamp
-    ## 1  blob[ 27.86 kB] bbaggins 2018-10-27 15:02:23
-    ## 2  blob[ 27.11 kB] bbaggins 2018-10-27 15:02:39
-    ## 3  blob[ 13.69 kB] bbaggins 2018-10-27 15:02:59
-    ## 4  blob[ 11.81 kB] bbaggins 2018-10-27 15:03:05
-    ## 5  blob[ 19.89 kB] bbaggins 2018-10-27 15:03:10
-    ## 6  blob[ 14.01 kB] bbaggins 2018-10-27 15:03:24
-    ## 7  blob[ 18.20 kB] bbaggins 2018-10-27 15:03:29
-    ## 8  blob[  9.36 kB] bbaggins 2018-10-27 15:04:27
-    ## 9  blob[ 10.50 kB] bbaggins 2018-10-27 15:04:52
-    ## 10 blob[  5.72 kB] bbaggins 2018-10-27 15:05:06
-    ## 11 blob[  7.34 kB] bbaggins 2018-10-27 15:05:12
-    ## 12 blob[  8.90 kB] bbaggins 2018-10-27 15:05:24
-    ## 13 blob[206.02 kB] fbaggins 2018-10-27 15:10:49
-    ## 14 blob[187.74 kB] fbaggins 2018-10-27 15:11:40
-    ## 15 blob[372.06 kB] fbaggins 2018-10-27 15:11:57
+    ##    annotationID                       recordingID               listID speciesID      libraryID      annotation personID
+    ## 1             1 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_3notes blob[ 27.87 kB] bbaggins
+    ## 2             2 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_3notes blob[ 27.12 kB] bbaggins
+    ## 3             3 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_2notes blob[ 13.70 kB] bbaggins
+    ## 4             4 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_3notes blob[ 11.82 kB] bbaggins
+    ## 5             5 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_3notes blob[ 19.89 kB] bbaggins
+    ## 6             6 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_2notes blob[ 14.02 kB] bbaggins
+    ## 7             7 midEarth3_2016-03-12_07-00-00.wav         Bilbo's List      verd    verd_2notes blob[ 18.21 kB] bbaggins
+    ## 8             8 midEarth4_2016-03-04_06-00-00.wav         Bilbo's List      verd    verd_3notes blob[  9.37 kB] bbaggins
+    ## 9             9 midEarth4_2016-03-04_06-00-00.wav         Bilbo's List      verd    verd_3notes blob[ 10.51 kB] bbaggins
+    ## 10           10 midEarth4_2016-03-04_06-00-00.wav         Bilbo's List      verd    verd_2notes blob[  5.74 kB] bbaggins
+    ## 11           11 midEarth4_2016-03-04_06-00-00.wav         Bilbo's List      verd    verd_2notes blob[  7.35 kB] bbaggins
+    ## 12           12 midEarth4_2016-03-04_06-00-00.wav         Bilbo's List      verd    verd_3notes blob[  8.91 kB] bbaggins
+    ## 13           13 midEarth4_2016-03-26_07-00-00.wav Middle Earth Mammals    coyote coyote_general blob[206.03 kB] fbaggins
+    ## 14           14 midEarth5_2016-03-21_07-30-00.wav         Frodo's List      verd     verd_other blob[187.75 kB] fbaggins
+    ## 15           15 midEarth5_2016-03-21_07-30-00.wav         Frodo's List      verd     verd_other blob[372.07 kB] fbaggins
 
 `shapeOccupancy()` will automatically use the input templateID argument
 to find the speciesID linked to that template (in this case, templateID
@@ -827,24 +712,24 @@ confirmed presences (2s), `shapeOccupancy()` will search for
 species-level verifications for ANY templateID associated with the
 target speciesID.
 
-This brings us to an important point about `shapeOccupancy()` – it
-generates encounter histories strictly at the *species-level*, and not
-at the level of the libraryID. So regardless of which template is used
-to generate automatic detections, `shapeOccupancy()` is working under
-the hood to link this templateID to a speciesID, therefore finding ANY
-species-level annotations or verifications to generate confirmed
-presence (2s) in the encounter history.
+This brings us to an important point about the behavior of
+`shapeOccupancy()` – it generates encounter histories strictly at the
+*species-level*, and not at the level of the libraryID. So regardless of
+which template is used to generate automatic detections,
+`shapeOccupancy()` is working under the hood to link this templateID to
+a speciesID, therefore finding ANY species-level annotations or
+verifications to generate confirmed presence (2s) in the encounter
+history.
 
-Ensemble Classifications
-========================
+# Ensemble Classifications
 
 We will look at two more examples of how to use `shapeOccupancy()` with
 the classifications table. Above, we used the `shapeOccupancy()` setting
 table = ‘classifications’, and we input a single model to the ‘models’
 element of the **mod.list** object input to the model.list argument.
-However, as mentioned in Chapter 17: Classifications, we can combine the
-power of multiple classifiers to make predictions about the target
-signal probability of each detection. `shapeOccupancy()` runs the
+However, as mentioned in Chapter 17: The Classifications Table, we can
+combine the power of multiple classifiers to make predictions about the
+target signal probability of each detection. `shapeOccupancy()` runs the
 `classifierEnsemble()` function to do this.
 
 To illustrate the concept of a precision-weighted ‘ensemble’, we will
@@ -878,7 +763,7 @@ In `shapeOccupancy()`, the weighted average ‘ensemble’ options are
 c(‘accuracy’, ‘sensitivity’, ‘specificity’, ‘precision’, ‘f1’,
 ‘simple’); instead of precision, we could alternatively choose to
 construct our weighted average ensemble models based on the accuracy,
-sensitivity, specificity, or f1 scores. One final option is that we
+sensitivity, specificity, or F1 scores. One final option is that we
 could merely choose to take an unweighted average of each classifier’s
 target signal probability prediction for a given observation (‘simple’).
 If there are any sub-optimal performances in the set of classifier
@@ -889,10 +774,10 @@ with).
 
 In the next example, we will keep almost all arguments the same as
 before. This time, however, we will input more classifiers into the
-‘models’ element of the model.list object. In the ‘ensemble’ element of
-the model.list, we will indicate a weighted average ensemble type of our
-choice. Below, we choose ‘precision’, which means we want to produce a
-weighted average for each target signal probability based on how well
+‘models’ element of the model.list object. In the ‘ensemble’ element
+of the model.list, we will indicate a weighted average ensemble type of
+our choice. Below, we choose ‘precision’, which means we want to produce
+a weighted average for each target signal probability based on how well
 each classifier performed on the precision evaluation metric. We leave
 the threshold element set at 0.95.
 
@@ -1114,16 +999,15 @@ shapeOccupancy(db.path = db.path,
     ## $survey.length
     ## [1] 3
 
-Generating encounter histories from the scores table
-====================================================
+# Generating encounter histories from the scores table
 
 One final option is to construct encounter histories directly from the
 **scores** table instead of the **classifications** table. This option
 may be suitable if users have not undergone the process of verifying
-detections and training classifiers as described in Chapter 17:
-Classifiers. Instead, templates are run against recordings, resulting in
-records that populate the **scores** table, and encounter histories can
-be generated directly from those detections.
+detections and training classifiers (as described in Chapter 17).
+Instead, templates are run against recordings, resulting in records that
+populate the **scores** table, and encounter histories can be generated
+directly from those detections.
 
 To use this option in `shapeOccupancy()`, arguments are similar to those
 in the previous examples, with a few major exceptions: first, we must
@@ -1251,8 +1135,7 @@ table, it is theoretically possible to create encounter histories based
 on photographs, but `shapeOccupancy()` does not currently implement this
 functionality.
 
-Running RPresence for Miller model analysis
-===========================================
+# Running RPresence for Miller model analysis
 
 Once we have generated encounter histories with `shapeOccupancy()`, we
 can pass the output to RPresence to analyze the data with the Miller
@@ -1297,10 +1180,10 @@ probability a detection will be certain, conditional on detecting the
 species at an occupied site.
 
 ``` r
-# set a random number seed
+# Set a random number seed
 set.seed(201)
 
-# create a simulated encounter history with 100 sites
+# Create a simulated encounter history with 100 sites
 sim.eh <- occupancySim(n.sites = 100, 
                        n.seasons = 2, 
                        surveys.per.season = 5,
@@ -1326,14 +1209,14 @@ sim.eh <- occupancySim(n.sites = 100,
 
 `occupancySim()` returns a matrix where the number of rows is equal to
 ‘n.sites’, and the number of columns is equal to
-‘n.seasons’\*‘surveys.per.season’. Notice that because of the random
-nature of simulating data, the final dataset’s parameters are not
-exactly equal to the requested parameter values; increasing sample size
-will generally reduce this difference. Cells are populated with either a
-0, 1, or 2. Row names indicate generic location names. Again, column
-names follow the pattern of ‘season’-‘survey’; the column name ‘1-1’
-indicates season 1, survey 1. ‘1-2’ stands for season 1, survey 2, and
-so on. `occupancySim()` also returns messages comparing the
+‘n.seasons’\(\times\)’surveys.per.season’. Notice that because of
+the random nature of simulating data, the final dataset’s parameters are
+not exactly equal to the requested parameter values; increasing sample
+size will generally reduce this difference. Cells are populated with
+either a 0, 1, or 2. Row names indicate generic location names. Again,
+column names follow the pattern of ‘season’-‘survey’; the column name
+‘1-1’ indicates season 1, survey 1. ‘1-2’ stands for season 1, survey
+2, and so on. `occupancySim()` also returns messages comparing the
 user-specified values against the actual simulated values (which may
 differ substantially if given a low value of ‘n.sites’). Below, we view
 the first few records of **sim.eh** to confirm its format:
@@ -1387,7 +1270,7 @@ documentation](https://www.mbr-pwrc.usgs.gov/software/presence.html) for
 more details.
 
 ``` r
-# Create a list of formulae for the Miller intercept model
+# Create a list of formulas for the Miller intercept model
 form.list <- list('psi ~ 1', 
                   'gamma ~ 1', 
                   'epsilon ~ 1',
@@ -1404,7 +1287,9 @@ m0 <- occMod(model = formulas,
              type = 'do.fp',
              randinit = 9,
              outfile = 'm0')
+```
 
+``` r
 # Look at the structure of the resulting model output
 str(m0, max.level = 1)
 ```
@@ -1426,7 +1311,7 @@ str(m0, max.level = 1)
     ##  - attr(*, "class")= chr [1:2] "occMod" "soFp"
 
 RPresence returns a list of outputs, which is packed full of information
-about the analysis. The authors have written functions that allow us to
+about the analysis. RPresence contains functions that allow us to
 extract key pieces of information easily. The names of these functions
 can be found with the `methods()` function:
 
@@ -1478,18 +1363,18 @@ lapply(m0$real, function(x) x[1, 'est'])
     ## [1] 0.05339807
 
 Now, we compare these estimates with the parameters that were actually
-simulated in the `simOccupany` function:
+simulated in the `simOccupancy()` function:
 
--   psi requested = 0.5; simulated = 0.48
--   gamma requested = 0.15; simulated = 0.175
--   epsilon requested = 0.15; simulated = 0.155
--   p11 requested = 0.8; simulated = 0.835
--   p10 requested = 0.05; simulated = 0.041
--   b requested = 0.5; simulated = 0.045
+  - psi requested = 0.5; simulated = 0.48
+  - gamma requested = 0.15; simulated = 0.175
+  - epsilon requested = 0.15; simulated = 0.155
+  - p11 requested = 0.8; simulated = 0.835
+  - p10 requested = 0.05; simulated = 0.041
+  - b requested = 0.5; simulated = 0.045
 
 Thus, given the simulated encountered history and the actual rates
 within, the Miller model was able to do a very good job at finding these
-parameter estimates; see also \[3\]. As with any modeling exercise, we
+parameter estimates; see also \[4\]. As with any modeling exercise, we
 should take care to formally assess how well the model fits the data.
 That is beyond our scope here, however.
 
@@ -1497,14 +1382,14 @@ If we decide we have created a useful occupancy model that we would like
 to store for future use, we can convert it into an **amModel** object
 and add it to the AMModel library that we created many chapters ago to
 store our dynamic false positives occupancy model outputs. This library
-is stored in in the **ammls** directory under ammls/do\_fp.RDS. Below,
-we demonstrate code for saving a useful model to the do\_fp AMModels
+is stored in the **ammls** directory under ammls/do\_fp.RDS. Below, we
+demonstrate code for saving a useful model to the do\_fp AMModels
 library. We will be able to use this model in the future and update it
 as needed to evaluate our progress toward our Verdin monitoring
 objective through time.
 
 ``` r
-# Read do_fp amml into R: 
+# Read do_fp amml into R
 do.fp.amml <- readRDS('ammls/do_fp.RDS')
 
 # Turn m0 into an amModel
@@ -1513,11 +1398,11 @@ am.model <- amModel(model = m0, comment = '')
 # Turn am.model into a named list for insertAMModelLib
 am.model.list <- list(verd_occupany = am.model)
 
-# Insert into amml:
+# Insert into amml
 do.fp.amml <- insertAMModelLib(models = am.model.list, 
                                amml = do.fp.amml)
 
-# Save to amml folder:
+# Save to amml folder
 saveRDS(do.fp.amml, 'ammls/do_fp.RDS')
 ```
 
@@ -1526,33 +1411,29 @@ a research or management program. We have provided just one example of
 how the data stored in the **classifications** table of the AMMonitor
 database can be analyzed to address specific research questions.
 
-You may recall from Chapter 5 that we have an objective named
-‘verd\_occupancy’, which is to maintain current Verdin occupancy at a
-standard of 0.40, with a minimum of 0.45 and a maximum of 0.55.
+You may recall from Chapter 5 (The Objectives Table) that we have an
+objective named ‘verd\_occupancy’, which is to maintain current Verdin
+occupancy at a standard of 0.40, with a minimum of 0.35 and a maximum of
+0.45.
 
 ``` r
 dbGetQuery(conn = conx,
-           statement = 'SELECT * 
+           statement = 'SELECT objectiveID, speciesID, objective, indicator, 
+                               units, direction, min, max, standard
                         FROM objectives')
 ```
 
-    ##      objectiveID       listID speciesID                                   objective indicator       units direction  min  max standard
-    ## 1       midEarth Middle Earth      <NA>                Conserve native biodiversity      <NA>        <NA>      <NA>   NA   NA       NA
-    ## 2 btgn_occupancy         <NA>      btgn Maximize Black-tailed Gnatcatcher occupancy       Psi Probability  Maximize   NA   NA       NA
-    ## 3 ecdo_occupancy         <NA>      ecdo   Minimize Eurasian Collared-dove occupancy       Psi Probability  Minimize   NA   NA     0.25
-    ## 4 verd_occupancy         <NA>      verd                   Maintain Verdin Occupancy       Psi Probability  Maintain 0.45 0.55     0.40
-    ##                                narrative
-    ## 1 Narrative for this objective goes here
-    ## 2 Narrative for this objective goes here
-    ## 3 Narrative for this objective goes here
-    ## 4 Narrative for this objective goes here
+    ##      objectiveID speciesID                                   objective indicator       units direction  min  max standard
+    ## 1       midEarth      <NA>                Conserve native biodiversity      <NA>        <NA>      <NA>   NA   NA       NA
+    ## 2 btgn_occupancy      btgn Maximize Black-tailed Gnatcatcher occupancy       Psi Probability  Maximize   NA   NA       NA
+    ## 3 ecdo_occupancy      ecdo   Minimize Eurasian Collared-dove occupancy       Psi Probability  Minimize   NA   NA     0.25
+    ## 4 verd_occupancy      verd                   Maintain Verdin Occupancy       Psi Probability  Maintain 0.35 0.45     0.40
 
-In our next chapter, we will use our Miller model to assess the state of
-a system (verdin occupancy rate), and compare it to the verdin
+In the next chapter, we will use our Miller model to assess the state of
+a system (Verdin occupancy rate), and compare it against our Verdin
 management objective.
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter described a workflow for moving from automated target
 signal detections to dynamic occupancy models that accommodate false
@@ -1565,38 +1446,63 @@ variety of options for aggregating the data. Encounter histories from
 `shapeOccupancy()` can be fit in the RPresence function `occMod()` to
 estimate parameters. The `occupancySim()` function offers an option for
 simulating Miller model encounter histories that can be used to test the
-workflow. `shapeOccupancyTemporals()` and `shapeOccupancySpatials()`
-allow temporal and spatial covariates to be included in calls to
-`occMod()`. Useful models can be saved in the **do\_fp** AMModels
-library of the **ammls** directory, and called into action through time
-to track progress toward monitoring objectives.
+workflow. Useful models can be saved in the **do\_fp** AMModels library
+of the **ammls** directory, and called into action through time to track
+progress toward monitoring objectives.
 
-Chapter References
-==================
+# Chapter References
 
-1. MacKenzie D, Nichols J, James Hines nad Melinda Knutson, Franklin A.
+<div id="refs" class="references">
+
+<div id="ref-MacKenzie2003">
+
+1\. MacKenzie D, Nichols J, James Hines nad Melinda Knutson, Franklin A.
 Estimating site occupancy, colonization, and local extinction when a
-species is detected imperfectly. Ecology. 2003;84: 2200–2207.
+species is detected imperfectly. Ecology. 2003;84: 2200–2207. 
 
-2. Miller D. A., Nichols J. D., Gude J. A., Rich L. N., Podruzny K. M.,
+</div>
+
+<div id="ref-Miller2013">
+
+2\. Miller D. A., Nichols J. D., Gude J. A., Rich L. N., Podruzny K. M.,
 Hines J. E., et al. Determining occurrence dynamics when false positives
 occur: Estimating the range dynamics of wolves from public survey data.
-PLoS one. 2013;8: e65808.
+PLoS one. 2013;8: e65808. 
 
-3. Balantic C, Donovan T. AMMonitor: Remote monitoring of biodiversity
-in an adaptive framework. R package pending submission to CRAN;
+</div>
 
-4. Hines J. PRESENCE: Software to estimate patch occupancy and related
+<div id="ref-Presence">
+
+3\. Hines J. PRESENCE: Software to estimate patch occupancy and related
 parameters (version 12.10) \[Internet\]. U.S. Geological Survey,
 Patuxent Wildlife Research Center; 2018. Available:
 <https://www.mbr-pwrc.usgs.gov/software/presence.html>
 
-5. Hines J. RPresence for presence: Software to estimate patch occupancy
-and related parameters (version 12.10) \[Internet\]. U.S. Geological
-Survey, Patuxent Wildlife Research Center; 2018. Available:
+</div>
+
+<div id="ref-Balantic2019">
+
+4\. Balantic C, Donovan T. AMMonitor: Remote monitoring of biodiversity
+in an adaptive framework. R package pending submission to CRAN; 
+
+</div>
+
+<div id="ref-RPresence">
+
+5\. Hines J. RPresence for presence: Software to estimate patch
+occupancy and related parameters (version 12.10) \[Internet\]. U.S.
+Geological Survey, Patuxent Wildlife Research Center; 2018. Available:
 <https://www.mbr-pwrc.usgs.gov/software/presence.html>
 
-6. Balantic CM, Donovan TM. Statistical learning mitigation of false
+</div>
+
+<div id="ref-BalanticStatistical">
+
+6\. Balantic CM, Donovan TM. Statistical learning mitigation of false
 positives from template-detected data in automated acoustic wildlife
-monitoring. Bioacoustics. Taylor & Francis; 2019;0: 1–26.
+monitoring. Bioacoustics. 2019;0: 1–26.
 doi:[10.1080/09524622.2019.1605309](https://doi.org/10.1080/09524622.2019.1605309)
+
+</div>
+
+</div>

@@ -2,11 +2,12 @@
 title: "Chapter 18: Analyses"
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
+  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -69,7 +70,7 @@ saveRDS(amml, 'ammls/classifiers.RDS')
 
 # Chapter Introduction
 
-The previous chapter, Classifications, explained how each detected event from an acoustic recording or photograph is assigned a probability that it is the target signal you seek. This table provides the raw material for a wide range of ecological analyses. For example, you may be interested in:
+The previous chapter (The Classifications Table), explained how each detected event from an acoustic recording or photograph is assigned a probability of being a target signal. This table provides the raw material for a wide range of ecological analyses. For example, you may be interested in:
 
 - analyzing the rate at which certain signals are issued by a target species through both time and space;
 - determining the community composition, such as species richness or diversity, across target species;
@@ -77,11 +78,11 @@ The previous chapter, Classifications, explained how each detected event from an
 - mapping distribution patterns; 
 - assessing a population trend through time across locations. 
 
-In other words, there are many, many ways to analyze data stored in the classifications tabl. In this chapter, we illustrate how data stored in the **classifications** table can be analyzed to assess species trends through time. 
+There are many ways to analyze data stored in the classifications table. In this chapter, we illustrate how data stored in the **classifications** table can be analyzed to assess species trends through time. 
 
 # Dynamic Occupancy Models 
 
-One way to monitor changes in species distribution patterns over time is to use a dynamic occupancy model, also known as a multi-season occupancy model. Occupancy models were largely developed by researchers at the Patuxent Wildlife Research Center, and now play a central role in monitoring species worldwide. The data input to the original dynamic occupancy model [@MacKenzie2003] are a log of the presence or absence of a target species across both space and time. The main outputs are a current estimate of occupancy rate, along with information about factors that influence **changes** in occupancy through time. 
+One way to monitor changes in species distribution patterns over time is to use a dynamic occupancy model, also known as a multi-season occupancy model. Occupancy models play a central role in monitoring species worldwide. The data input to the classic dynamic occupancy model [@MacKenzie2003] are a log of the presence or absence of a target species across both space and time. The main outputs are a current estimate of occupancy rate, along with information about factors that influence **changes** in occupancy through time. 
 To illustrate an input, suppose a single study site was searched for a target species three times each summer for four years. The "encounter history" for this site might look like the following:
 
 101 000 100 000
@@ -94,18 +95,18 @@ This history has four primary periods (years, in this case), and three secondary
 
 3. Detection is imperfect. We observe an example of imperfect detection in the first primary period, where the history is 101. If the site is closed to changes in occupancy state during this period, and if we assume that the first detection is not an error, we assume the species occupied the site during the second survey but was not detected. Failure to detect a present species is an example of a false-negative detection at the survey level. 
 
-4. Though false negative detections are possible in the standard occupancy model, most frameworks assume false positives are not possible. Thus, if a detection does occur, we accept that the species is present.
+4. Though false *negative* detections are possible in the standard occupancy model, most frameworks assume false *positives* are not possible. Thus, if a detection does occur, we accept that the species is present.
 
 With dynamic models, a large number of sites are typically surveyed through time. In addition to the encounter histories themselves, researchers may collect a number of site-level covariates (such as the patch size associated with each monitoring location), and survey-level covariates (such as prevailing weather conditions during a given survey). The encounter histories, along with site- and survey-level covariates, are inputs to the dynamic occupancy model. For outputs, the model returns estimates of the following parameters (along with estimates of the influence of covariates on these parameters):
 
 - psi ($\psi$):  the probability a site is occupied.
-- p: the probability a species will be detected during a survey, given presence.
+- $p$: the probability a species will be detected during a survey, given presence.
 - epsilon ($\epsilon$): the probability an occupied site will go locally extinct in the next primary period.
 - gamma ($\gamma$): the probability an unoccupied site will be locally colonized in the next primary period.
 
-Thus, the dynamic occupancy framework is an ideal framework for testing metapopulation theory.  Now that's cool!  :sunglasses:
+Thus, the dynamic occupancy framework is an ideal framework for testing metapopulation theory. Now that's cool!  :sunglasses:
 
-In 2013, David Miller and colleagues contributed an important paper entitled [Determining Occurrence Dynamics when False Positives Occur: Estimating the Range Dynamics of Wolves from Public Survey Data](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0065808) [@Miller2013]. In this paper, the authors extended the dynamic model to include the possibility that some detections may be false positives, wherein a species is detected even though it is not present (hereafter, the "Miller model"). For example, the third primary period in the above encounter history was recorded as 100. The species was recorded as present, but if we relax the standard occupancy assumption that no false positives are possible, we now consider that this detection occurred in error. To accommodate the possibility of false positives, the Miller model requires a subset of detections to be verified by a second methodology in which false positives are not possible. If the alternative methodology confirms that the target species is indeed present, the survey is logged with a '2' instead of a '1'. For example, the encounter history above, 
+In 2013, Miller et al. extended the dynamic model to include the possibility that some detections may be false positives, wherein a species is detected even though it is not present: [Determining Occurrence Dynamics when False Positives Occur: Estimating the Range Dynamics of Wolves from Public Survey Data](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0065808) [@Miller2013] (hereafter, the "Miller model"). For example, the third primary period in the above encounter history was recorded as 100. The species was recorded as present, but if we relax the standard occupancy assumption that no false positives are possible, we now consider that this detection occurred in error. To accommodate the possibility of false positives, the Miller model requires that a subset of detections be verified by a second methodology in which false positives are not possible. If the alternative methodology confirms that the target species is indeed present, the survey is logged with a '2' instead of a '1'. For example, the encounter history above, 
 
 101 000 100 000 
 
@@ -113,14 +114,14 @@ can be changed to
 
 102 000 100 000.
 
-In this example, we confirmed the presence of the target species in the third survey within the first period by a different survey method, which is indicated by the number 2. Such confirmation can improve model performance, leading to improved parameter estimates, and ultimately, better-informed resource management [@Balantic2019].
+In this example, we confirmed the presence of the target species in the third survey within the first period by a different survey method, which is indicated by the number 2. Such confirmation can improve model performance, leading to improved parameter estimates, and ultimately, better-informed resource management.
 
 In addition to the four parameters listed above (psi, p, epsilon, gamma), the Miller model uses maximum likelihood methods to estimate:
 
-- p_{10}:  the probability of a false positive detection at an unoccupied site.
-- b: the probability the detection will be certain, conditional on detecting the species at an occupied site.
+- $p_{10}$:  the probability of a false positive detection at an unoccupied site.
+- $b$: the probability the detection will be certain, conditional on detecting the species at an occupied site.
 
-Our goal for this chapter is to illustrate a Miller model analysis within the **AMMonitor** framework. In **AMMonitor**, we use detections in the **scores** table or **classifications** table to create the binary portion of the encounter history (0s and 1s), while annotations and verifications, stored in the **annotations** and **scores** tables, respectively, are used to "confirm" surveys (signified by 2s in the encounter history). From these data, we create Miller-type occupancy encounter histories for each site, and then send the data to the program, PRESENCE [@Presence], for analysis. The outputs of this model provide not only site-occupancy estimates, but also may identify covariates that can be managed to influence the system toward a desired occupancy level (a topic we will visit in the next chapter). We tested the bias and precision of the Miller model in automated acoustic monitoring, and found that the model performed well under a variety of conditions [@Balantic2019]. 
+Our goal for this chapter is to illustrate a Miller model analysis within the **AMMonitor** framework. In **AMMonitor**, we use detections in the **scores** table or **classifications** table to create the binary portion of the encounter history (0s and 1s), while annotations and verifications, stored in the **annotations** and **scores** tables, respectively, are used to "confirm" surveys (signified by 2s in the encounter history). From these data, we create Miller-type occupancy encounter histories for each site, and then send the data to the program [PRESENCE](https://www.mbr-pwrc.usgs.gov/software/presence.html) [@Presence] for analysis. The outputs of this model provide not only site-occupancy estimates, but also may identify covariates that can be managed to influence the system toward a desired occupancy level (a topic we will visit in the next chapter). We tested the bias and precision of the Miller model in automated acoustic monitoring, and found that the model performed well under a variety of conditions [@Balantic2019]. 
 
 Our target species for this chapter is the Verdin (*Auriparus flaviceps*), a small songbird found in the southwestern United States.
 
@@ -134,21 +135,17 @@ The Miller model can be run in R via the package RPresence [@RPresence]. To use 
 
 Here, our main R installation is stored in the Program Files directory on our C drive, while "add-on" packages are stored in a directory called "RSiteLibrary", also on our C drive. Regardless of where your "site library" is located, you should download RPresence and copy it to your site library.
 
-To illustrate the process of creating dynamic occupancy models from automated detection data, we will use the `dbCreateSample()` function to create a database called "Chap18.sqlite", which will be stored in a folder (directory) called "database" within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
+To illustrate the process of creating dynamic occupancy models from automated detection data, we will use the `dbCreateSample()` function to create a database called "Chap18.sqlite", which will be stored in a folder (directory) called **database** within the **AMMonitor** main directory, which should be your working directory in R. Recall that `dbCreateSample()` generates all tables of an **AMMonitor** database, and then pre-populates sample data into tables specified by the user. 
 
 Here, we create a sample data base with pre-populated data for several necessary tables using the `dbCreateSample()` function below. 
 ```{r}
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap18.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables = c('templates', 'recordings',
-                          'equipment', 'locations',
-                          'accounts', 'library',
-                          'species', 'people', 
-                          'lists', 'listItems',
-                          'scores','classifications', 
-                           'annotations', 'objectives',
-                          'temporals', 'spatials'))
+               tables = c('templates', 'recordings', 'equipment', 'locations',
+                          'accounts', 'library', 'species', 'people', 
+                          'lists', 'listItems','scores','classifications', 
+                           'annotations', 'objectives', 'temporals', 'spatials'))
 ```
 
 Now, we connect to the database. First, we initialize a character object, **db.path**, that holds the database's full file path. Then, we create a database connection object, **conx**, using RSQLite's `dbConnect()` function, where we identify the SQLite driver in the ‘drv’ argument, and our **db.path** object in the ‘dbname’ argument:
@@ -168,14 +165,18 @@ dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
 
 Next, we view the **scores** table that comes with our sample database, which contains scores associated produced by templates 'verd1', 'verd2', and 'verd3', all of which were created to find Verdin vocalizations:
 ```{r}
-# Retrieve the sample scores
-scores <- dbGetQuery(conn = conx, statement = "SELECT * FROM scores")
+# Retrieve a few columns from the sample scores table
+scores <- dbGetQuery(conn = conx, 
+                     statement = "SELECT scoreID, recordingID, templateID, 
+                                         time, scoreThreshold, score, 
+                                         manualVerifyLibraryID, manualVerifySpeciesID
+                                  FROM scores")
 
 # Return the scores
-scores
+scores[1:10, ]
 ```
 
-Here, we view the first 10 of 52 scores. These 10 scores were generated by running the "verd1" template against the recording "midEarth3_2016-03-12_07-00". Notice that the columns *manualVerifyLibraryID* and *manualVerifySpeciesID* are NA. In a previous chapter (Scores), we illustrated how to use the interactive function `scoresVerify()` to verify these scores, wherein a "1" signals that the score was in fact the target signal from a target species, and a "0" indicates a false alarm. 
+Here, we view the first 10 of 52 scores. These 10 scores were generated by running the "verd1" template against the recording "midEarth3_2016-03-12_07-00". Notice that the columns *manualVerifyLibraryID* and *manualVerifySpeciesID* are NA. In a previous chapter (16: The Scores Table), we illustrated how to use the interactive function `scoresVerify()` to verify these scores, wherein a "1" indicates that the score was in fact the target signal from a target species, and a "0" indicates a false alarm. 
 
 For demonstration purposes, instead of running `scoresVerify()`, we will manually add *manualVerifyLibraryID* and *manualVerifySpeciesID* verifications below for both the 'verd1' and 'verd2' templates. Later in the chapter, these verifications later allow us to generate 2s (confirmed surveys) for Miller-type encounter histories.
 
@@ -220,7 +221,7 @@ Our next task is to combine verifications, annotations, and scores into encounte
 
 The `shapeOccupancy()` function converts detection data into an encounter history for the Miller model. This encounter history will be an N x M matrix, where N, the number of rows, is equal to the number of study locations in a monitoring program, and M, the number of columns, is equal to the combined total number of surveys taken across all sampling seasons. 
 
-The encounter history matrix itself is composed of zeroes (0 - uncertain absence), ones (1 - unconfirmed presence), and twos (2 - confirmed presence). `shapeOccupancy()` uses either detection data directly from the **scores** table or from the **classifications** table (recommended) to generate 1s, and uses both **annotations** and verification data (*manualVerifySpeciesID* and *manualVerifyLibraryID* columns in the **scores** table) to produce 2s. 
+The encounter history matrix itself is composed of zeroes (0 - uncertain nondetection), ones (1 - unconfirmed detection), and twos (2 - confirmed detection). `shapeOccupancy()` uses either detection data directly from the **scores** table or from the **classifications** table to generate 1s, and uses both **annotations** and verification data (*manualVerifySpeciesID* and *manualVerifyLibraryID* columns in the **scores** table) to produce 2s. 
 
 We demonstrate `shapeOccupancy()` below. 
 
@@ -230,13 +231,13 @@ First, we view the arguments:
 args(shapeOccupancy)
 ```
 
-As usual, we input the **db.path** object to the 'db.path' argument. In the 'table' argument, we specify whether we would like our encounter history to be generated from the classifications table ('classifications') or the scores table ('scores'). the defaul, "classifications", is recommended because it may reduce false positive detections by utilizing classifications made by one or more statistical learning models. In 'locationID', we must explicitly state which locationIDs should be used to generate the encounter history -- this is intended to give the user greater ownership over which locations are meaningful for the encounter history during the seasonal monitoring periods, given that not all locations may be monitored during an entire season depending on monitoring protocols in a research program. Below, we choose locationID = 'all'. 
+As usual, we input the **db.path** object to the 'db.path' argument. In the 'table' argument, we specify whether we would like our encounter history to be generated from the classifications table ('classifications') or the scores table ('scores'). the default, "classifications", is recommended because it may reduce false positive detections by utilizing classifications made by one or more statistical learning models [@BalanticStatistical]. In 'locationID', we must explicitly state which locationIDs should be used to generate the encounter history -- this is intended to give the user greater ownership over which locations are meaningful for the encounter history during the seasonal monitoring periods, given that not all locations may be monitored during an entire season depending on monitoring protocols in a research program. Below, we choose locationID = 'all'. 
 
-Next, the 'seasons' argument requires care. Here, we must create a list in which we indicate the start and end dates for each "season" (primary period) we would like to include in the occupancy model. This argument provides maximum flexibility because the nature of a "season" may vary based on monitoring goals and periods of closure meaningful for the target species. Below, we indicate a list with two seasons, with the first season extending from '2016-03-01' to '2016-03-15' (inclusive), and the second season ranging from '2016-03-16' to '2016-03-31' (inclusive). We chose these seasons merely for demonstration within a small dataset; they are not meaningful for Verdin life history patterns. By specifying these dates, we assume that a site's occupancy status will not change within the first and second portions of March. However, *between* the first and second portion of March, occupancy status may change. 
+Next, the 'seasons' argument requires care. Here, we must create a list in which we indicate the start and end dates for each "season" (primary period) we would like to include in the occupancy model. This argument provides maximum flexibility because the nature of a "season" may vary based on monitoring goals and periods of closure meaningful for the target species. Below, we indicate a list with two seasons, with the first season extending from '2016-03-01' to '2016-03-15' (inclusive), and the second season ranging from '2016-03-16' to '2016-03-31' (inclusive). We chose these seasons merely for demonstration within a small dataset; they are not meaningful for Verdin life history patterns. By specifying these dates, we assume that a site's occupancy status will not change *within* either the first or second portions of March. However, *between* the first and second portion of March, occupancy status may change. 
 
-Next, because we have set table = 'classifications', we must now construct an input to the 'model.list' argument. The 'model.list' is another input that requires care, thought, and attention to detail from the user. It is a nested list where each list element is named according to a templateID that exists in the database, and where each list element contains three elements, named 'models', 'ensemble', and 'threshold'. The models element should contain a character vector of statistical learning classifier model name(s) present in your ammls/classifier.RDS amml. Recall from the Classifications chapter that these model names automatically encode the templateID, raw template score.threshold, label.type, and classifier type (e.g., 'verd1_0.2_libraryID_glmnet') -- if multiple model names are input to the 'models' element of model.list, model names must match on every characteristic except classifier. By inputting multiple classifiers, the user is indicating that they want to aggregate those classifiers in a weighted average ensemble method. In the 'ensemble' element, the user should specify a single character string of which type of ensemble to create an encounter history from, if using multiple models. Ensemble options are 'accuracy', 'sensitivity', 'specificity', 'f1', 'precision', or 'simple' (or NULL if only inputting one classifier). In the example below, we will input only a single list element, named 'verd1' after the verd1 template, which contains a single model name, models = 'verd1_0.2_libraryID_glmnet'. We will set ensemble = NULL. Thus, we are limiting observations from the verd1 template to only classifications from the glmnet classifier.
+Next, because we have set table = 'classifications', we must now construct an input to the 'model.list' argument. The 'model.list' is another input that requires care, thought, and attention to detail from the user. It is a nested list where each list element is named according to a templateID that exists in the database, and where each list element contains three elements, named 'models', 'ensemble', and 'threshold'. The models element should contain a character vector of statistical learning classifier model name(s) present in your ammls/classifier.RDS amml. Recall from Chapter 17 that these model names automatically encode the templateID, raw template score.threshold, label.type, and classifier type (e.g., 'verd1_0.2_libraryID_glmnet') -- if multiple model names are input to the 'models' element of model.list, model names must match on every characteristic except classifier. By inputting multiple classifiers, the user is indicating that they want to aggregate those classifiers in a weighted average ensemble method. In the 'ensemble' element, the user should specify a single character string of which type of ensemble to create an encounter history from, if using multiple models. Ensemble options are 'accuracy', 'sensitivity', 'specificity', 'f1', 'precision', or 'simple' (or NULL if only inputting one classifier). In the example below, we will input only a single list element, named 'verd1' after the verd1 template, which contains a single model name, models = 'verd1_0.2_libraryID_glmnet'. We will set ensemble = NULL. Thus, we are limiting observations from the verd1 template to only classifications from the glmnet classifier.
 
-Finally, in the 'threshold' element, the user must specify the survey-level detection threshold above which an automatic '1' will be logged to signify a detection at the survey level. **Note that this threshold is different from a template detection score.threshold.** In the context of `shapeOccupancy()`, a threshold is a probability value bound between 0 and 1. When using table = 'classifications', `shapeOccupancy()` will compute the probability that there is *at least one* true target signal detected during the survey period [@BalanticStatistical]. A threshold value of 0.95, as chosen below, indicates that we want a probability of at least 0.95 that there is at least one target signal within the survey to log a 1 in the encounter history. 
+Finally, in the 'threshold' element, the user must specify the survey-level detection threshold above which an automatic '1' will be logged to signify a detection at the survey level. **Note that this threshold is different from a template detection score.threshold.** In the context of `shapeOccupancy()`, a threshold is a probability value bound between 0 and 1. When using table = 'classifications', `shapeOccupancy()` will compute the probability that there is *at least one* true target signal detected during the survey period [@BalanticStatistical]. A threshold value of 0.95, as chosen below, indicates that we want a probability of at least 0.95 that there is at least one target signal within the survey, which allows us to log a 1 in the encounter history. 
 
 ```{r}
 # Generate a model list object, where each list element is named after a valid templateID, 
@@ -249,7 +250,7 @@ mod.list <- list(
 
 ```
 
-After constructing our model.list object, in the 'amml' argument, we point to the **amModel** library that stores our classification models. In 'survey.length', we specify the number of days that should consitute a (secondary) survey at each location. Below, we are declaring that three days' worth of recordings will all be lumped into a single survey for the purposes of the occupancy model. Finally, the 'cull.FA' argument grants us the option to eliminate any classification records where the probability of target signal is less than 0.5. We are "culling" false alarms (FA) from the dataset in that case, and they will not be used in the probability aggregation scheme to compute whether our survey.level detection threshold exceeds 0.95. For now, we will set this to FALSE. With this information, a Miller-type encounter history will be produced. (Warning: this table will produce a table with just a few 0's and 2's, and a lot of NAs!)
+After constructing our model.list object, in the 'amml' argument, we point to the **amModel** library that stores our classification models. In 'survey.length', we specify the number of days that should consitute a (secondary) survey at each location. Below, we are declaring that three days' worth of recordings will all be lumped into a single survey for the purposes of the occupancy model. Finally, the 'cull.FA' argument grants us the option to eliminate any classification records where the probability of target signal is less than 0.5. We are "culling" false alarms (FA) from the dataset in that case, and they will not be used in the probability aggregation scheme to compute whether our survey.level detection threshold exceeds 0.95. For now, we will set this to FALSE. With this information, a Miller-type encounter history will be produced. (Warning: the following example produces a table with just a few 0s and 2s, and a lot of NAs.)
 ```{r}
 
 # Read in our classifiers amml
@@ -276,14 +277,20 @@ First, notice the number of columns and the column names. The column name '1-1' 
 Next, why are there so many NAs in this encounter history? We revisit the sample data in the **recordings** table for a clue: 
 
 ```{r}
-dbGetQuery(conn = conx, 'SELECT * FROM recordings')
+dbGetQuery(conn = conx, 
+           statement = 'SELECT recordingID, locationID, equipmentID, 
+                               startDate, startTime
+                        FROM recordings')
 ```
 Recall that we only have four recordings in the sample database. We have one recording taken at location\@1, two recordings at location\@2, and one recording at location\@3. In this case, because our sample recording data set is so small, we actually don't have enough recorded data to claim that we surveyed during most of these survey periods. Wherever this occurs, we log NAs in the history to indicate a missing survey. To illustrate in greater detail: survey 1-1 occurs from 2016-03-01 to 2016-03-03. We have no recordings that cover this period at any location, so all locations are logged an NA for this survey. Survey 1-2 occurs from 2016-03-04 to 2016-03-06. We have recorded data at location\@2 during this survey period, which gives us the ability to input a 0, 1, or 2 into row 2 (named 'location\@2'), column 2 ('1-2'). 
 
 However, why is this survey a 2 instead of a 0 or a 1? We view the **annotations** table below for a clue, where we note that both Bilbo and Frodo have annotated all four of these recording files manually. 
 
 ```{r}
-dbGetQuery(conn = conx, statement = 'SELECT * FROM annotations')
+dbGetQuery(conn = conx, 
+           statement = 'SELECT annotationID, recordingID, listID, speciesID, 
+                               libraryID, annotation, personID
+                        FROM annotations')
 ```
 
 `shapeOccupancy()` will automatically use the input templateID argument to find the speciesID linked to that template (in this case, templateID = 'verd1' is linked to the speciesID 'verd' for the songbird Verdin). `shapeOccupancy()` will then identify *any* species listIDs where Verdin is being searched (in this case, both Bilbo and Frodo have declared that they will search for Verdin presence or absence on Bilbo's List and Frodo's List, respectively). `shapeOccupancy()` will then search through the **annotations** table to see if the target species, Verdin, is located in any annotations on relevant survey recordings. If Verdin is found on these recordings, the function logs a '2' in the encounter history to indicate a confirmed survey. If Verdin is NOT found by any Verdin searcher, the function logs a '0' in the encounter history.
@@ -299,11 +306,11 @@ dbGetQuery(conn = conx,
 ```
 Here, recall that we added verifications at the level of the libraryID (*manualVerifyLibraryID*) and the speciesID (*manualVerifySpeciesID*). In some cases, the detection was a false alarm (0) at the libraryID level, but a target signal (1) at the speciesID level. Though we input a model.list object focused on 'verd1' in our example, realize that to log confirmed presences (2s), `shapeOccupancy()` will search for species-level verifications for ANY templateID associated with the target speciesID. 
 
-This brings us to an important point about `shapeOccupancy()` -- it generates encounter histories strictly at the *species-level*, and not at the level of the libraryID. So regardless of which template is used to generate automatic detections, `shapeOccupancy()` is working under the hood to link this templateID to a speciesID, therefore finding ANY species-level annotations or verifications to generate confirmed presence (2s) in the encounter history. 
+This brings us to an important point about the behavior of `shapeOccupancy()` -- it generates encounter histories strictly at the *species-level*, and not at the level of the libraryID. So regardless of which template is used to generate automatic detections, `shapeOccupancy()` is working under the hood to link this templateID to a speciesID, therefore finding ANY species-level annotations or verifications to generate confirmed presence (2s) in the encounter history. 
 
 # Ensemble Classifications
 
-We will look at two more examples of how to use `shapeOccupancy()` with the classifications table. Above, we used the `shapeOccupancy()` setting table = 'classifications', and we input a single model to the 'models' element of the **mod.list** object input to the model.list argument. However, as mentioned in Chapter 17: Classifications, we can combine the power of multiple classifiers to make predictions about the target signal probability of each detection. `shapeOccupancy()` runs the `classifierEnsemble()` function to do this. 
+We will look at two more examples of how to use `shapeOccupancy()` with the classifications table. Above, we used the `shapeOccupancy()` setting table = 'classifications', and we input a single model to the 'models' element of the **mod.list** object input to the model.list argument. However, as mentioned in Chapter 17: The Classifications Table, we can combine the power of multiple classifiers to make predictions about the target signal probability of each detection. `shapeOccupancy()` runs the `classifierEnsemble()` function to do this. 
 
 To illustrate the concept of a precision-weighted 'ensemble', we will read in the classifiers amml, and then use `classifierPerformance()` to remind ourselves how all five classifiers performed on the test data. Pulling out a few columns, we recall that the glmnet, svmLinear, and kknn classifiers performed best on the precision metric, each scoring a 1. If we use a precision-weighted average ensemble in `shapeOccupancy()`, this means the glmnet, svmLinear, and kknn classifiers have the highest "weight" in the weighted average. Meanwhile, svmRadial performs worst on precision, with a score of 0.5; it will have the lowest weight in the precision-weighted average.
 ```{r}
@@ -315,7 +322,7 @@ performance <- classifierPerformance(amml = amml,
 # Compare model performance for 5 metrics
 performance[, c('Model', 'Accuracy', 'Sensitivity', 'Specificity', 'Precision', 'F1')]
 ```
-In `shapeOccupancy()`, the weighted average 'ensemble' options are c('accuracy', 'sensitivity', 'specificity', 'precision', 'f1', 'simple'); instead of precision, we could alternatively choose to construct our weighted average ensemble models based on the accuracy, sensitivity, specificity, or f1 scores. One final option is that we could merely choose to take an unweighted average of each classifier's target signal probability prediction for a given observation ('simple'). If there are any sub-optimal performances in the set of classifier models, like svmLinear, we can choose to leave them out of the ensemble entirely by omitting them from the 'models' element of the model.list object (or by not storing them in the classifiers.RDS amml to begin with). 
+In `shapeOccupancy()`, the weighted average 'ensemble' options are c('accuracy', 'sensitivity', 'specificity', 'precision', 'f1', 'simple'); instead of precision, we could alternatively choose to construct our weighted average ensemble models based on the accuracy, sensitivity, specificity, or F1 scores. One final option is that we could merely choose to take an unweighted average of each classifier's target signal probability prediction for a given observation ('simple'). If there are any sub-optimal performances in the set of classifier models, like svmLinear, we can choose to leave them out of the ensemble entirely by omitting them from the 'models' element of the model.list object (or by not storing them in the classifiers.RDS amml to begin with). 
 
 In the next example, we will keep almost all arguments the same as before. This time, however, we will input more classifiers into the 'models' element of the model.list object. In the 'ensemble' element of the model.list, we will indicate a weighted average ensemble type of our choice. Below, we choose 'precision', which means we want to produce a weighted average for each target signal probability based on how well each classifier performed on the precision evaluation metric. We leave the threshold element set at 0.95.
 
@@ -382,7 +389,7 @@ shapeOccupancy(db.path = db.path,
 
 
 # Generating encounter histories from the scores table
-One final option is to construct encounter histories directly from the **scores** table instead of the **classifications** table. This option may be suitable if users have not undergone the process of verifying detections and training classifiers as described in Chapter 17: Classifiers. Instead, templates are run against recordings, resulting in records that populate the **scores** table, and encounter histories can be generated directly from those detections. 
+One final option is to construct encounter histories directly from the **scores** table instead of the **classifications** table. This option may be suitable if users have not undergone the process of verifying detections and training classifiers (as described in Chapter 17). Instead, templates are run against recordings, resulting in records that populate the **scores** table, and encounter histories can be generated directly from those detections. 
 
 To use this option in `shapeOccupancy()`, arguments are similar to those in the previous examples, with a few major exceptions: first, we must set table = 'scores'. Secondly, the 'model.list', 'ensemble', 'amml', and 'cull.FA' arguments can be omitted entirely, since they are not relevant if using table = 'scores'. Finally, instead of inputting a model.list, this time we are inputting a template.list, with one or more templates. Each template.list element, named according to a valid templateID in the database, contains a single numeric value that indicates the detection threshold. **Here, instead of an aggregated probability as in the table = 'classifications' option, now this threshold value merely stands for the actual template score detection threshold we should use to log a detection.** For example, if using a spectrogram cross-correlation template, we might decide to log a detection if this record exceeds a correlation score of 0.20 or 0.22 (as below). (If using a binary point matching template, the score might be more like 5, or 10, or anything suitable.)
 ```{r}
@@ -431,10 +438,10 @@ Above, we used `shapeOccupancy()` to create an **eh.list** object.
 However, because our dataset is so small and insufficient for demonstration, we will replace the output with a **simulated encounter history** using the function `occupancySim()`. This function is a simple intercept-model simulator for the single-species false positive dynamic occupancy model (the Miller model). It does not accommodate covariates. Users may input a desired number of sites ('n.sites'), seasons ('n.seasons'), and 'surveys.per.season'. In 'psi', input the desired probability of occupancy in the first season; in 'gamma', the probability of colonization of an unoccupied site; and in 'epsilon', the probability of extinction from an occupied site. In 'p11', input a value for detection probability given presence; in 'p10', the probability of a false positive detection at an unoccupied site; and in 'b', the probability a detection will be certain, conditional on detecting the species at an occupied site. 
 
 ```{r}
-# set a random number seed
+# Set a random number seed
 set.seed(201)
 
-# create a simulated encounter history with 100 sites
+# Create a simulated encounter history with 100 sites
 sim.eh <- occupancySim(n.sites = 100, 
                        n.seasons = 2, 
                        surveys.per.season = 5,
@@ -447,7 +454,7 @@ sim.eh <- occupancySim(n.sites = 100,
 
 ```
 
-`occupancySim()` returns a matrix where the number of rows is equal to 'n.sites', and the number of columns is equal to 'n.seasons'\*'surveys.per.season'. Notice that because of the random nature of simulating data, the final dataset's parameters are not exactly equal to the requested parameter values; increasing sample size will generally reduce this difference. Cells are populated with either a 0, 1, or 2. Row names indicate generic location names. Again, column names follow the pattern of 'season'-'survey'; the column name '1-1' indicates season 1, survey 1. '1-2' stands for season 1, survey 2, and so on. `occupancySim()` also returns messages comparing the user-specified values against the actual simulated values (which may differ substantially if given a low value of 'n.sites'). Below, we view the first few records of **sim.eh** to confirm its format:
+`occupancySim()` returns a matrix where the number of rows is equal to 'n.sites', and the number of columns is equal to 'n.seasons'$\times$'surveys.per.season'. Notice that because of the random nature of simulating data, the final dataset's parameters are not exactly equal to the requested parameter values; increasing sample size will generally reduce this difference. Cells are populated with either a 0, 1, or 2. Row names indicate generic location names. Again, column names follow the pattern of 'season'-'survey'; the column name '1-1' indicates season 1, survey 1. '1-2' stands for season 1, survey 2, and so on. `occupancySim()` also returns messages comparing the user-specified values against the actual simulated values (which may differ substantially if given a low value of 'n.sites'). Below, we view the first few records of **sim.eh** to confirm its format:
 
 ```{r}
 head(sim.eh)
@@ -469,8 +476,8 @@ one.pao <- createPao(data = sim.eh,
 
 Next, we  create formulas for all six parameters of the Miller model, and turn them into R data type "formulas" using lapply(form.list, as.formula). Finally, we use `occMod()`, inputting the **formulas** object to the 'model' argument and **one.pao** to 'data'. Under 'type', we indicate 'do.fp' (which stands for dynamic occupancy false positives). We use the 'randinit' argument to tell PRESENCE to use 9 different starting values to help it find the top of the likelihood function. Lastly, we can give the output file a name in the 'outfile' argument. See [RPresence/PRESENCE documentation](https://www.mbr-pwrc.usgs.gov/software/presence.html) for more details. 
 
-```{r}
-# Create a list of formulae for the Miller intercept model
+```{r, message = FALSE, results = 'hide'}
+# Create a list of formulas for the Miller intercept model
 form.list <- list('psi ~ 1', 
                   'gamma ~ 1', 
                   'epsilon ~ 1',
@@ -488,12 +495,15 @@ m0 <- occMod(model = formulas,
              randinit = 9,
              outfile = 'm0')
 
+```
+
+``` {r}
 # Look at the structure of the resulting model output
 str(m0, max.level = 1)
 
 ```
 
-RPresence returns a list of outputs, which is packed full of information about the analysis. The authors have written functions that allow us to extract key pieces of information easily. The names of these functions can be found with the `methods()` function:
+RPresence returns a list of outputs, which is packed full of information about the analysis. RPresence contains functions that allow us to extract key pieces of information easily. The names of these functions can be found with the `methods()` function:
 
 ```{r}
 methods(class = class(m0))
@@ -511,7 +521,7 @@ To view real parameter estimates (on the probability scale), we can extract the 
 lapply(m0$real, function(x) x[1, 'est'])
 ```
 
-Now, we compare these estimates with the parameters that were actually simulated in the `simOccupany` function:  
+Now, we compare these estimates with the parameters that were actually simulated in the `simOccupancy()` function:  
 
 - psi requested = 0.5; simulated = 0.48
 - gamma requested = 0.15; simulated = 0.175
@@ -522,11 +532,11 @@ Now, we compare these estimates with the parameters that were actually simulated
 
 Thus, given the simulated encountered history and the actual rates within, the Miller model was able to do a very good job at finding these parameter estimates; see also @Balantic2019. As with any modeling exercise, we should take care to formally assess how well the model fits the data. That is beyond our scope here, however.
 
-If we decide we have created a useful occupancy model that we would like to store for future use, we can convert it into an **amModel** object and add it to the  AMModel library that we created many chapters ago to store our dynamic false positives occupancy model outputs.  This library is stored in in the **ammls** directory under ammls/do_fp.RDS. Below, we demonstrate code for saving a useful model to the do_fp AMModels library. We will be able to use this model in the future and update it as needed to evaluate our progress toward our Verdin monitoring objective through time. 
+If we decide we have created a useful occupancy model that we would like to store for future use, we can convert it into an **amModel** object and add it to the  AMModel library that we created many chapters ago to store our dynamic false positives occupancy model outputs. This library is stored in the **ammls** directory under ammls/do_fp.RDS. Below, we demonstrate code for saving a useful model to the do_fp AMModels library. We will be able to use this model in the future and update it as needed to evaluate our progress toward our Verdin monitoring objective through time. 
 
 ```{r, eval = TRUE}
 
-# Read do_fp amml into R: 
+# Read do_fp amml into R
 do.fp.amml <- readRDS('ammls/do_fp.RDS')
 
 # Turn m0 into an amModel
@@ -535,30 +545,31 @@ am.model <- amModel(model = m0, comment = '')
 # Turn am.model into a named list for insertAMModelLib
 am.model.list <- list(verd_occupany = am.model)
 
-# Insert into amml:
+# Insert into amml
 do.fp.amml <- insertAMModelLib(models = am.model.list, 
                                amml = do.fp.amml)
 
-# Save to amml folder:
+# Save to amml folder
 saveRDS(do.fp.amml, 'ammls/do_fp.RDS')
 
 ```
 
 
-This occupancy model and other models like it may have great utility for a research or management program. We have provided just one example of how the data stored in the **classifications** table of the AMMonitor database can be analyzed to address specific research questions.  
+This occupancy model and other models like it may have great utility for a research or management program. We have provided just one example of how the data stored in the **classifications** table of the AMMonitor database can be analyzed to address specific research questions. 
 
-You may recall from Chapter 5 that  we have an objective named 'verd_occupancy', which is to maintain current Verdin occupancy at a standard of 0.40, with a minimum of 0.45 and a maximum of 0.55. 
+You may recall from Chapter 5 (The Objectives Table) that we have an objective named 'verd_occupancy', which is to maintain current Verdin occupancy at a standard of 0.40, with a minimum of 0.35 and a maximum of 0.45. 
 ```{r}
 dbGetQuery(conn = conx,
-           statement = 'SELECT * 
+           statement = 'SELECT objectiveID, speciesID, objective, indicator, 
+                               units, direction, min, max, standard
                         FROM objectives')
 ```
 
-In our next chapter, we will use our Miller model to assess the state of a system (verdin occupancy rate), and compare it to the verdin management objective. 
+In the next chapter, we will use our Miller model to assess the state of a system (Verdin occupancy rate), and compare it against our Verdin management objective. 
 
 # Chapter Summary
 
-This chapter described a workflow for moving from automated target signal detections to dynamic occupancy models that accommodate false positives (as in [@Miller2013]). The `shapeOccupancy()` function can be used to generate encounter histories formatted for the Miller model. `shapeOccupancy()` searches the **classifications** or **scores** tables in an AMMonitor database, along with the **annotations** table, to produce 0s, 1s, and 2s in the Miller model encounter history, with a variety of options for aggregating the data. Encounter histories from `shapeOccupancy()` can be fit in the RPresence function `occMod()` to estimate parameters. The `occupancySim()` function offers an option for simulating Miller model encounter histories that can be used to test the workflow. `shapeOccupancyTemporals()` and `shapeOccupancySpatials()` allow temporal and spatial covariates to be included in calls to `occMod()`. Useful models can be saved in the **do_fp** AMModels library of the **ammls** directory, and called into action through time to track progress toward monitoring objectives. 
+This chapter described a workflow for moving from automated target signal detections to dynamic occupancy models that accommodate false positives (as in [@Miller2013]). The `shapeOccupancy()` function can be used to generate encounter histories formatted for the Miller model. `shapeOccupancy()` searches the **classifications** or **scores** tables in an AMMonitor database, along with the **annotations** table, to produce 0s, 1s, and 2s in the Miller model encounter history, with a variety of options for aggregating the data. Encounter histories from `shapeOccupancy()` can be fit in the RPresence function `occMod()` to estimate parameters. The `occupancySim()` function offers an option for simulating Miller model encounter histories that can be used to test the workflow. Useful models can be saved in the **do_fp** AMModels library of the **ammls** directory, and called into action through time to track progress toward monitoring objectives. 
 
 
 # Chapter References
