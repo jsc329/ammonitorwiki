@@ -1,19 +1,18 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [Create the Chapter Database](#create-the-chapter-database)
--   [The Objectives Table](#the-objectives-table)
--   [The Verdin Dynamic Occupancy
+  - [Chapter Introduction](#chapter-introduction)
+  - [Create the Chapter Database](#create-the-chapter-database)
+  - [The Objectives Table](#the-objectives-table)
+  - [The Verdin Dynamic Occupancy
     Analysis](#the-verdin-dynamic-occupancy-analysis)
--   [Assessment of the Verdin Occupancy
+  - [Assessment of the Verdin Occupancy
     Objective](#assessment-of-the-verdin-occupancy-objective)
--   [Logging the Assessement](#logging-the-assessement)
--   [The Assessments Table in Access](#the-assessments-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Logging the Assessement](#logging-the-assessement)
+  - [The Assessments Table in Access](#the-assessments-table-in-access)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 In previous chapters, we explained how the **scores** and
 **classifications** tables in an **AMMonitor** database store a wealth
@@ -53,17 +52,17 @@ such, example objectives may include:
 
 Setting objectives can be difficult, and a discussion of how to set
 objectives is well beyond our scope. For additional information, see
-\[2\], \[1\], \[3\], \[4\], \[5\], \[6\], \[7\], and \[8\]. In Chapter
-5, we described how objectives (of any type) can be logged in the
-**AMMonitor** database. Now, we focus on how to assess an objective by
-comparing the results of an analysis with the stated objective. The
-analysis will be logged in the **assessments** database table to provide
-a trace. Unlike other chapters, there are no new **AMMonitor** functions
-to explore. The reason is because objectives can vary tremendously, and
-each objective may very well require a unique set of instructions for
-pitting an analysis output against the objective itself. These
-instructions may be stored in a script (logged in the **scripts** table,
-and where the actual code is stored in the directory called “scripts”).
+\[1–8\]. In Chapter 5, we described how objectives (of any type) can
+be logged in the **AMMonitor** database. Now, we focus on how to assess
+an objective by comparing the results of an analysis with the stated
+objective. The analysis will be logged in the **assessments** database
+table to provide a trace. Unlike other chapters, there are no new
+**AMMonitor** functions to explore. The reason is because objectives can
+vary tremendously, and each objective may very well require a unique set
+of instructions for pitting an analysis output against the objective
+itself. These instructions may be stored in a script (logged in the
+**scripts** table, and where the actual code is stored in the directory
+called **scripts**).
 
 Here, we provide a single example of an assessment. We define an
 assessment as an analysis conducted to describe the state of affairs,
@@ -77,23 +76,21 @@ illustrate some coding approaches (saved in a script) to compare the
 objective with the documented occupancy status, and log this assessement
 into the **assessments** table.
 
-Create the Chapter Database
-===========================
+# Create the Chapter Database
 
 Here, we use `dbCreateSample()` to create a database called
-“Chap5.sqlite”, which will be stored in a folder (directory) called
-“database” within the **AMMonitor** main directory, which should be your
-working directory in R. Recall that `dbCreateSample()` generates all
-tables of an **AMMonitor** database, and then pre-populates sample data
-into tables specified by the user. For the demonstration purposes of
-this chapter, we will only pre-populate a few necessary tables.
+“Chap19.sqlite”, which will be stored in a folder (directory) called
+**database** within the **AMMonitor** main directory, which should be
+your working directory in R. Recall that `dbCreateSample()` generates
+all tables of an **AMMonitor** database, and then pre-populates sample
+data into tables specified by the user. For the demonstration purposes
+of this chapter, we will only pre-populate a few necessary tables.
 
 ``` r
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap19.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables =  c("objectives", "species", 
-                           "lists", "listItems"))
+               tables =  c("objectives", "species", "lists", "listItems"))
 ```
 
     ## An AMMonitor database has been created with the name Chap19.sqlite which consists of the following tables:
@@ -122,9 +119,7 @@ constraints within the database.
 
 ``` r
 # Turn the SQLite foreign constraints on
-RSQLite::dbSendQuery(conn = conx, statement = 
-              "PRAGMA foreign_keys = ON;"
-          )
+RSQLite::dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;")
 ```
 
     ## <SQLiteResult>
@@ -132,8 +127,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-The Objectives Table
-====================
+# The Objectives Table
 
 Let’s start by reviewing the structure of the **objectives** table:
 
@@ -159,22 +153,22 @@ dbTables(db.path = db.path, table = "objectives")
 `dbTables()` identifies the name of each column, the primary key, the
 type of data stored in each column, and required column entries.
 
--   *objectiveID* - the table’s primary key (must be unique and less
+  - *objectiveID* - the table’s primary key (must be unique and less
     than 255 characters). Should be a brief identifier that is easily
     typed.
--   *listID* - a list record that is provided in the **lists** table, if
+  - *listID* - a list record that is provided in the **lists** table, if
     applicable.
--   *speciesID* - a species record that is given in the **species**
+  - *speciesID* - a species record that is given in the **species**
     table, if applicable.
--   *objective* - the stated objective in report-ready form.
--   *indicator* - specifies what exactly will be measured.
--   *units* - specifies the units of measure.
--   *direction* - indicates the desired direction, such as increase,
+  - *objective* - the stated objective in report-ready form.
+  - *indicator* - specifies what exactly will be measured.
+  - *units* - specifies the units of measure.
+  - *direction* - indicates the desired direction, such as increase,
     maximize, decrease, minimize, or maintain.
--   *min* - the minimum acceptable target, if applicable.
--   *max* - the maximum acceptable target, if applicable.
--   *standard* - the stated target, if applicable.
--   *narrative* - A text field that allows any number of characters to
+  - *min* - the minimum acceptable target, if applicable.
+  - *max* - the maximum acceptable target, if applicable.
+  - *standard* - the stated target, if applicable.
+  - *narrative* - A text field that allows any number of characters to
     be stored.
 
 This table also contains foreign keys that are linked to other database
@@ -225,10 +219,10 @@ the first six columns only. The first objective’s ID is simply
 three objectives deal with specific species and their desired occupancy
 rates; we have elected to set the primary keys by the species
 abbreviation, followed by the word “occupancy” for the primary keys. In
-each case, the *listID* is set to &lt;NA&gt;, the *speciesID* is linked
-to the primary key in the **species** table, the *indicator* to be
-measured is “Psi” (which is the Greek symbol *ψ*, commonly used to
-denote occupancy rate), with “Probability” as the *units* of measure.
+each case, the *listID* is set to \<NA\>, the *speciesID* is linked to
+the primary key in the **species** table, the *indicator* to be measured
+is “Psi” (which is the Greek symbol \(\psi\), commonly used to denote
+occupancy rate), with “Probability” as the *units* of measure.
 
 Objectives are not required to be associated with a **speciesID** or
 **listID**, however. For example, in some U.S. National Parks,
@@ -244,7 +238,7 @@ objectives[4,c(1,7:10)]
 ```
 
     ##      objectiveID direction  min  max standard
-    ## 4 verd_occupancy  Maintain 0.45 0.55      0.4
+    ## 4 verd_occupancy  Maintain 0.35 0.45      0.4
 
 Here, we see an objective with the *objectiveID* of “verd\_occupancy”.
 Note that *direction* is set to “Maintain.” Directions are typically
@@ -256,8 +250,8 @@ acceptable occupancy.
 
 The final column of the **objectives** table (not shown) stores the
 objective narrative. The *narrative* field can be used to provide
-additional narrative. For example, might include a description of the
-type of analysis or analyses that may be used to assess the objective.
+additional narrative. For example, one might include a description of
+the type of analysis that may be used to assess the objective.
 
 The purpose of a monitoring effort is to compare the state of the system
 (e.g., Verdin occupancy rate) with a stated objective (which could be a
@@ -265,8 +259,7 @@ natural resources objective or a scientific objective). Now that we
 understand the Verdin objective, we can analyze our remotely captured
 data.
 
-The Verdin Dynamic Occupancy Analysis
-=====================================
+# The Verdin Dynamic Occupancy Analysis
 
 In Chapter 18, we assumed the Middle Earth team analyzed the
 **AMMonitor** acoustic monitoring data with the package, **RPresence**
@@ -275,7 +268,7 @@ In Chapter 18, we assumed the Middle Earth team analyzed the
 As a quick refresher to Chapter 18, we used the function
 `occupancySim()` to simulate an encounter history for the Verdin
 (necessary because the sample dataset that comes with **AMMonitor** is
-too small to run a meaninful analysis directly). The `occupancySim()`
+too small to run a meaningful analysis directly). The `occupancySim()`
 function provides encounter histories like “real” histories from
 remotely captured data; these data can be input into a single-species
 false positive dynamic occupancy model (‘the Miller Model’). Note that
@@ -292,10 +285,10 @@ probability a detection will be certain, conditional on detecting the
 species at an occupied site.
 
 ``` r
-# set a random number seed
+# Set a random number seed
 set.seed(201)
 
-# create a simulated encounter history with 100 sites
+# Create a simulated encounter history with 100 sites
 sim.eh <- occupancySim(n.sites = 100, 
                        n.seasons = 2, 
                        surveys.per.season = 5,
@@ -321,14 +314,14 @@ sim.eh <- occupancySim(n.sites = 100,
 
 `occupancySim()` returns a matrix where the number of rows is equal to
 ‘n.sites’, and the number of columns is equal to
-‘n.seasons’\*‘surveys.per.season’. Notice that because of the random
-nature of simulating data, the final dataset’s parameters are not
-exactly equal to the requested parameter values; increasing sample size
-will generally reduce this difference. Cells are populated with either a
-0, 1, or 2. Row names indicate generic location names. Again, column
-names follow the pattern of ‘season’-‘survey’; the column name ‘1-1’
-indicates season 1, survey 1. ‘1-2’ stands for season 1, survey 2, and
-so on. `occupancySim()` also returns messages comparing the
+‘n.seasons’\(\times\)’surveys.per.season’. Notice that because of
+the random nature of simulating data, the final dataset’s parameters are
+not exactly equal to the requested parameter values; increasing sample
+size will generally reduce this difference. Cells are populated with
+either a 0, 1, or 2. Row names indicate generic location names. Again,
+column names follow the pattern of ‘season’-‘survey’; the column name
+‘1-1’ indicates season 1, survey 1. ‘1-2’ stands for season 1, survey
+2, and so on. `occupancySim()` also returns messages comparing the
 user-specified values against the actual simulated values (which may
 differ substantially if given a low value of ‘n.sites’). Below, we view
 the first few records of **sim.eh** to confirm its format:
@@ -386,7 +379,7 @@ documentation](https://www.mbr-pwrc.usgs.gov/software/presence.html) for
 more details.
 
 ``` r
-# Create a list of formulae for the Miller intercept model
+# Create a list of formulas for the Miller intercept model
 form.list <- list('psi ~ 1', 
                   'gamma ~ 1', 
                   'epsilon ~ 1',
@@ -403,7 +396,9 @@ sim.model <- occMod(model = formulas,
              type = 'do.fp',
              randinit = 9,
              outfile = 'm0')
+```
 
+``` r
 # Look at the structure of the resulting model output
 str(sim.model, max.level = 1)
 ```
@@ -429,11 +424,13 @@ information about the analysis. We view some key outputs below,
 recalling that we simulated a 3 year study. The main “state” of the
 system parameters are:
 
--   psi (*ψ*) = the initial occupancy pattern in year 1
--   gamma (*γ*) = the probability that an unoccuppied site in year *t*-1
-    becomes occupied in year *t* (i.e., the probability of colonization)
--   epsilon (*ϵ*) = the probability that an occupied in year *t*-1
-    becomes unoccupied in year *t* (i.e., the probability of extinction)
+  - psi (\(\psi\)) = the initial occupancy pattern in year 1
+  - gamma (\(\gamma\)) = the probability that an unoccuppied site in
+    year *t*-1 becomes occupied in year *t* (i.e., the probability of
+    colonization)
+  - epsilon (\(\epsilon\)) = the probability that an occupied in year
+    *t*-1 becomes unoccupied in year *t* (i.e., the probability of
+    extinction)
 
 The remaining parameters are detection parameters, and provide
 information about the detection process.
@@ -471,16 +468,16 @@ estimates
     ## 0.05331403 0.01132231 0.03501125 0.08038784
 
 Recall that we can store any model in an **AMModels** library if we wish
-to preserve it for posterity. (Recall that we created an **AMModels**
-library called do\_fp.RDS, which is housed in the **ammls** directory).
-This library stores any/all of the dynamic occupancy false positive
-models run by a monitoring program. Below, we demonstrate code for
-saving a useful model to the do\_fp **AMModels** library. We will be
+to preserve it for posterity. In previous chapters, we created an
+**AMModels** library called do\_fp.RDS, which is housed in the **ammls**
+directory. This library stores any/all of the dynamic occupancy false
+positive models run by a monitoring program. Below, we demonstrate code
+for saving a useful model to the do\_fp **AMModels** library. We will be
 able to use this model in the future and update it as needed to evaluate
 progress toward our Verdin monitoring objective through time.
 
 ``` r
-# Read do_fp amml into R: 
+# Read do_fp amml into R
 do.fp.amml <- readRDS('ammls/do_fp.RDS')
 
 # Turn sim.model into an amModel
@@ -493,12 +490,11 @@ am.model.list <- list(verd_sim_occupany = am.model)
 do.fp.amml <- insertAMModelLib(models = am.model.list, 
                                amml = do.fp.amml)
 
-# Re-save to amml folder:
+# Re-save to amml folder
 saveRDS(do.fp.amml, 'ammls/do_fp.RDS')
 ```
 
-Assessment of the Verdin Occupancy Objective
-============================================
+# Assessment of the Verdin Occupancy Objective
 
 At this point, we have identified an objective for managing the Verdin,
 and analyzed our Verdin data with a dynamic occupancy false positive
@@ -515,24 +511,24 @@ objectives
 ```
 
     ##      objectiveID direction  min  max standard
-    ## 4 verd_occupancy  Maintain 0.45 0.55      0.4
+    ## 4 verd_occupancy  Maintain 0.35 0.45      0.4
 
 We can use the following code to generate site occupancy rates for each
 of the three survey years, and plot them with respect to our stated
 objective:
 
 ``` r
-# set up a vector to hold the psi estimates for each year
-psi <- rep(estimates$psi['est'],3)
+# Set up a vector to hold the psi estimates for each year
+psi <- rep(estimates$psi['est'], 3)
 gamma <- estimates$gamma['est']
 epsilon <- estimates$epsilon['est']
 
-# calculate psi for years 2 and 3
+# Calculate psi for years 2 and 3
 for (i in 2:3) {
   psi[i] = psi[i - 1] * (1 - epsilon) + (1 - psi[i - 1]) * gamma
 }
 
-# plot 
+# Plot results
 plot(x = 1:3, 
      y = psi, 
      ylim = c(0,1), 
@@ -546,19 +542,14 @@ lines(x = 1:3, y = psi)
 
 abline(h = 0)
 
-# add in the min from the objective
+# Add in the min from the objective
 abline(h = objectives[1,'min'], col = 'red', lty = 'dashed')
 
-# add in the  max from the objective
+# Add in the  max from the objective
 abline(h = objectives[1,'max'], col = 'red', lty = 'dashed')
 ```
 
-<img src="Chap19_Figs/unnamed-chunk-18-1.png" style="display: block; margin: auto auto auto 0;" />
-
-``` r
-# Disconnect from the database
-# dbDisconnect(conn = RSQLite::SQLite(), dbname = db.path)
-```
+<img src="Chap19_Figs/unnamed-chunk-19-1.png" style="display: block; margin: auto auto auto 0;" />
 
 In Year 1, our Verdin occupancy rate exceeded the 0.35-0.45 minimum and
 maximum range for our objective. This triggered adaptive management
@@ -568,11 +559,7 @@ within our goal range. In future years, if the downward trend in Verdin
 occupancy continues to the point that it places us outside the goal
 range, this would again trigger modification to the management action.
 
-As can be seen, the Verdin occupancy rate has dipped below the stated
-objective in Year 3.
-
-Logging the Assessement
-=======================
+# Logging the Assessement
 
 To log this (simplified) assessment, we now add an entry to the
 database’s **assessment** table. Let’s first look at this table’s
@@ -599,13 +586,13 @@ table. The *cid* column indicates the column (field) number; *name*
 indicates the column name; *type* conveys the data type for that column
 as contained within the underlying SQLite database. Thus, the
 **assessments** table consists of seven fields (columns):
-“assessmentID”, “objectiveID”, “scriptID”, “amml”, “modelName”, and
-“notes”, and “timestamp”. Most fields store VARCHAR (variable character
-length) data, storing up to 255 characters. In R, VARCHAR data are of
-class “character”. The *notnull* column indicates whether an entry is
-required for that field. A column’s *dflt\_value* specifies the default
-value is used for that field (NA indicates no default value). Lastly,
-*pk* indicates whether the field is a primary key. In the
+“assessmentID”, “objectiveID”, “scriptID”, “amml”, “modelName”,
+“notes”, and “timestamp”. Most fields store VARCHAR (variable
+character length) data, storing up to 255 characters. In R, VARCHAR data
+are of class “character”. The *notnull* column indicates whether an
+entry is required for that field. A column’s *dflt\_value* specifies the
+default value is used for that field (NA indicates no default value).
+Lastly, *pk* indicates whether the field is a primary key. In the
 **assessments** table, *assessmentID* is the primary key, which is
 automatically assigned by SQLite and is an integer. The *objectiveID*
 maps to an objectiveID in the **objectives** table, while the *scriptID*
@@ -637,7 +624,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
               VALUES ('verd_occupancy',
                       'do.fp',
                       'verd_sim_occupany',
-                      'First assessment of verdin occupancy rate.');"
+                      'First assessment of Verdin occupancy rate.');"
           )
 ```
 
@@ -649,7 +636,7 @@ RSQLite::dbSendQuery(conn = conx, statement =
     ##               VALUES ('verd_occupancy',
     ##                       'do.fp',
     ##                       'verd_sim_occupany',
-    ##                       'First assessment of verdin occupancy rate.');
+    ##                       'First assessment of Verdin occupancy rate.');
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 1
 
@@ -659,31 +646,32 @@ RSQLite::dbGetQuery(conn = conx, 'SELECT * FROM assessments')
 ```
 
     ##   assessmentID    objectiveID scriptID  amml         modelName                                      notes           timestamp
-    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of verdin occupancy rate. 2019-07-05 16:27:27
+    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of Verdin occupancy rate. 2019-07-17 14:15:04
 
 By registering our assessment, we now formally link a natural resource
-objective (verdin occupancy rate) with an analysis (the dynamic
+objective (Verdin occupancy rate) with an analysis (the dynamic
 occupancy model with false positives). Our model is stored in our
 AMModels library, where it can be recalled at any time. And our script,
 if saved, can be registered in the scripts table if desired to preserve
 the elements of the analysis.
 
-As this analysis shows, the simulated Verdin occupancy rate has dipped
-below the stated objective in Year 3. :worried: Consequently, this
-information may spur the Middle Earth team to initiate some management
-activities that may increase the occupancy rate back toward the intended
-level. Normally, an occupancy model would include some covariates that
-can be manipulated by management activities. For example, if Verdin
-local extinction from a site is related to vegetation structure at the
-site, then management activities that alter vegetation structure can be
-used to reduce site extinction risk. If Verdin colonization of empty
-sites is a function of patch connectivity, then management activities
-that promote connectivity can be used to increase colonization of empty
+As this analysis shows, the simulated Verdin occupancy remains within
+the management team’s acceptable boundaries in year 3. Imagine, however,
+that the occupancy rate were to dip below the minimum acceptable
+occupancy rate of 0.35. :worried: Consequently, this information would
+spur the Middle Earth team to initiate some management activities that
+would increase the occupancy rate back toward the intended level.
+Normally, an occupancy model would include some covariates that can be
+manipulated by management activities. For example, if Verdin local
+extinction from a site is related to vegetation structure at the site,
+then management activities that alter vegetation structure can be used
+to reduce site extinction risk. If Verdin colonization of empty sites is
+a function of patch connectivity, then management activities that
+promote connectivity can be used to increase colonization of empty
 sites. Both of these management activities can help push the Verdin
-toward’s it intended objective.
+towards its intended objective.
 
-The Assessments Table in Access
-===============================
+# The Assessments Table in Access
 
 An assessment is stored directly with its objective, and thus can be
 located under the main tab called Objectives. An assessment can be
@@ -699,8 +687,7 @@ earlier.
 > intended to assess. Objectives can be be scientific objectives, or
 > natural resource management objectives.*
 
-Chapter Summary
-===============
+# Chapter Summary
 
 The “AM” portion of the AMMonitor package stands for “Adaptive
 Management”. Agencies are increasingly called upon to implement their
@@ -730,54 +717,105 @@ environmental factors that drive the system itself. AMMonitor may help
 to enable this practice for monitoring programs that utilize remotely
 captured data.
 
-Chapter References
-==================
+# Chapter References
 
-1. Gregory R. Structured decision making: A practical guide to
+<div id="refs" class="references">
+
+<div id="ref-Gregory">
+
+1\. Gregory R. Structured decision making: A practical guide to
 environmental management choices. New York: Wiley-Blackwell; 2012. p.
-312 p.
+312 p. 
 
-2. Keeney RL. Developing objectives and attributes. In: Edwards W, Miles
-RFJ, Winterfeldt D von, editors. Advances in decision analysis.
+</div>
+
+<div id="ref-Keeney">
+
+2\. Keeney RL. Developing objectives and attributes. In: Edwards W,
+Miles RFJ, Winterfeldt D von, editors. Advances in decision analysis.
 Cambridge University Press; pp. 104–128.
 doi:[10.1017/cbo9780511611308.008](https://doi.org/10.1017/cbo9780511611308.008)
 
-3. Conroy M, Peterson J. Decision making in natural resource management:
-A structured, adaptive approach \[Internet\]. Wiley-Blackwell; 2013.
-Available:
+</div>
+
+<div id="ref-Conroy">
+
+3\. Conroy M, Peterson J. Decision making in natural resource
+management: A structured, adaptive approach \[Internet\].
+Wiley-Blackwell; 2013. Available:
 <http://www.wiley.com/WileyCDA/WileyTitle/productCd-0470671742.html>
 
-4. Goodwin P, Wright G. Decision analysis for management judgment. John
-Wiley & Sons; 2014.
+</div>
 
-5. Walters C. Adaptive management of renewable resources. New York:
-Macmillan; 1986. p. 374 p.
+<div id="ref-Goodwin">
 
-6. Fuller AK. Decision making in natural resource management: A
+4\. Goodwin P, Wright G. Decision analysis for management judgment. John
+Wiley & Sons; 2014. 
+
+</div>
+
+<div id="ref-Walters1986">
+
+5\. Walters C. Adaptive management of renewable resources. New York:
+Macmillan; 1986. p. 374 p. 
+
+</div>
+
+<div id="ref-Fuller2014">
+
+6\. Fuller AK. Decision making in natural resource management: A
 structured adaptive approach. Journal of Wildlife Management. 2014;78:
-175–176.
+175–176. 
 
-7. Williams BK. Adaptive management of natural resources-framework and
-issues. Journal of Environmental Management. 2011;92: 1346–1353.
+</div>
 
-8. Runge MC. An introduction to adaptive management for threatened and
+<div id="ref-Williams2011">
+
+7\. Williams BK. Adaptive management of natural resources-framework and
+issues. Journal of Environmental Management. 2011;92: 1346–1353. 
+
+</div>
+
+<div id="ref-Runge2011">
+
+8\. Runge MC. An introduction to adaptive management for threatened and
 endangered species. Journal of Fish and Wildlife Management. 2011;2:
-220–233.
+220–233. 
 
-9. Miller D. A., Nichols J. D., Gude J. A., Rich L. N., Podruzny K. M.,
+</div>
+
+<div id="ref-Miller2013">
+
+9\. Miller D. A., Nichols J. D., Gude J. A., Rich L. N., Podruzny K. M.,
 Hines J. E., et al. Determining occurrence dynamics when false positives
 occur: Estimating the range dynamics of wolves from public survey data.
-PLoS one. 2013;8: e65808.
+PLoS one. 2013;8: e65808. 
 
-10. Hines J. RPresence for presence: Software to estimate patch
+</div>
+
+<div id="ref-RPresence">
+
+10\. Hines J. RPresence for presence: Software to estimate patch
 occupancy and related parameters (version 12.10) \[Internet\]. U.S.
 Geological Survey, Patuxent Wildlife Research Center; 2018. Available:
 <https://www.mbr-pwrc.usgs.gov/software/presence.html>
 
-11. Fiske IJ, Chandler RB. Unmarked: An r package for fitting
-hierarchical models of wildlife occurrence and abundance. Journal of
-Statistical Software. 2011;43: 1–23.
+</div>
 
-12. Williams BK, Brown ED. Adaptive management: The u.s. Department of
+<div id="ref-Fiske2011">
+
+11\. Fiske IJ, Chandler RB. Unmarked: An r package for fitting
+hierarchical models of wildlife occurrence and abundance. Journal of
+Statistical Software. 2011;43: 1–23. 
+
+</div>
+
+<div id="ref-Williams2012">
+
+12\. Williams BK, Brown ED. Adaptive management: The u.s. Department of
 interior applications guide. U.S. Department of the Interior,
-Washington, DC. 2012.
+Washington, DC. 2012. 
+
+</div>
+
+</div>

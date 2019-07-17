@@ -7,3 +7,5 @@
 database
 recordings
 ammls
+recording_drop
+*.html
