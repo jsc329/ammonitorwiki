@@ -1,47 +1,45 @@
 <div><img src="ammonitor-footer.png" width="1000px" align="center"></div>
 
--   [Chapter Introduction](#chapter-introduction)
--   [Scripts](#scripts)
--   [The fetchRecordings.R Script](#the-fetchrecordings.r-script)
-    -   [Start Script
+  - [Chapter Introduction](#chapter-introduction)
+  - [Scripts](#scripts)
+  - [The fetchRecordings.R Script](#the-fetchrecordings.r-script)
+      - [Start Script
         \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_](#start-script-__________________)
-    -   [End Script
+      - [End Script
         \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_](#end-script-___________________)
--   [The getSoundscape.R Script](#the-getsoundscape.r-script)
-    -   [Start Script
+  - [The getSoundscape.R Script](#the-getsoundscape.r-script)
+      - [Start Script
         \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_](#start-script-__________________-1)
-    -   [End Script
+      - [End Script
         \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_](#end-script-___________________-1)
--   [The scripts and scriptArgs table in
+  - [The scripts and scriptArgs table in
     Access](#the-scripts-and-scriptargs-table-in-access)
--   [Chapter Summary](#chapter-summary)
--   [Chapter References](#chapter-references)
+  - [Chapter Summary](#chapter-summary)
+  - [Chapter References](#chapter-references)
 
-Chapter Introduction
-====================
+# Chapter Introduction
 
 As you’ve worked through the various chapters describing the
 **AMMonitor** approach, you’ve noticed that many tables, such as
 **people**, **objectives**, **equipment**, **deployment**, **acounts**,
 and **locations**, are filled in manually by the monitoring team.
-Entries in these tables can be manipulated in R or via the Access
-front-end. However, several tables are filled in exclusively by
-**AMMonitor** functions. For example, the **temporals** table is
-populated by the function, `temporalsGet()`, which uses the Dark Sky API
-to retrieve either forecast or historical weather conditions for
-monitoring locations.
+Entries in these tables can be manipulated in R or via the Access front
+end. However, several tables are filled in exclusively by **AMMonitor**
+functions. For example, the **temporals** table is populated by
+`temporalsGet()`, which uses the Dark Sky API to retrieve either
+forecast or historical weather conditions for monitoring locations.
 
 Other such examples in the **AMMonitor** workflow include:
 
-1.  Scheduling recordings via the function, `scheduleOptim()`, which
-    populates the **schedules** table.
+1.  Scheduling recordings via `scheduleOptim()`, which populates the
+    **schedules** table.
 2.  Archiving recordings and photos that were delivered into “drop”
-    folders with the `dropboxMoveBatch()` function, which logs metadata
-    in the **recordings** and **photos** tables.
+    folders with `dropboxMoveBatch()`, which logs metadata in the
+    **recordings** and **photos** tables.
 3.  Populating the **logs** table based on files delivered to the
     “log\_drop” folder, allowing inspection of equipment performance.
-4.  Documenting soundscape metrics of recordings with the function,
-    `soundscape()`, which populates the **soundscape** table.
+4.  Documenting soundscape metrics of recordings with the `soundscape()`
+    function, which populates the **soundscape** table.
 5.  Searching recordings for target signals with `scoresDetect()`, which
     populates the **scores** table.
 6.  Evaluating **scores** and predicting the probability that a detected
@@ -85,12 +83,12 @@ run daily (say, first thing each morning).
 
 1.  Our first script (called “fetchRecordings.R”) will run
     `dropboxMoveBatch()` to automatically move files from the
-    recording\_drop directory (where new audio files collected the
+    \***recording\_drop** directory (where new audio files collected the
     previous day would land if monitoring via the smartphone approach)
-    to the recordings directory for long-term storage, and log metadata
-    in the **recordings** table. This script will be identified in the
-    **scripts** table, and the arguments that feed this script will be
-    stored in the **scriptArgs** table.
+    to the **recordings** directory for long-term storage, and log
+    metadata in the **recordings** table. This script will be identified
+    in the **scripts** table, and the arguments that feed this script
+    will be stored in the **scriptArgs** table.
 
 2.  In the second script (called “getSoundscape.R”), we will run the
     `soundscape()` function on any recordings acquired in the previous
@@ -109,10 +107,8 @@ library(AMMonitor)
 # Create a sample database for this chapter
 dbCreateSample(db.name = "Chap19.sqlite", 
                file.path = paste0(getwd(),"/database"), 
-               tables =  c('people', 'deployment',
-                           'equipment', 'locations',
-                           'accounts', 'scripts', 
-                           'scriptArgs'))
+               tables =  c('people', 'deployment', 'equipment', 'locations',
+                           'accounts', 'scripts', 'scriptArgs'))
 ```
 
     ## An AMMonitor database has been created with the name Chap19.sqlite which consists of the following tables:
@@ -150,8 +146,7 @@ dbSendQuery(conn = conx, statement = "PRAGMA foreign_keys = ON;" )
     ##   ROWS Fetched: 0 [complete]
     ##        Changed: 0
 
-Scripts
-=======
+# Scripts
 
 Before we begin our analysis, we view the schema of the **scripts**
 table, which contains just two fields:
@@ -169,7 +164,7 @@ dbTables(db.path = db.path, table = "scripts")
 The primary key for this table is *scriptID*, which is a VARCHAR(255)
 identifier, and should point to an R file located in the “scripts”
 directory. The description field (TEXT) holds a full description of what
-the script actually does. Below we view the records that come in the
+the script actually does. Below, we view the records that come in the
 sample dataset:
 
 ``` r
@@ -187,8 +182,8 @@ dbGetQuery(conn = conx, statement = "SELECT *
 
 Here, we see that two scripts have been registered in this table. Thus,
 we expect to see “fetchRecordings.R” and “getSoundscape.R” stored in the
-“scripts” directory. (You will add these actual scripts later on in this
-chapter.)
+**scripts** directory. You will add these scripts to the directory later
+on in this chapter.
 
 Before actually looking at the scripts, view the **scriptArgs** table
 definition:
@@ -219,8 +214,7 @@ function, each function argument, and each argument value. The *date*
 column allows the tracking of changes in these values, thus enabling
 reproducibility in the **AMMonitor** system.
 
-The fetchRecordings.R Script
-============================
+# The fetchRecordings.R Script
 
 The fetchRecordings.R script will use `dropboxMoveBatch()` to move
 recordings from the **recording\_drop** folder to the **recordings**
@@ -269,10 +263,11 @@ that 2 of the 7 records present in the table are old, logged on
 be passed to the fetchRecordings script itself.
 
 With this background, we can now illustrate the use of the
-fetchRecordings.R script in moving files from the ‘recording\_drop’
-directory to the ‘recordings’ directory. At present, no recordings have
-been logged into the **recordings** table for this chapter, as confirmed
-with the code below (which returns a 0 row by 9 column tibble):
+fetchRecordings.R script in moving files from the **recording\_drop**
+directory to the **recordings** directory. At present, no recordings
+have been logged into the **recordings** table for this chapter, as
+confirmed with the code below (which returns a 0 row by 9 column
+tibble):
 
 ``` r
 # Use * to select all rows and columns of the scripts table
@@ -283,11 +278,11 @@ dbGetQuery(conn = conx, statement = "SELECT *
     ## [1] recordingID locationID  equipmentID startDate   startTime   filepath    tz          format      timestamp  
     ## <0 rows> (or 0-length row.names)
 
-Moreover, we have no recordings in the ‘recording\_drop’ directory, so
-we have no files to move! We will simulate this process by writing the
+Moreover, we have no recordings in the **recording\_drop** directory, so
+we have no files to move\! We will simulate this process by writing the
 four wave files that come with the package’s **sampleRecordings** data
-to the ‘recording\_drop’ folder. This mimics the process by which files
-land in the recording\_drop directory for processing.
+to the **recording\_drop** folder. This mimics the process by which
+files land in the **recording\_drop** directory for processing.
 
 ``` r
 # Load the recordings
@@ -305,7 +300,7 @@ tuneR::writeWave(object = sampleRecordings[[4]],
 ```
 
 Let’s assume that these recordings were collected and deposited to the
-‘recording\_drop’ folder, and today the monitoring team would like to
+**recording\_drop** folder, and today the monitoring team would like to
 automatically process them.
 
 The actual fetchRecordings.R script may look something like the code
@@ -317,8 +312,7 @@ script itself, but are present to illustrate what the script is actually
 doing. Also note that we have commented out the database connection and
 disconnection as we are already connected to this chapter’s database.
 
-Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
--------------------------------------------------
+## Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 ``` r
 # fetchRecordings script
@@ -388,6 +382,9 @@ dropboxMoveBatch(db.path = db.path,
 
     ## Move in progress, waiting 10 seconds for server to catch up...
 
+    ## ...Move still in progress, waiting 10 more seconds...
+    ## ...Move still in progress, waiting 10 more seconds...
+
     ## Move status: complete
 
     ## Added 4 new records to recordings table.
@@ -398,10 +395,10 @@ dropboxMoveBatch(db.path = db.path,
     ## 3: midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4: midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##    format           timestamp
-    ## 1:    wav 2019-07-05 12:22:22
-    ## 2:    wav 2019-07-05 12:22:22
-    ## 3:    wav 2019-07-05 12:22:22
-    ## 4:    wav 2019-07-05 12:22:22
+    ## 1:    wav 2019-07-17 09:46:46
+    ## 2:    wav 2019-07-17 09:46:46
+    ## 3:    wav 2019-07-17 09:46:46
+    ## 4:    wav 2019-07-17 09:46:46
 
 ``` r
 # Error checking here
@@ -417,17 +414,16 @@ cat("Recordings have been moved from recording_drop to the recordings directory.
 # dbDisconnect(conx)
 ```
 
-End Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
--------------------------------------------------
+## End Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 This ends the script code; this script should be saved and stored in the
-‘scripts’ directory, with inputs that point to the monitoring program’s
-database. When sourced, the code will be executed with inputs stored in
-the **scriptArgs** table.
+**scripts** directory, with inputs that point to the monitoring
+program’s database. When sourced, the code will be executed with
+inputs stored in the **scriptArgs** table.
 
 We can now confirm that the metadata for these archived recordings are
 now logged in the **recordings** table. Of course, we have to connect to
-the database once again to continue using it!
+the database once again to continue using it\!
 
 ``` r
 # Return records in the recordings table as a tibble
@@ -440,19 +436,19 @@ dbGetQuery(conn = conx, statement = "SELECT * FROM recordings;")
     ## 3 midEarth4_2016-03-04_06-00-00.wav location@2     equip@4 2016-03-04  06:00:00 /recordings/midEarth4_2016-03-04_06-00-00.wav America/Los_Angeles
     ## 4 midEarth5_2016-03-21_07-30-00.wav location@3     equip@5 2016-03-21  07:30:00 /recordings/midEarth5_2016-03-21_07-30-00.wav America/Los_Angeles
     ##   format           timestamp
-    ## 1    wav 2019-07-05 12:22:22
-    ## 2    wav 2019-07-05 12:22:22
-    ## 3    wav 2019-07-05 12:22:22
-    ## 4    wav 2019-07-05 12:22:22
+    ## 1    wav 2019-07-17 09:46:46
+    ## 2    wav 2019-07-17 09:46:46
+    ## 3    wav 2019-07-17 09:46:46
+    ## 4    wav 2019-07-17 09:46:46
 
 Thus, we’ve demonstrated that the “fetchRecordings.R” script moves
-recordings from the ‘recording\_drop’ folder to the ‘recordings’ folder,
-and at the same time enters metadata to the **recordings** table. Notice
-that the column *timestamp* automatically registers the date on which
-the function was run; we will make use of this in our next example.
+recordings from the **recording\_drop** folder to the **recordings**
+folder, and at the same time enters metadata to the **recordings**
+table. Notice that the column *timestamp* automatically registers the
+date on which the function was run; we will make use of this in our next
+example.
 
-The getSoundscape.R Script
-==========================
+# The getSoundscape.R Script
 
 Our second example will use a script to automatically process the
 soundscape data from the *new* recordings logged in the **recordings**
@@ -464,19 +460,23 @@ script, we look at the argument inputs required by **AMMonitor**’s
 args(AMMonitor::soundscape)
 ```
 
-    ## function (db.path = NULL, recordingID, token.path = "settings/dropbox-token.RDS", 
+    ## function (db.path = NULL, recordingID, directory, token.path = NULL, 
     ##     db.insert = FALSE, ...) 
     ## NULL
 
-The `soundscape()` function needs a database path, a single recordingID,
-and a Dropbox token that allows us to pull a recording out of the cloud
-and use it in R. The argument, ‘db.insert’, has a default of FALSE; we
-will need to set this to TRUE if we want to store the output in the
-**soundscape** table. The ‘dots’ argument allows us to pass in any
-arguments to the R package **soundecology**’s `soundscape()` function.
-Although we do not illustrate this here, it is possible to change any
-arguments sent to this function by logging the change in the
-**scriptArgs** table. Make sure you read the `soundscape()` helpfile!
+The `soundscape()` function needs a database path, a character vector of
+recordingIDs for which to generate soundscape data (‘recordingID’
+argument), and a Dropbox token that allows us to pull a recording out of
+the cloud and use it in R. The argument ‘db.insert’ has a default of
+FALSE; we will need to set this to TRUE if we want to store the output
+in the **soundscape** table. The ‘…’ argument allows us to pass in
+arguments to the R package **soundecology**’s underlying soundscape
+ecology functions (such as `acoustic_complexity()`,
+`bioacoustic_index()`, and `ndsi()`). Although we do not illustrate this
+here, it is possible to change arguments sent to these functions by
+logging changes in the **scriptArgs** table. Be sure to read the
+helpfiles for these underlying functions if implementing the ‘…’
+argument.
 
 First, let’s see what arguments the Middle Earth monitoring team logged
 in our **scriptArgs** table for the getSoundscape.R script:
@@ -497,9 +497,9 @@ dbGetQuery(conn = conx, statement = "SELECT *
 Here, we can see that this script will use just one function, and that
 is AMMonitor’s `soundscape()` function. Arguments for this script are
 shown in the *argumentValue* column. Notice that argument ‘recordingID’
-has been set to ‘today’ – this is not conventional; normally a
-recordingID would be provided. Instead, we will write code in the script
-that will retrieve all recordings that have been added to the
+has been set to ‘today’ – this is not conventional; normally a vector of
+recordingIDs would be provided. Instead, we will write code in the
+script that will retrieve all recordings that have been added to the
 **recordings** table today. Recall that we just added four records to
 this table.
 
@@ -513,8 +513,7 @@ present to show what the script is actually doing). Also note that we
 have commented out the database connection and disconnection as we are
 already connected to this chapter’s database.
 
-Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
--------------------------------------------------
+## Start Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 ``` r
 # fetchRecordings script
@@ -590,14 +589,12 @@ recordings[,1]
 ``` r
 # Analyze soundscape
 AMMonitor::soundscape(db.path = db.path,
-         recordingID = recordings[,1],
-         token.path = token.path,
-         db.insert = db.insert)
+                      recordingID = recordings[,1],
+                      token.path = token.path,
+                      directory = 'recordings', 
+                      db.insert = db.insert)
 ```
 
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
     ## 
     ##  min_freq not set, using value of: 0 
     ## 
@@ -613,31 +610,28 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.7136259
+    ##   Normalized Difference Soundscape Index: 0.7493573
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 3.462376
+    ##   Bioacoustic Index: 49.09803
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.259009
+    ##   Acoustic Diversity Index: 2.816474
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.168665
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
-    ## 
+    ##   Acoustic Evenness Index: 0.404339
+    ## Removing Dropbox Web wave file from temporary directory.
     ##  min_freq not set, using value of: 0 
     ## 
     ## 
@@ -652,31 +646,28 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.5666851
+    ##   Normalized Difference Soundscape Index: 0.6518585
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 2.155669
+    ##   Bioacoustic Index: 46.17716
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.302307
+    ##   Acoustic Diversity Index: 3.067636
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.013472
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
-    ## 
+    ##   Acoustic Evenness Index: 0.068936
+    ## Removing Dropbox Web wave file from temporary directory.
     ##  min_freq not set, using value of: 0 
     ## 
     ## 
@@ -691,31 +682,28 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.56092
+    ##   Normalized Difference Soundscape Index: 0.6736117
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 1.430398
+    ##   Bioacoustic Index: 46.00534
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.302584
+    ##   Acoustic Diversity Index: 3.090592
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.000869
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
-    ## 
+    ##   Acoustic Evenness Index: 0.008127
+    ## Removing Dropbox Web wave file from temporary directory.
     ##  min_freq not set, using value of: 0 
     ## 
     ## 
@@ -730,33 +718,34 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.8211343
+    ##   Normalized Difference Soundscape Index: 0.840151
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 3.434104
+    ##   Bioacoustic Index: 48.03101
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.286216
+    ##   Acoustic Diversity Index: 2.940061
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.103616
+    ##   Acoustic Evenness Index: 0.286355
+    ## Removing Dropbox Web wave file from temporary directory.
 
-    ##                          recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1: midEarth3_2016-03-12_07-00-00.wav 1496.210 0.7136259        0.2792271      1.670859 3.462376 2.259009 0.168665      0      0 2019-07-05
-    ## 2: midEarth4_2016-03-26_07-00-00.wav 1504.585 0.5666851        0.4852220      1.754360 2.155669 2.302307 0.013472      0      0 2019-07-05
-    ## 3: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.5609200        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-05
-    ## 4: midEarth5_2016-03-21_07-30-00.wav 1506.407 0.8211343        0.1430338      1.456309 3.434104 2.286216 0.103616      0      0 2019-07-05
+    ##                          recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq           timestamp
+    ## 1: midEarth3_2016-03-12_07-00-00.wav 1496.210 0.7493573        0.2781125      1.941082 49.09803 2.816474 0.404339      0      0 2019-07-17 09:47:00
+    ## 2: midEarth4_2016-03-26_07-00-00.wav 1504.585 0.6518585        0.4777805      2.266968 46.17716 3.067636 0.068936      0      0 2019-07-17 09:47:18
+    ## 3: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.6736117        0.5923499      3.037376 46.00534 3.090592 0.008127      0      0 2019-07-17 09:47:31
+    ## 4: midEarth5_2016-03-21_07-30-00.wav 1506.407 0.8401510        0.1427615      1.643443 48.03101 2.940061 0.286355      0      0 2019-07-17 09:47:43
 
 ``` r
 # Error checking here
@@ -772,8 +761,7 @@ cat("Soundscape data have been processed and logged into the soundscape table of
 # dbDisconnect(conx)
 ```
 
-End Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
--------------------------------------------------
+## End Script \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
 After running this script, we should see that the files have been
 analyzed, with outputs placed in the database’s **soundscape** table.
@@ -783,11 +771,11 @@ analyzed, with outputs placed in the database’s **soundscape** table.
 RSQLite::dbGetQuery(conx, "SELECT * FROM soundscape")
 ```
 
-    ##                         recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1 midEarth3_2016-03-12_07-00-00.wav 1496.210 0.7136259        0.2792271      1.670859 3.462376 2.259009 0.168665      0      0 2019-07-05
-    ## 2 midEarth4_2016-03-26_07-00-00.wav 1504.585 0.5666851        0.4852220      1.754360 2.155669 2.302307 0.013472      0      0 2019-07-05
-    ## 3 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.5609200        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-05
-    ## 4 midEarth5_2016-03-21_07-30-00.wav 1506.407 0.8211343        0.1430338      1.456309 3.434104 2.286216 0.103616      0      0 2019-07-05
+    ##                         recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq           timestamp
+    ## 1 midEarth3_2016-03-12_07-00-00.wav 1496.210 0.7493573        0.2781125      1.941082 49.09803 2.816474 0.404339      0      0 2019-07-17 09:47:00
+    ## 2 midEarth4_2016-03-26_07-00-00.wav 1504.585 0.6518585        0.4777805      2.266968 46.17716 3.067636 0.068936      0      0 2019-07-17 09:47:18
+    ## 3 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.6736117        0.5923499      3.037376 46.00534 3.090592 0.008127      0      0 2019-07-17 09:47:31
+    ## 4 midEarth5_2016-03-21_07-30-00.wav 1506.407 0.8401510        0.1427615      1.643443 48.03101 2.940061 0.286355      0      0 2019-07-17 09:47:43
 
 Here, we can see that soundscape data for our four recordings have been
 entered into the **soundscape** table in the database.
@@ -802,14 +790,13 @@ We envision that each monitoring team will have a unique workflow, and
 the code within a collection of scripts will reflect this workflow. For
 example, a team may have one giant script that connects to the database
 initially, executes the code sequentially, and has a single
-disconnection at the end. Alternative, a team may run several scripts in
-sequence, with the first script providing the database connection, and
-the last script disconnecting it. The scripts can be automatically
-sourced when R is launched by sourcing these scripts upon startup, or
-they can be sourced by hand.
+disconnection at the end. Alternatively, a team may run several scripts
+in sequence, with the first script providing the database connection,
+and the last script disconnecting it. The scripts can be automatically
+run when R is launched by sourcing these scripts upon startup, or they
+can be sourced by hand.
 
-The scripts and scriptArgs table in Access
-==========================================
+# The scripts and scriptArgs table in Access
 
 The scripts table is a secondary tab in the Access Navigation Form,
 nestled under the ‘Mgt’ primary tab. Here’s a look at the Scripts tab,
@@ -829,8 +816,7 @@ passed to the script.
 > files stored in the scripts directory), and stores all inputs to the
 > script as a script argument.*
 
-Chapter Summary
-===============
+# Chapter Summary
 
 This chapter covered the **scripts** and **scriptArgs** tables, which
 provide a highly customizable means for monitoring programs to automate
@@ -840,9 +826,16 @@ daily basis to collect incoming recordings and log their metadata in the
 inputs to function arguments through time to facilitate reproducibility
 and sound record-keeping.
 
-Chapter References
-==================
+# Chapter References
 
-1. Villanueva-Rivera LJ, Pijanowski BC. Soundecology: Soundscape ecology
-\[Internet\]. 2018. Available:
+<div id="refs" class="references">
+
+<div id="ref-soundecology">
+
+1\. Villanueva-Rivera LJ, Pijanowski BC. Soundecology: Soundscape
+ecology \[Internet\]. 2018. Available:
 <https://CRAN.R-project.org/package=soundecology>
+
+</div>
+
+</div>
