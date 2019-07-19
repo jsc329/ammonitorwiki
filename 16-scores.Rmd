@@ -340,6 +340,21 @@ unserialized.features[[1]][1, 1163:1172]
 
 In the next chapter, we will use the features for each detected event to separate target signals from false alarms.
 
+# plotDetections()
+
+After acquiring detections with `scoresDetect()`, you may find the `plotDetections()` function useful for visualizing what you have found. A quick scan of the detections will provide you with a broad visual sense of the types of signals your template is likely to detect. See the `plotDetections()` help file for various argument options and examples. 
+
+```{r, results = 'hide'}
+plotDetections(db.path = db.path, 
+               templateID = 'verd1', 
+               score.threshold = 0.2,
+               plot.scoreID = FALSE, 
+               spec.col = gray.2(),
+               box = TRUE,
+               box.col = 'black',
+               box.lwd = 1)
+```
+
 # The Scores Table in Access
 
 The scores table is a secondary tab in the Access Navigation Form, located under the 'Recordings' primary tab. Below, we view the Recordings tab, where you can see four recordings are present in the database, and annotations are listed for each recording.
@@ -372,6 +387,6 @@ Each score is listed individually (here, we are viewing the first of 52 scores i
 
 # Chapter Summary
 
-This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain information about each detected signal, which can be used to help train the system to better distinguish between target signals and false alarms. 
+This chapter covered the **scores** table, which stores events detected by templates that seek target signals within audio recordings. Detected events are acquired via `scoresDetect()`, which runs template matching functions and also extracts acoustic features associated with each detected event. These features contain information about each detected signal, which can be used to help train the system to better distinguish between target signals and false alarms. `plotDetections()` is useful for visualizing events that have been detected. 
 
 # Chapter References

@@ -346,10 +346,11 @@ R’s console in response to prompts. Below, we view the arguments:
 args(scoresVerify)
 ```
 
-    ## function (db.path, date.range, recordingID, templateID, label.type, 
-    ##     directory, token.path = NULL, db.insert = FALSE, overwrite = FALSE, 
-    ##     fd.rat = 4, f.lim = c(0, 12), spec.col = gray.3(), box = TRUE, 
-    ##     on.col = "#FFA50050", off.col = "#0000FF50", pt.col = "#80008050") 
+    ## function (db.path, date.range, recordingID, scoreID, templateID, 
+    ##     label.type, directory, token.path = NULL, db.insert = FALSE, 
+    ##     overwrite = FALSE, fd.rat = 4, f.lim = c(0, 12), spec.col = gray.3(), 
+    ##     box = TRUE, on.col = "#FFA50050", off.col = "#0000FF50", 
+    ##     pt.col = "#80008050") 
     ## NULL
 
 As usual, we feed the **db.path** object to the ‘db.path’ argument. In
@@ -375,8 +376,11 @@ previously existing database verifications should be overwritten. If
 overwrite = FALSE, users will not be prompted to verify any detected
 events that already have a verification. (Finally, there are several
 other arguments with default values that allow the user to customize how
-detected events should be displayed during the interactive session. We
-do not review them here; see `help('scoresVerify')` for details.)
+detected events should be displayed during the interactive session.
+There is also an option to verify specific scoreIDs, in the event that
+the user has taken a stratified sample or otherwise selected which
+scoreIDs should be verified. We do not review these options here; see
+`help('scoresVerify')` for details.)
 
 ``` r
 # Interactive function; the output cannot be displayed 
@@ -981,10 +985,10 @@ new.classifs[which(new.classifs$scoreID == 1),]
 ```
 
     ##    scoreID        amml classifier                     modelName modelProbability           timestamp
-    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-15 16:41:20
-    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-15 16:41:20
-    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-15 16:41:20
-    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-15 16:41:20
+    ## 1:       1 classifiers     glmnet    verd1_0.2_libraryID_glmnet       0.17018835 2019-07-19 13:30:56
+    ## 2:       1 classifiers  svmRadial verd1_0.2_libraryID_svmRadial       0.61615217 2019-07-19 13:30:56
+    ## 3:       1 classifiers  svmLinear verd1_0.2_libraryID_svmLinear       0.08530979 2019-07-19 13:30:57
+    ## 4:       1 classifiers         rf        verd1_0.2_libraryID_rf       0.33000000 2019-07-19 13:30:57
 
 Note that these data are identical to those we examined at the start of
 this chapter. We store the *scoreID* and the *amml* name associated with

@@ -5,6 +5,7 @@
   - [Acquiring automatic detections with
     scoresDetect()](#acquiring-automatic-detections-with-scoresdetect)
   - [Event Features](#event-features)
+  - [plotDetections()](#plotdetections)
   - [The Scores Table in Access](#the-scores-table-in-access)
   - [Chapter Summary](#chapter-summary)
   - [Chapter References](#chapter-references)
@@ -402,12 +403,12 @@ RSQLite::dbGetQuery(conn = conx,
     ## 5       5 midEarth3_2016-03-12_07-00-00.wav      verd1 10.692789            0.2 0.2506303                    NA                    NA blob[37.23 kB]
     ## 6       6 midEarth3_2016-03-12_07-00-00.wav      verd1 13.920363            0.2 0.3788103                    NA                    NA blob[37.23 kB]
     ##             timestamp
-    ## 1 2019-07-15 14:17:23
-    ## 2 2019-07-15 14:17:23
-    ## 3 2019-07-15 14:17:23
-    ## 4 2019-07-15 14:17:23
-    ## 5 2019-07-15 14:17:23
-    ## 6 2019-07-15 14:17:23
+    ## 1 2019-07-19 13:21:07
+    ## 2 2019-07-19 13:21:07
+    ## 3 2019-07-19 13:21:07
+    ## 4 2019-07-19 13:21:07
+    ## 5 2019-07-19 13:21:07
+    ## 6 2019-07-19 13:21:07
 
 Notice that the first detected event in the recording
 midEarth3\_2016-03-12\_07-00-00.wav was produced by the template
@@ -448,7 +449,7 @@ str(scores)
     ##  $ features             :List of 1
     ##   ..$ : raw  58 0a 00 00 ...
     ##   ..- attr(*, "class")= chr "blob"
-    ##  $ timestamp            : chr "2019-07-15 14:17:23"
+    ##  $ timestamp            : chr "2019-07-19 13:21:07"
 
 Here, we confirm the returned object is a data.frame. *Features* of each
 event are returned as a list of 1, and are of serialized “raw” data
@@ -606,6 +607,27 @@ unserialized.features[[1]][1, 1163:1172]
 In the next chapter, we will use the features for each detected event to
 separate target signals from false alarms.
 
+# plotDetections()
+
+After acquiring detections with `scoresDetect()`, you may find the
+`plotDetections()` function useful for visualizing what you have found.
+A quick scan of the detections will provide you with a broad visual
+sense of the types of signals your template is likely to detect. See the
+`plotDetections()` help file for various argument options and examples.
+
+``` r
+plotDetections(db.path = db.path, 
+               templateID = 'verd1', 
+               score.threshold = 0.2,
+               plot.scoreID = FALSE, 
+               spec.col = gray.2(),
+               box = TRUE,
+               box.col = 'black',
+               box.lwd = 1)
+```
+
+<img src="Chap16_Figs/unnamed-chunk-31-1.png" style="display: block; margin: auto auto auto 0;" />
+
 # The Scores Table in Access
 
 The scores table is a secondary tab in the Access Navigation Form,
@@ -654,7 +676,8 @@ events are acquired via `scoresDetect()`, which runs template matching
 functions and also extracts acoustic features associated with each
 detected event. These features contain information about each detected
 signal, which can be used to help train the system to better distinguish
-between target signals and false alarms.
+between target signals and false alarms. `plotDetections()` is useful
+for visualizing events that have been detected.
 
 # Chapter References
 
