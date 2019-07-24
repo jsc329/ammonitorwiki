@@ -306,11 +306,19 @@ sim.eh <- occupancySim(n.sites = 100,
 
     ## Requested epsilon: 0.3. Simulated: 0.247.
 
-    ## Requested p11: 0.8. Simulated: 0.832.
+    ## Requested p11: 0.8. Simulated: 0.798.
 
     ## Requested p10: 0.05. Simulated: 0.045.
 
-    ## Requested b: 0.05. Simulated: 0.045.
+    ## Requested b: 0.05. Simulated: 0.054.
+
+    ##         requested simulated
+    ## psi          0.50     0.480
+    ## gamma        0.15     0.177
+    ## epsilon      0.30     0.247
+    ## p11          0.80     0.798
+    ## p10          0.05     0.045
+    ## b            0.05     0.054
 
 `occupancySim()` returns a matrix where the number of rows is equal to
 ‘n.sites’, and the number of columns is equal to
@@ -331,11 +339,11 @@ head(sim.eh)
 ```
 
     ##            1-1 1-2 1-3 1-4 1-5 2-1 2-2 2-3 2-4 2-5
-    ## location@1   1   1   1   0   1   0   0   0   0   0
-    ## location@2   0   0   0   0   0   1   1   1   1   0
+    ## location@1   2   1   1   1   1   0   0   0   0   0
+    ## location@2   0   0   0   0   0   1   1   1   1   1
     ## location@3   0   0   0   0   0   0   0   1   0   0
     ## location@4   0   0   0   0   0   0   0   0   0   0
-    ## location@5   1   1   1   1   0   1   1   1   1   1
+    ## location@5   0   1   1   1   1   0   1   1   1   1
     ## location@6   0   0   0   0   1   0   0   0   0   0
 
 Here, we will assume that this Verdin dataset was collected by remotely
@@ -410,9 +418,9 @@ str(sim.model, max.level = 1)
     ##  $ data       :List of 15
     ##   ..- attr(*, "class")= chr "pao"
     ##  $ outfile    : chr "m0"
-    ##  $ neg2loglike: num 996
+    ##  $ neg2loglike: num 1057
     ##  $ npar       : int 6
-    ##  $ aic        : num 1008
+    ##  $ aic        : num 1069
     ##  $ beta       :List of 9
     ##  $ real       :List of 6
     ##  $ warnings   :List of 2
@@ -445,27 +453,27 @@ estimates
 
     ## $psi
     ##        est         se lower_0.95 upper_0.95 
-    ## 0.48181577 0.05044124 0.38491338 0.58010557 
+    ## 0.48496603 0.05075454 0.38736015 0.58373240 
     ## 
     ## $gamma
     ##        est         se lower_0.95 upper_0.95 
-    ## 0.17589612 0.05358439 0.09372997 0.30578770 
+    ## 0.17648687 0.05414058 0.09360066 0.30784289 
     ## 
     ## $epsilon
     ##        est         se lower_0.95 upper_0.95 
-    ## 0.25701928 0.06455957 0.15133861 0.40157725 
+    ## 0.25401352 0.06548239 0.14746470 0.40130893 
     ## 
     ## $p11
     ##        est         se lower_0.95 upper_0.95 
-    ## 0.84622373 0.01752883 0.80865143 0.87753577 
+    ## 0.79286037 0.01996425 0.75100873 0.82927653 
     ## 
     ## $p10
     ##         est          se  lower_0.95  upper_0.95 
-    ## 0.045100016 0.009450511 0.029804930 0.067696454 
+    ## 0.043847278 0.009540148 0.028520324 0.066844265 
     ## 
     ## $b
     ##        est         se lower_0.95 upper_0.95 
-    ## 0.05331403 0.01132231 0.03501125 0.08038784
+    ## 0.05380547 0.01170708 0.03496640 0.08193283
 
 Recall that we can store any model in an **AMModels** library if we wish
 to preserve it for posterity. In previous chapters, we created an
@@ -646,7 +654,7 @@ RSQLite::dbGetQuery(conn = conx, 'SELECT * FROM assessments')
 ```
 
     ##   assessmentID    objectiveID scriptID  amml         modelName                                      notes           timestamp
-    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of Verdin occupancy rate. 2019-07-17 14:19:17
+    ## 1            1 verd_occupancy     <NA> do.fp verd_sim_occupany First assessment of Verdin occupancy rate. 2019-07-24 19:33:34
 
 By registering our assessment, we now formally link a natural resource
 objective (Verdin occupancy rate) with an analysis (the dynamic

@@ -1,13 +1,14 @@
 ---
 title: "Chapter 19: Scripts and scriptArgs"
 output:
+  html_document:
+    self_contained: TRUE
   md_document:
     variant: gfm
     toc: true
     toc_depth: 3
     includes:
       in_header: header.html
-  html_document:
 bibliography: refs.bib
 csl: plos.csl
 ---
