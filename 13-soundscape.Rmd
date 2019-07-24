@@ -8,6 +8,7 @@ output:
     includes:
       in_header: header.html
   html_document:
+    self_contained: TRUE
 bibliography: refs.bib
 csl: plos.csl
 ---
@@ -218,12 +219,13 @@ This simple example highlights the fact that each **soundscape** [@soundecology]
 
 # The soundscape() function
 
-At last, we are able to illustrate **AMMonitor**'s `soundscape()` function. This function has three arguments, the first of which is the recording to be analyzed, identified by recordingID as logged in the database. If the file is located in the dropbox cloud, a 'token.path' must be provided. Here, we set 'db.insert' to FALSE to indicate that we do not wish to insert the results to our database, and instead will test the function first:
+At last, we are able to illustrate **AMMonitor**'s `soundscape()` function. This function has several arguments, the first of which is the recording to be analyzed, identified by recordingID as logged in the database. If the file is located in the dropbox cloud, a 'token.path' must be provided. The 'directory' argument is used to indicate either the local directory or Dropbox directory where the recording can be found. Here, we set 'db.insert' to FALSE to indicate that we do not wish to insert the results to our database, and instead will test the function first:
 
 
 ```{r, eval = T}
 results <- AMMonitor::soundscape(db.path = NULL,
                recordingID = 'midEarth4_2016-03-04_06-00-00.wav',
+               directory = 'recordings', 
                token.path = NULL,
                db.insert = FALSE)
 
@@ -241,6 +243,7 @@ It is useful to check the results of the function before inserting to the databa
 # Run soundscape analyses
 AMMonitor::soundscape(db.path = db.path,
          recordingID = 'midEarth4_2016-03-04_06-00-00.wav',
+         directory = 'recordings', 
          token.path = 'settings/dropbox-token.RDS', 
          db.insert = TRUE)
 

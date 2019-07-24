@@ -339,23 +339,23 @@ script (Chapter 20).
 # The soundscape() function
 
 At last, we are able to illustrate **AMMonitor**’s `soundscape()`
-function. This function has three arguments, the first of which is the
+function. This function has several arguments, the first of which is the
 recording to be analyzed, identified by recordingID as logged in the
 database. If the file is located in the dropbox cloud, a ‘token.path’
-must be provided. Here, we set ‘db.insert’ to FALSE to indicate that we
-do not wish to insert the results to our database, and instead will test
-the function first:
+must be provided. The ‘directory’ argument is used to indicate either
+the local directory or Dropbox directory where the recording can be
+found. Here, we set ‘db.insert’ to FALSE to indicate that we do not wish
+to insert the results to our database, and instead will test the
+function first:
 
 ``` r
 results <- AMMonitor::soundscape(db.path = NULL,
                recordingID = 'midEarth4_2016-03-04_06-00-00.wav',
+               directory = 'recordings', 
                token.path = NULL,
                db.insert = FALSE)
 ```
 
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
     ## 
     ##  min_freq not set, using value of: 0 
     ## 
@@ -371,35 +371,35 @@ results <- AMMonitor::soundscape(db.path = NULL,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.56092
+    ##   Normalized Difference Soundscape Index: 0.6736117
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 1.430398
+    ##   Bioacoustic Index: 46.00534
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.302584
+    ##   Acoustic Diversity Index: 3.090592
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.000869
+    ##   Acoustic Evenness Index: 0.008127
 
 ``` r
 # view results
 results
 ```
 
-    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
+    ##                          recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq           timestamp
+    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.6736117        0.5923499      3.037376 46.00534 3.090592 0.008127      0      0 2019-07-24 15:26:33
 
 It is useful to check the results of the function before inserting to
 the database to confirm that all is well. Once confirmed, users may
@@ -412,13 +412,11 @@ that are stored in the Dropbox cloud by providing the Dropbox token in
 # Run soundscape analyses
 AMMonitor::soundscape(db.path = db.path,
          recordingID = 'midEarth4_2016-03-04_06-00-00.wav',
+         directory = 'recordings', 
          token.path = 'settings/dropbox-token.RDS', 
          db.insert = TRUE)
 ```
 
-    ## 
-    ##  max_freq not set, using value of: 22050 
-    ## 
     ## 
     ##  min_freq not set, using value of: 0 
     ## 
@@ -434,38 +432,39 @@ AMMonitor::soundscape(db.path = db.path,
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Normalized Difference Soundscape Index: 0.56092
+    ##   Normalized Difference Soundscape Index: 0.6736117
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Bioacoustic Index: 1.430398
+    ##   Bioacoustic Index: 46.00534
     ## 
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Diversity Index: 2.302584
+    ##   Acoustic Diversity Index: 3.090592
     ## 
     ##  This is a mono file.
     ## 
     ##  Calculating index. Please wait... 
     ## 
-    ##   Acoustic Evenness Index: 0.000869
+    ##   Acoustic Evenness Index: 0.008127
+    ## Removing Dropbox Web wave file from temporary directory.
 
-    ##                          recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
+    ##                          recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq           timestamp
+    ## 1: midEarth4_2016-03-04_06-00-00.wav 1500.366 0.6736117        0.5923499      3.037376 46.00534 3.090592 0.008127      0      0 2019-07-24 15:26:42
 
 ``` r
 # Check database to ensure events were added:
 RSQLite::dbGetQuery(conx, "SELECT * FROM soundscape")
 ```
 
-    ##                         recordingID      aci    ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq  timestamp
-    ## 1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.56092        0.6212917      2.208678 1.430398 2.302584 0.000869      0      0 2019-07-12
+    ##                         recordingID      aci      ndsi ndsi_anthrophony ndsi_biophony bioindex      adi      aei minFrq maxFrq           timestamp
+    ## 1 midEarth4_2016-03-04_06-00-00.wav 1500.366 0.6736117        0.5923499      3.037376 46.00534 3.090592 0.008127      0      0 2019-07-24 15:26:42
 
 As shown, the results of the `soundscape()` function have been uploaded
 to the **soundscape** table.
